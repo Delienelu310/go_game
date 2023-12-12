@@ -1,17 +1,20 @@
-<diagram program="umletino" version="15.1"><zoom_level>8</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>200</x><y>304</y><w>168</w><h>88</h></coordinates><panel_attributes>Client
+<diagram program="umletino" version="15.1"><zoom_level>7</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>289</x><y>742</y><w>147</w><h>105</h></coordinates><panel_attributes>Client
 --
 -id: Long 
 -username: String
 -password: String
 
 -currentRoom: Room
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>112</x><y>72</y><w>80</w><h>88</h></coordinates><panel_attributes>Room
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>86</x><y>742</y><w>119</w><h>175</h></coordinates><panel_attributes>Room
 --
 -id: Long
 -admin: Client
--game: Game
+-white: Client
+-black: Client
+-participants: List&lt;Client&gt;
 
--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>464</x><y>304</y><w>160</w><h>360</h></coordinates><panel_attributes>Game
+-game: Game
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>527</x><y>742</y><w>140</w><h>315</h></coordinates><panel_attributes>Game
 --
 -whitePlayer: Client
 -blackPlayer: Client
@@ -42,18 +45,65 @@
 ...
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>56</y><w>80</w><h>24</h></coordinates><panel_attributes>Bot</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>272</x><y>56</y><w>96</w><h>24</h></coordinates><panel_attributes>RoomController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>0</y><w>80</w><h>24</h></coordinates><panel_attributes>ClientController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>416</x><y>0</y><w>80</w><h>24</h></coordinates><panel_attributes>GameController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>600</x><y>0</y><w>96</w><h>24</h></coordinates><panel_attributes>GamesRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>0</y><w>96</w><h>24</h></coordinates><panel_attributes>UserRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>600</x><y>56</y><w>96</w><h>24</h></coordinates><panel_attributes>RoomRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>304</y><w>112</w><h>96</h></coordinates><panel_attributes>Move
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>226</x><y>448</y><w>133</w><h>119</h></coordinates><panel_attributes>&lt;&lt;RestController&gt;&gt;
+RoomManagementController
+--
+-repository: RepositoryInterface
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>387</x><y>483</y><w>147</w><h>119</h></coordinates><panel_attributes>&lt;&lt;RestController&gt;&gt;
+ClientController
+--
+-repository: RepositoryInterface
+--
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>751</x><y>742</y><w>98</w><h>84</h></coordinates><panel_attributes>Move
 --
 -x: int
 -y: int
 -game: Game
 -color: Color
--pass: Boolean = false</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>336</y><w>120</w><h>32</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+-pass: Boolean = false</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>660</x><y>770</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
 m1=1
-m2=*</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>728</x><y>200</y><w>80</w><h>56</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
+m2=*</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>758</x><y>651</y><w>70</w><h>49</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
 Color
-{WHITE, BLACK}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>200</y><w>152</w><h>56</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
+{WHITE, BLACK}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>541</x><y>651</y><w>133</w><h>49</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
 State
-{CREATED, STARTED, FINISHED}</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>336</y><w>120</w><h>32</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-m1=2
-m2=*</panel_attributes><additional_attributes>130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>536</x><y>248</y><w>208</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;240;10</additional_attributes></element><element><id>Relation</id><coordinates><x>768</x><y>248</y><w>24</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>624</x><y>248</y><w>168</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>190;70;10;10</additional_attributes></element></diagram>
+{CREATED, STARTED, FINISHED}</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>429</x><y>770</y><w>112</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=*
+m2=2</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>590</x><y>693</y><w>182</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;240;10</additional_attributes></element><element><id>Relation</id><coordinates><x>793</x><y>693</y><w>21</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>667</x><y>693</y><w>147</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>190;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>749</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+r1=admin</panel_attributes><additional_attributes>10;20;130;20</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>763</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+r1=white</panel_attributes><additional_attributes>10;20;130;20</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>777</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+r1=black</panel_attributes><additional_attributes>10;20;130;20</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>798</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+r1=participants</panel_attributes><additional_attributes>10;20;130;20</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>861</y><w>343</w><h>21</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;470;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>359</x><y>322</y><w>210</w><h>98</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+RepositoryInterface
+--
++getRoomRepository(): RoomRepositoryInterface
++getClientRepository(): ClientRepositoryInterface
++getGameRepository(): GameRepositoryInterface</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>562</x><y>252</y><w>49</w><h>98</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;120;50;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>597</x><y>238</y><w>126</w><h>42</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+RoomRepositoryInterface
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>653</x><y>308</y><w>126</w><h>49</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+ClientRepository
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>562</x><y>315</y><w>105</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;30;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>744</x><y>385</y><w>126</w><h>42</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+GameRepositoryInterface</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>562</x><y>329</y><w>196</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;260;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>51</x><y>448</y><w>133</w><h>119</h></coordinates><panel_attributes>&lt;&lt;SocketController&gt;&gt;
+RoomSocketController
+--
+?</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>352</x><y>84</y><w>224</w><h>98</h></coordinates><panel_attributes>RuntimeRepository
+--
+-roomRepository: RuntimeRoomRepository
+-clientRepository: RuntimeClientRepository
+-gameRepository: RuntimeGameRepository
+--
++getRoomRepository(): RoomRepositoryInterface
++getClientRepository(): ClientRepositoryInterface
++getGameRepository(): GameRepositoryInterface</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>604</x><y>0</y><w>126</w><h>49</h></coordinates><panel_attributes>RuntimeRoomRepository
+--
+-List&lt;Room&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>695</x><y>77</y><w>126</w><h>49</h></coordinates><panel_attributes>RuntimeClientRepository
+--
+-List&lt;Client&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>807</x><y>161</y><w>126</w><h>42</h></coordinates><panel_attributes>RuntimeGameRepository
+--
+-List&lt;Game&gt;
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>175</y><w>21</w><h>161</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;210;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>569</x><y>42</y><w>112</w><h>98</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;120;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>660</x><y>42</y><w>21</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;280;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>569</x><y>112</y><w>140</w><h>28</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;20;180;10</additional_attributes></element><element><id>Relation</id><coordinates><x>569</x><y>119</y><w>252</w><h>91</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;340;110</additional_attributes></element><element><id>Relation</id><coordinates><x>737</x><y>119</y><w>21</w><h>203</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;270;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>828</x><y>196</y><w>21</w><h>203</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;270;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>562</x><y>511</y><w>154</w><h>119</h></coordinates><panel_attributes>&lt;&lt;RestController&gt;&gt;
+GamesController
+--
+-repository: RepositoryInterface
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>464</x><y>413</y><w>189</w><h>112</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;250;140</additional_attributes></element><element><id>Relation</id><coordinates><x>457</x><y>413</y><w>21</w><h>84</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>289</x><y>413</y><w>189</w><h>49</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>250;10;10;50</additional_attributes></element></diagram>
