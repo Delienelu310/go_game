@@ -1,0 +1,11 @@
+frontend: 
+    - registration and log in pages
+    - page with a board, where current client connects room sockets
+    - board component, which gets activated when both users click start
+        - when clicked on square the msg is sent through the socket to the server, then the response is got
+        - when other player made move, this player must receive msg from the socket
+backend:
+    - clients management
+    - simple room management
+    - mock game, that places checkers where request told to place them
+    - room sockets 
