@@ -1,0 +1,59 @@
+<diagram program="umletino" version="15.1"><zoom_level>8</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>200</x><y>304</y><w>168</w><h>88</h></coordinates><panel_attributes>Client
+--
+-id: Long 
+-username: String
+-password: String
+
+-currentRoom: Room
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>112</x><y>72</y><w>80</w><h>88</h></coordinates><panel_attributes>Room
+--
+-id: Long
+-admin: Client
+-game: Game
+
+-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>464</x><y>304</y><w>160</w><h>360</h></coordinates><panel_attributes>Game
+--
+-whitePlayer: Client
+-blackPlayer: Client
+
+-whitePlayerCounter: int
+-blackPlayerCounter: int
+-field: Color[][]
+-size: field
+-moves: List&lt;Move&gt;
+-state: State
+
+--
+&lt;&lt;Constructors&gt;&gt;
+
+&lt;&lt;ForControllers&gt;&gt;
++getMoves(): List&lt;Move&gt;
++getField(): int[][]
++addMove(Move) 
+        throws InvalidMoveException 
++start() : void throws 
+	
+
+&lt;&lt;Main checks&gt;&gt;
+-checkMove(Move): Boolean 
+       throws InvalidMoveException
+-finishGame(): void
+
+...
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>56</y><w>80</w><h>24</h></coordinates><panel_attributes>Bot</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>272</x><y>56</y><w>96</w><h>24</h></coordinates><panel_attributes>RoomController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>0</y><w>80</w><h>24</h></coordinates><panel_attributes>ClientController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>416</x><y>0</y><w>80</w><h>24</h></coordinates><panel_attributes>GameController</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>600</x><y>0</y><w>96</w><h>24</h></coordinates><panel_attributes>GamesRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>0</y><w>96</w><h>24</h></coordinates><panel_attributes>UserRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>600</x><y>56</y><w>96</w><h>24</h></coordinates><panel_attributes>RoomRepository</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>304</y><w>112</w><h>96</h></coordinates><panel_attributes>Move
+--
+-x: int
+-y: int
+-game: Game
+-color: Color
+-pass: Boolean = false</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>616</x><y>336</y><w>120</w><h>32</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1
+m2=*</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>728</x><y>200</y><w>80</w><h>56</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
+Color
+{WHITE, BLACK}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>200</y><w>152</w><h>56</h></coordinates><panel_attributes>&lt;&lt;Enumeration&gt;&gt;
+State
+{CREATED, STARTED, FINISHED}</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>336</y><w>120</w><h>32</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=2
+m2=*</panel_attributes><additional_attributes>130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>536</x><y>248</y><w>208</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;240;10</additional_attributes></element><element><id>Relation</id><coordinates><x>768</x><y>248</y><w>24</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>624</x><y>248</y><w>168</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>190;70;10;10</additional_attributes></element></diagram>
