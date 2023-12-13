@@ -1,19 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import AuthProvider from './security/AuthContext';
+import Header from './components/Header';
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={
-            <div></div>
-          }>
+      <AuthProvider>
+        
+        <BrowserRouter>
+          <Header/>
+          <Routes>
+            
+            <Route path="/" element={
+              <div></div>
+            }>
 
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+      
     </div>
   );
 }
