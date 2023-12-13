@@ -22,6 +22,8 @@ public class ClientController {
         this.repositoryInterface = repositoryInterface;
     }
 
+    
+
     @GetMapping("/clients") 
     public List<Client> getClients(){
         return repositoryInterface.getClientRepository().retrieveClients();
@@ -30,6 +32,14 @@ public class ClientController {
     @GetMapping("/clients/{id}")
     public Client getClientById(@PathVariable Long id){
         return repositoryInterface.getClientRepository().retrieveClientById(id);
+    }
+
+    @PostMapping("/login")
+    public Client login(@RequestBody Client client){
+        Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(client.getUsername());
+        
+        if(cl.getPassword().equals(client.getPassword())) return cl;
+        else throw new RuntimeException("Wrong password");
     }
 
     @DeleteMapping("/clients/{id}")

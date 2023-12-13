@@ -47,6 +47,11 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
         return client;
     }
 
+    @Override
+    public Client retrieveClientByUsername(String username) {
+        return clients.stream().filter(client -> client.getUsername().equals(username)).toList().get(0);
+    }
+
     
     
 }

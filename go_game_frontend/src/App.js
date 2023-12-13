@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthProvider from './security/AuthContext';
 import Header from './components/Header';
 
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+
 function App() {
   return (
     <div className="App">
@@ -14,9 +17,16 @@ function App() {
             
             <Route path="/" element={
               <div></div>
-            }>
+            }/>
+            
+            <Route path="/register" element={
+              <RegisterPage/>
+            }/>
 
-            </Route>
+            <Route path="/login" element={
+              <LoginPage/>
+            }/>
+
           </Routes>
         </BrowserRouter>
       </AuthProvider>
