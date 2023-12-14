@@ -3,6 +3,7 @@ package com.teoriaprogramowania.go_game.repository.interfaces;
 import java.util.List;
 
 import com.teoriaprogramowania.go_game.resources.Client;
+import com.teoriaprogramowania.go_game.resources.ClientDetails;
 
 public interface ClientRepositoryInterface {
     
@@ -12,5 +13,5 @@ public interface ClientRepositoryInterface {
 
     void deleteClientById(Long id);
     Client addClient(Client client);    
-    Client updateClient(Client client);    
+    void updateClient(ClientDetails clientDetails, Long id);    
 }

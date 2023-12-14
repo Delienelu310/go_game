@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.teoriaprogramowania.go_game.repository.interfaces.ClientRepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
+import com.teoriaprogramowania.go_game.resources.ClientDetails;
 
 @Repository
 public class RuntimeClientRepository implements ClientRepositoryInterface{
@@ -30,14 +31,11 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
     }
 
     @Override
-    public Client updateClient(Client client) {
-        if(! clients.contains(client)){
-            throw new RuntimeException("User does not exist");
-        }
-        int index = clients.indexOf(client);
+    public void updateClient(ClientDetails clientDetails, Long id) {
+
+        int index = clients.stream().map( cl -> cl.getId()).toList().indexOf(id);
         if(index == -1) throw new RuntimeException("The client is not found");
-        clients.set(index, client);
-        return client;
+        clients.get(index).setClientDetails(clientDetails);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
 
     @Override
     public Client retrieveClientByUsername(String username) {
-        return clients.stream().filter(client -> client.getUsername().equals(username)).toList().get(0);
+        return clients.stream().filter(client -> client.getClientDetails().getUsername().equals(username)).toList().get(0);
     }
 
     

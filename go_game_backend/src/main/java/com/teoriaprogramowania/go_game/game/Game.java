@@ -18,6 +18,8 @@ public class Game {
         Make tests and exceptions
     */
 
+    private Long id;
+
     private Client white;
     private Client black;
 

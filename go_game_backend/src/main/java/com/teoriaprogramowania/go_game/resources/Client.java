@@ -10,8 +10,7 @@ public class Client {
 
     private Long id;
 
-    private String username;
-    private String password;
+    private ClientDetails clientDetails = new ClientDetails();
 
     private Room currentRoom;
 

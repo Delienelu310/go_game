@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class Room {
 
     private Long id;
+    private RoomDetails roomDetails;
 
     private Client admin;
     private List<Client> participants;

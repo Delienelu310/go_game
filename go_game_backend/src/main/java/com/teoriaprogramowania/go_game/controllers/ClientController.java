@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
+import com.teoriaprogramowania.go_game.resources.ClientDetails;
 
 @RestController
 public class ClientController {
@@ -21,8 +22,6 @@ public class ClientController {
     public ClientController(RepositoryInterface repositoryInterface) {
         this.repositoryInterface = repositoryInterface;
     }
-
-    
 
     @GetMapping("/clients") 
     public List<Client> getClients(){
@@ -36,9 +35,9 @@ public class ClientController {
 
     @PostMapping("/login")
     public Client login(@RequestBody Client client){
-        Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(client.getUsername());
+        Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(client.getClientDetails().getUsername());
         
-        if(cl.getPassword().equals(client.getPassword())) return cl;
+        if(cl.getClientDetails().getPassword().equals(client.getClientDetails().getPassword())) return cl;
         else throw new RuntimeException("Wrong password");
     }
 
@@ -53,8 +52,7 @@ public class ClientController {
     }
 
     @PutMapping("/clients/{id}")
-    public Client updateClient(@RequestBody Client client, @PathVariable Long id){
-        client.setId(id);
-        return repositoryInterface.getClientRepository().updateClient(client);
+    public void updateClient(@RequestBody ClientDetails clientDetails, @PathVariable Long id){
+        repositoryInterface.getClientRepository().updateClient(clientDetails, id);
     }
 }
