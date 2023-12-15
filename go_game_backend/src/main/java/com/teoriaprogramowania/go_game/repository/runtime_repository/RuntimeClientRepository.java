@@ -3,14 +3,18 @@ package com.teoriaprogramowania.go_game.repository.runtime_repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.teoriaprogramowania.go_game.GoGameApplication;
 import com.teoriaprogramowania.go_game.repository.interfaces.ClientRepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.resources.ClientDetails;
 
 @Repository
 public class RuntimeClientRepository implements ClientRepositoryInterface{
+    Logger logger = LoggerFactory.getLogger(GoGameApplication.class);
 
     private List<Client> clients = new ArrayList<>();
     private Long clientsCounter = 100l;
@@ -39,7 +43,9 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
     }
 
     @Override
-    public Client addClient(Client client) {
+    public Client addClient(ClientDetails clientDetails) {
+        Client client = new Client();
+        client.setClientDetails(clientDetails);
         client.setId(clientsCounter++);
         clients.add(client);
         return client;
@@ -47,6 +53,7 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
 
     @Override
     public Client retrieveClientByUsername(String username) {
+        logger.info(username);
         return clients.stream().filter(client -> client.getClientDetails().getUsername().equals(username)).toList().get(0);
     }
 

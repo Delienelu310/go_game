@@ -34,10 +34,10 @@ public class ClientController {
     }
 
     @PostMapping("/login")
-    public Client login(@RequestBody Client client){
-        Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(client.getClientDetails().getUsername());
+    public Client login(@RequestBody ClientDetails clientDetails){
+        Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(clientDetails.getUsername());
         
-        if(cl.getClientDetails().getPassword().equals(client.getClientDetails().getPassword())) return cl;
+        if(cl.getClientDetails().getPassword().equals(clientDetails.getPassword())) return cl;
         else throw new RuntimeException("Wrong password");
     }
 
@@ -47,8 +47,8 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public Client addClient(@RequestBody Client client){
-        return repositoryInterface.getClientRepository().addClient(client);
+    public Client addClient(@RequestBody ClientDetails clientDetails){
+        return repositoryInterface.getClientRepository().addClient(clientDetails);
     }
 
     @PutMapping("/clients/{id}")

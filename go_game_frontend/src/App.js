@@ -6,6 +6,10 @@ import Header from './components/Header';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import Board from './components/Board';
+import RoomListPage from './pages/RoomListPage';
+import CreateGamePage from './pages/CreateGamePage';
+import MainPage from './pages/MainPage';
+import GamePage from './pages/GamePage';
 
 function App() {
   return (
@@ -17,7 +21,7 @@ function App() {
           <Routes>
             
             <Route path="/" element={
-              <div></div>
+              <MainPage/>
             }/>
             
             <Route path="/register" element={
@@ -28,8 +32,21 @@ function App() {
               <LoginPage/>
             }/>
 
+            <Route path="/rooms" element={
+              <RoomListPage/>
+            }/>
+
+            <Route path="/create/game" element={
+              <CreateGamePage/>
+            }/>
+
+            <Route path="/game/:roomId" element={
+              <GamePage/>
+            }/>
+
+
           </Routes>
-          <Board
+          {/* <Board
             size={9}
             cellSize={30}
             boardMatrix={[
@@ -44,7 +61,7 @@ function App() {
               [null, null, null, null, null, null, null, null, null]
             ]}
             color="WHITE"
-          />
+          /> */}
         </BrowserRouter>
       </AuthProvider>
       

@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Room;
+import com.teoriaprogramowania.go_game.resources.RoomDetails;
+import com.teoriaprogramowania.go_game.resources.Client;
 
 @RestController
 public class RoomManagementController {
@@ -36,8 +39,16 @@ public class RoomManagementController {
         repositoryInterface.getRoomRepository().deleteRoomById(id);
     }
 
-    @PostMapping("/rooms")
-    public Room addRoom(@RequestBody Room room){
+    @PostMapping("/clients/{client_id}/rooms")
+    public Room addRoom(@RequestBody RoomDetails roomDetails, @PathVariable("client_id") Long clientId, @RequestParam("size") int size){
+        Client admin = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+        Room room = new Room();
+        room.setRoomDetails(roomDetails);
+        room.setAdmin(admin);
+        admin.setCurrentRoom(room);
+
+        room.setGame(repositoryInterface.getGameRepository().createGame(size));
+
         return repositoryInterface.getRoomRepository().addRoom(room);
     }
 }

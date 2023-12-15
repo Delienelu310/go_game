@@ -8,14 +8,12 @@ export default function RoomsList(){
 
     const [rooms, setRooms] = useState([]);
 
-    function getRoomsList(){
-        retrieveRoomsList.then();
-    }
 
     useEffect(() => {
-        getRoomsList()
-            .then(resopnse => {
-                setRooms(resopnse.data);
+        retrieveRoomsList()
+            .then(response => {
+                console.log(response);
+                setRooms(response.data);
                 setException(false);
             })
             .catch(e => {
@@ -26,6 +24,7 @@ export default function RoomsList(){
 
     return (
         <div>
+            {showException && <div>Error</div>}
             {rooms.map( (room, index) => {
                 return (
                     <Room room={room} key={index}/>
@@ -33,4 +32,4 @@ export default function RoomsList(){
             })}
         </div>
     );
-}
+}  

@@ -1,10 +1,10 @@
 
 import apiClient from "./apiClient";
 
-export function login(username, passsword){
-    return apiClient.post("/login", {username, passsword});
+export function login(username, password){
+    return apiClient.post("/login", {username, password});
 }
 
-export function register(username, passsword){
-    return apiClient.post("/clients", {username, passsword});
+export function register(username, password){
+    return apiClient.post("/clients", {username, password});
 }

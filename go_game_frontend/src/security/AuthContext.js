@@ -1,5 +1,6 @@
 import { useContext, createContext, useState } from "react"
 import { login, register } from "../api/authenticationApi";
+import { useNavigate } from "react-router-dom";
 
 
 const AuthContext = createContext();
@@ -9,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 export default function AuthProvider({children}){
 
     const [id, setId] = useState();
+
 
     async function tryLogin(username, password){
         return login(username, password)
@@ -25,9 +27,13 @@ export default function AuthProvider({children}){
                 setId(response.data.id);
             });
     }
+    async function logout(){
+        setId(null);
+        //TODO: add exiting from the room
+    }
 
     return (
-        <AuthContext.Provider value={{id, tryLogin, tryRegister}}>
+        <AuthContext.Provider value={{id, logout, tryLogin, tryRegister}}>
             {children}
         </AuthContext.Provider>
     );

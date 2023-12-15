@@ -12,6 +12,6 @@ public interface ClientRepositoryInterface {
     Client retrieveClientByUsername(String username);
 
     void deleteClientById(Long id);
-    Client addClient(Client client);    
+    Client addClient(ClientDetails clientDetails);    
     void updateClient(ClientDetails clientDetails, Long id);    
 }

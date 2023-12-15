@@ -18,9 +18,6 @@ public class Room {
     private Client admin;
     private List<Client> participants = new ArrayList<>();
 
-    private Client whitePlayer;
-    private Client blackPlayer;
-
     private Game game;
     
 }

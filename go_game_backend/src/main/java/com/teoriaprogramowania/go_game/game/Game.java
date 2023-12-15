@@ -28,11 +28,17 @@ public class Game {
 
     private List<Move> moves;
     private Color[][] field; 
+    private int size;
 
-    private State state;
+    private State state = State.CREATED;
 
     public Game(){
 
+    }
+
+    public Game(int size){
+        this.size = size;
+        field = new Color[size][size];
     }
 
     public void addMove(Move move) throws InvalidMoveException{

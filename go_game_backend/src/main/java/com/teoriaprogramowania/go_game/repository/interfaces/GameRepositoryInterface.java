@@ -10,6 +10,6 @@ public interface GameRepositoryInterface {
     public List<Game> retrieveAllGames();
 
     public void deleteGameById(Long id);
-    public Game createGame(Game game);
+    public Game createGame(int size);
 
 }

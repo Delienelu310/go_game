@@ -30,7 +30,8 @@ public class RuntimeGameRepository implements GameRepositoryInterface{
     }
 
     @Override
-    public Game createGame(Game game) {
+    public Game createGame(int size) {
+        Game game = new Game(size);
         game.setId(counter++);
         games.add(game);
         return game;
