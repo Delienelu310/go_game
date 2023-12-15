@@ -5,6 +5,7 @@ import Header from './components/Header';
 
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import Board from './components/Board';
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
             }/>
 
           </Routes>
+          <Board
+            size={9}
+            cellSize={30}
+            stones={[{row: 1, col: 2}]}
+          />
         </BrowserRouter>
       </AuthProvider>
       
