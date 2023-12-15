@@ -32,7 +32,18 @@ function App() {
           <Board
             size={9}
             cellSize={30}
-            stones={[{row: 1, col: 2}]}
+            boardMatrix={[
+              [null, null, null, "WHITE", null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, "BLACK", null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null, null]
+            ]}
+            color="WHITE"
           />
         </BrowserRouter>
       </AuthProvider>
