@@ -1,6 +1,7 @@
 package com.teoriaprogramowania.go_game.resources;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.teoriaprogramowania.go_game.game.Game;
 
@@ -15,7 +16,7 @@ public class Room {
     private RoomDetails roomDetails;
 
     private Client admin;
-    private List<Client> participants;
+    private List<Client> participants = new ArrayList<>();
 
     private Client whitePlayer;
     private Client blackPlayer;

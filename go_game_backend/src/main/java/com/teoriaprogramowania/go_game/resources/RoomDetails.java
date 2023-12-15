@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class RoomDetails {
-    
+    private String title;
+    private String description;
 }
