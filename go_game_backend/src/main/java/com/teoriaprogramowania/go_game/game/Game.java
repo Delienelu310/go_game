@@ -29,12 +29,15 @@ public class Game {
     private List<Move> moves;
     private Color[][] field; 
 
+    private State state;
+
     public Game(){
 
     }
 
-    public void addMove() throws InvalidMoveException{
-
+    public void addMove(Move move) throws InvalidMoveException{
+        if(move.getPass()) return;
+        field[move.getX()][move.getY()] = move.getColor();
     }
 
     public void start(){
