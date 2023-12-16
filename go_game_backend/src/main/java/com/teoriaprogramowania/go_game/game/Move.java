@@ -10,8 +10,6 @@ public class Move {
 
     private Boolean pass = false;
     private Color color;
-
-    private Game game;
     
     public Move(){
 

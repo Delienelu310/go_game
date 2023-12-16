@@ -1,9 +1,10 @@
 package com.teoriaprogramowania.go_game.roomsockets;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
@@ -22,7 +23,7 @@ public class RoomSocketsController {
 
     @MessageMapping("/{room_id}/move")
 	@SendTo("/game/{room_id}/move")
-	public Room greeting(Move move, @PathVariable("room_id") Long roomId){
+	public Room greeting(@Payload Move move, @DestinationVariable("room_id") Long roomId){
 
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
         Game game = room.getGame();

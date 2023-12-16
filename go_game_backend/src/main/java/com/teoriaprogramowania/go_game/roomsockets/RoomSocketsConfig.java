@@ -18,7 +18,9 @@ public class RoomSocketsConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/rooms/socket/{room_id}");
+		registry.addEndpoint("/socket/room")
+			.setAllowedOriginPatterns("*")
+			.withSockJS();
 	}
 
 }
