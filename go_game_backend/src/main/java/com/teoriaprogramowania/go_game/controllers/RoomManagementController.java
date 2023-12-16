@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,5 +70,50 @@ public class RoomManagementController {
 
         repositoryInterface.getRoomRepository().updateRoom(room);
         return room;
+    }
+
+    @PutMapping("/rooms/{id}/set/white/{client_id}")
+    public void setWhitePlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
+        Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        room.getGame().setWhite(whitePlayer);
+        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        repositoryInterface.getRoomRepository().updateRoom(room);
+    }
+
+    @PutMapping("/rooms/{id}/set/black/{client_id}")
+    public void setBlackPlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
+        Client blackPlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        room.getGame().setBlack(blackPlayer);
+        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        repositoryInterface.getRoomRepository().updateRoom(room);
+    }
+
+    @PutMapping("/rooms/{id}/remove/white")
+    public void removeWhitePlayer(@PathVariable("id") Long roomId){
+
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        room.getGame().setWhite(null);
+        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        repositoryInterface.getRoomRepository().updateRoom(room);
+    }
+
+    @PutMapping("/rooms/{id}/remove/black")
+    public void setBlackPlayer(@PathVariable("id") Long roomId){
+
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        room.getGame().setBlack(null);
+        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        repositoryInterface.getRoomRepository().updateRoom(room);
+    }
+
+    @PutMapping("/rooms/{id}/start")
+    public void startGame(@PathVariable("id") Long roomId){
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        room.getGame().start();
+
+        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        repositoryInterface.getRoomRepository().updateRoom(room);
     }
 }

@@ -22,8 +22,8 @@ public class RoomSocketsController {
 
 
     @MessageMapping("/{room_id}/move")
-	@SendTo("/game/{room_id}/move")
-	public Room greeting(@Payload Move move, @DestinationVariable("room_id") Long roomId){
+	@SendTo("/game/{room_id}")
+	public Room sendMove(@Payload Move move, @DestinationVariable("room_id") Long roomId){
 
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
         Game game = room.getGame();
@@ -34,5 +34,11 @@ public class RoomSocketsController {
 
 		return room;
 	}
+
+    @MessageMapping("/{room_id}/refresh")
+    @SendTo("/game/{room_id}")
+    public Room refresh(@DestinationVariable("room_id") Long roomId){
+        return repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+    }
 
 }
