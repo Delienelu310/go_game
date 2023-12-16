@@ -11,4 +11,5 @@ public interface RoomRepositoryInterface {
 
     public void deleteRoomById(Long id);
     public Room addRoom(Room room);
+    public void updateRoom(Room room);
 }

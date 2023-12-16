@@ -13,7 +13,7 @@ public class RoomSocketsConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
 		config.enableSimpleBroker("/game");
-		config.setApplicationDestinationPrefixes("/move");
+		config.setApplicationDestinationPrefixes("/room");
 	}
 
 	@Override

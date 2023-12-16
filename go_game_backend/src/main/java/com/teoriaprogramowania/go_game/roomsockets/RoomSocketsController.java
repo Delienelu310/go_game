@@ -5,29 +5,33 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.teoriaprogramowania.go_game.game.Color;
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
-import com.teoriaprogramowania.go_game.repository.interfaces.GameRepositoryInterface;
+import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
+import com.teoriaprogramowania.go_game.resources.Room;
 
 @Controller
 public class RoomSocketsController {
 
-    private GameRepositoryInterface gameRepositoryInterface;
+    private RepositoryInterface repositoryInterface;
 
-	public RoomSocketsController(GameRepositoryInterface gameRepositoryInterface) {
-        this.gameRepositoryInterface = gameRepositoryInterface;
+    public RoomSocketsController(RepositoryInterface repositoryInterface) {
+        this.repositoryInterface = repositoryInterface;
     }
 
 
-    @MessageMapping("/{game_id}/move")
-	@SendTo("/game/{game_id}/move")
-	public Color[][] greeting(Move move, @PathVariable("game_id") Long gameId){
+    @MessageMapping("/{room_id}/move")
+	@SendTo("/game/{room_id}/move")
+	public Room greeting(Move move, @PathVariable("room_id") Long roomId){
 
-        Game game = gameRepositoryInterface.retrieveGameById(gameId);
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+        Game game = room.getGame();
         game.addMove(move);
 
-		return game.getField();
+        repositoryInterface.getRoomRepository().updateRoom(room);
+        repositoryInterface.getGameRepository().updateGame(game);
+
+		return room;
 	}
 
 }

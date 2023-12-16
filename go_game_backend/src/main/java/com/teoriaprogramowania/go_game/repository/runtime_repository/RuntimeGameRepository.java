@@ -36,5 +36,14 @@ public class RuntimeGameRepository implements GameRepositoryInterface{
         games.add(game);
         return game;
     }
+
+    @Override
+    public void updateGame(Game game) {
+        int index = games.stream().map( g -> g.getId()).toList().indexOf(game.getId());
+        if(index == -1) throw new RuntimeException("The game is not found");
+        games.set(index, game);
+    }
+
+    
     
 }

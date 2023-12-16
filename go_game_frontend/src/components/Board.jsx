@@ -16,8 +16,10 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
         const row = Math.floor(clickY / cellSize);
     
         // moves.push({x: row, y: col, color: color});
-        boardMatrix[col][row] = color;
-        refresh();
+        sendMove({x: col, y: row, color});
+        
+        // boardMatrix[col][row] = color;
+        // refresh();
     };
 
     function refresh(){

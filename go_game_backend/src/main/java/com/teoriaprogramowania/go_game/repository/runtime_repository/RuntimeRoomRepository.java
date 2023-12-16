@@ -36,4 +36,11 @@ public class RuntimeRoomRepository implements RoomRepositoryInterface{
         return room;
     }
 
+    @Override
+    public void updateRoom(Room room) {
+        int index = rooms.stream().map( r -> r.getId()).toList().indexOf(room.getId());
+        if(index == -1) throw new RuntimeException("The client is not found");
+        rooms.set(index, room);
+    }
+
 }

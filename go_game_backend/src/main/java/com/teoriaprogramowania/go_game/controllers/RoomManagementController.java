@@ -51,4 +51,23 @@ public class RoomManagementController {
 
         return repositoryInterface.getRoomRepository().addRoom(room);
     }
+
+    @PostMapping("/rooms/{id}/add/{client_id}")
+    public Room addParticipant(@PathVariable("id") Long id, @PathVariable("client_id") Long clientId){
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(id);
+        Client client = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+        room.getParticipants().add(client);
+
+        repositoryInterface.getRoomRepository().updateRoom(room);
+        return room;
+    }
+
+    @PostMapping("/rooms/{id}/remove/{client_id}")
+    public Room removeParticipant(@PathVariable("id") Long id, @PathVariable("client_id") Long clientId){
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(id);
+        room.getParticipants().removeIf(client -> client.getId() == clientId);
+
+        repositoryInterface.getRoomRepository().updateRoom(room);
+        return room;
+    }
 }

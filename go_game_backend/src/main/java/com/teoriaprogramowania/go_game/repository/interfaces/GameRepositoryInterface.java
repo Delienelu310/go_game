@@ -11,5 +11,6 @@ public interface GameRepositoryInterface {
 
     public void deleteGameById(Long id);
     public Game createGame(int size);
+    public void updateGame(Game game);
 
 }

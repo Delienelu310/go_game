@@ -55,4 +55,11 @@ public class ClientController {
     public void updateClient(@RequestBody ClientDetails clientDetails, @PathVariable Long id){
         repositoryInterface.getClientRepository().updateClient(clientDetails, id);
     }
+
+    @PutMapping("/clients/{id}/exitroom")
+    public void exitRoom(@PathVariable Long id){
+        Client client = repositoryInterface.getClientRepository().retrieveClientById(id);
+        client.getCurrentRoom().getParticipants().removeIf(participant -> participant.getId() == id);
+        client.setCurrentRoom(null);
+    }
 }
