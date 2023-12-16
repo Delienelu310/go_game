@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addBlackPlayer, addWhitePlayer, leaveRoom, removeBlackPlayer, removeWhitePlayer, retrieveRoom, startGame } from "../api/roomsApi"
+import { addBlackPlayer, addWhitePlayer, enterRoom, leaveRoom, removeBlackPlayer, removeWhitePlayer, retrieveRoom, startGame } from "../api/roomsApi"
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
 import SockJS from "sockjs-client"
@@ -58,9 +58,9 @@ export default function GamePage(){
         console.log('Disconnected');
     };
 
-    function sendMove({x, y, color}){
+    function sendMove({x, y, color, pass}){
         stompClient &&
-        stompClient.send( `/room/${roomId}/move`,  {},  JSON.stringify({x ,y, color }));
+        stompClient.send( `/room/${roomId}/move`,  {},  JSON.stringify({x ,y, color, pass }));
     };
 
     function refreshRoomForAll(){
@@ -81,9 +81,15 @@ export default function GamePage(){
     }
 
     useEffect(() => {
-        initializeStompClient();
-        // connect();
-        getRoomInfo();
+        enterRoom(roomId, id)
+            .then(response => {
+                initializeStompClient();
+                getRoomInfo();
+            })
+            .catch(e => {
+                console.log(e);
+            });
+        
     }, []);
 
     return (
@@ -96,7 +102,7 @@ export default function GamePage(){
                         <div>
                             {room.game.white.clientDetails.username}
                             {(room.game.white.id == id || room.admin.id == id) &&
-                                <button className="btn btn-danger" onClick={e => {
+                                <button className="btn btn-danger m-2" onClick={e => {
                                     removeWhitePlayer(room.id)
                                         .then(response => {
                                             refreshRoomForAll();
@@ -107,7 +113,7 @@ export default function GamePage(){
                             
                         </div>
                         :
-                        <button className="btn btn-success" onClick={e => {
+                        <button className="btn btn-success m-2" onClick={e => {
                             addWhitePlayer(room.id, id)
                                 .then(response => {
                                     refreshRoomForAll();
@@ -118,8 +124,8 @@ export default function GamePage(){
                     <div className="m-3">Black player: {room.game.black ? 
                         <div>
                             {room.game.black.clientDetails.username}
-                            {(room.game.white.id == id || room.admin.id == id) &&
-                                <button className="btn btn-danger" onClick={e => {
+                            {(room.game.black.id == id || room.admin.id == id) &&
+                                <button className="btn btn-danger m-2" onClick={e => {
                                     removeBlackPlayer(room.id)
                                         .then(response => {
                                             refreshRoomForAll();
@@ -129,7 +135,7 @@ export default function GamePage(){
                             }
                         </div>
                         :
-                        <button className="btn btn-success" onClick={e => {
+                        <button className="btn btn-success m-2" onClick={e => {
                             addBlackPlayer(room.id, id)
                                 .then(response => {
                                     refreshRoomForAll();
@@ -141,9 +147,9 @@ export default function GamePage(){
                     <div>
                         <h4>Participants:</h4>
                         {room.participants.map((client, index) => 
-                            <div>
-                                {index + 1}.{client.username}
-                                {room.admin.id == id && <button className="btn btn-danger" onClick={e => {
+                            <div className="m-2">
+                                {index + 1}.{client.clientDetails.username}
+                                {room.admin.id == id && <button className="btn btn-danger m-2" onClick={e => {
                                     leaveRoom(room.id, id)
                                         .then(response => {
                                             refreshRoomForAll();
@@ -166,7 +172,7 @@ export default function GamePage(){
 
                 <br/>
                 {room.game.state != "CREATED" && <div>
-
+                    <button className="btn btn-danger m-2">Surrender</button>
                     <Board
                         size={room.game.size}
                         cellSize={50}

@@ -71,12 +71,18 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
     useEffect( refresh, [size, boardMatrix]);
       
     return (
-        <canvas 
-            ref={canvasRef} 
-            width={cellSize * size} 
-            height={cellSize * size} 
-            style={{ border: '1px solid #000' }} 
-            onClick={handleCanvasClick}
-        />
+        <div>
+            <canvas 
+                ref={canvasRef} 
+                width={cellSize * size} 
+                height={cellSize * size} 
+                style={{ border: '1px solid #000' }} 
+                onClick={handleCanvasClick}
+            />
+            <button className="btn btn-danger m-2" onClick={e => {
+                sendMove({x: 0, y: 0, pass: true, color: color});
+            }}>Pass</button>
+        </div>
+        
     );
 };

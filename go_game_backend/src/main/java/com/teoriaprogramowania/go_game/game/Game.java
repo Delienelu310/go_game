@@ -1,6 +1,7 @@
 package com.teoriaprogramowania.go_game.game;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
@@ -26,7 +27,7 @@ public class Game {
     private int whitePlayerCounter;
     private int blackPlayerCounter;
 
-    private List<Move> moves;
+    private List<Move> moves = new ArrayList<>();
     private Color[][] field; 
     private int size;
 
@@ -42,12 +43,22 @@ public class Game {
     }
 
     public void addMove(Move move) throws InvalidMoveException{
+        
+        if(move.getColor() == Color.WHITE && state != State.WHITEMOVES) return;
+        if(move.getColor() == Color.BLACK && state != State.BLACKMOVES) return;
+
+        if(move.getColor() == Color.WHITE) state = State.BLACKMOVES;
+        else if(move.getColor() == Color.BLACK) state = State.WHITEMOVES;
+        else return;
+        
+        moves.add(move);
         if(move.getPass()) return;
         field[move.getX()][move.getY()] = move.getColor();
+        
     }
 
     public void start(){
-
+        this.state = State.BLACKMOVES;
     }
 
     
