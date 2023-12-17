@@ -31,8 +31,8 @@ public class Point {
 		this.stoneGroup = stoneGroup;
 	}
 	
-	public Color getColor() {
-		return this.stoneGroup.getColor();
+	public Player getOwner() {
+		return this.stoneGroup.getOwner();
 	}
 	
 	public Set<StoneGroup> getNeighborStoneGroups(){
@@ -50,7 +50,7 @@ public class Point {
 			
 			//continue if point empty
 			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint.getColor() == null) {
+			if(newPoint.getOwner() == null) {
 				continue;
 			}
 			
@@ -75,7 +75,7 @@ public class Point {
 			
 			//continue if point empty
 			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint.getColor() == null) {
+			if(newPoint.getOwner() == null) {
 				emptyNeighborStoneGroups.add(newPoint);
 			}
 		}

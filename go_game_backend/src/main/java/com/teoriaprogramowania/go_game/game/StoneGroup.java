@@ -3,27 +3,28 @@ package com.teoriaprogramowania.go_game.game;
 import java.util.*;
 
 public class StoneGroup {
+	//represents a group of stones 
 	private Set<Point> stones;
 	private Set<Point> breaths;
-	Color color;
+	Player owner;
 	
 	//group of stones constructor
-	public StoneGroup(Set<Point> stones, Set<Point> breaths, Color color) {
+	public StoneGroup(Set<Point> stones, Set<Point> breaths, Player owner) {
 		this.stones = stones;
 		this.breaths = breaths;
-		this.color = color;
+		this.owner = owner;
 	}
 	
 	//singular stone constructor
-	public StoneGroup(Point point, Color color) {
+	public StoneGroup(Point point, Player owner) {
 		this.stones = new HashSet<Point>();
 		stones.add(point);
-		this.color = color;
+		this.owner = owner;
 		this.breaths = new HashSet<Point>(point.getEmptyNeighborPoints());
 	}
 	
-	public Color getColor() {
-		return this.color;
+	public Player getOwner() {
+		return this.owner;
 	}
 	
 	public Set<Point> getBreaths(){
@@ -45,12 +46,12 @@ public class StoneGroup {
 	
 	//when enemy player puts his stone in the neighborhood of our's stone group
 	public StoneGroup removeBreath(Point enemyPoint) {
-		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.color);
+		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
 		newStoneGroup.breaths.remove(enemyPoint);
 		return newStoneGroup;
 	}
 	
-	//remove stone group and update liberties of neighbor points
+	//remove stone group and update breaths of neighbor points
 	//return number of stones from this group
 	public int removeStoneGroup() {
 		int capturedStones = this.stones.size();

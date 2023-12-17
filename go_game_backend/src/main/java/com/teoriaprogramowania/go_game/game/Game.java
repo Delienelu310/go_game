@@ -11,31 +11,14 @@ import lombok.Data;
 
 @Data
 public class Game {
-
-	//represent board of the game and also handle all the rules
+	//class Game is handling rules of the game
 	
+	private Long id;
 
-//INACZEJ:
-//		Point			// point
-//		StoneGroup		// stone chain
-//		GameHistory		// game record
-//		Move			// game turn
-//		Game			// Goban
-	
-	
-	
-    /*TODO: 
-        implement these methods in a way you like
-        Remember to have high cohension
-        introduce  new fields, new classes or event design patterns if you like
-        reme
-        Make tests and exceptions
-    */
-
-    private Long id;
-
-    private Client white;
-    private Client black;
+    private Player white;
+    private Player black;
+    
+    
 
     private int whitePlayerCounter;
     private int blackPlayerCounter;
@@ -51,9 +34,10 @@ public class Game {
     }
 
     public void start(){
-    	this.white = new Client();
-    	this.black = new Client();
-    	
+    	Client whiteClient = new Client();
+    	Client blackClient = new Client();
+    	this.white = new Player(whiteClient);
+    	this.black = new Player(blackClient);
     	
     	while(true) {
 /*    		this.state = State.BLACKMOVES;
@@ -95,62 +79,23 @@ public class Game {
     }
     
     public void makeMove(Move move, Board board) {
-    	if(!isMoveValid(move)) {
-    		throw new InvalidMoveException("Invalid move.");
-    	}
-    	addMove(move);
-    	Stone newStone = new Stone(move, board);
-    	board.addStone(newStone);
-        addStone(newStone);
-        
+
     }
     
     public List<Move> getMoves(){
     	return this.moves;
     }
     
-    private void addStone(Stone stone) {
-    	if(stone.getColor() == Color.WHITE) {
-    		whiteStones.add(stone);
-    	} else if(stone.getColor() == Color.BLACK) {
-    		blackStones.add(stone);
-    	}
-    }
 
     private boolean gameResolved() {
-    	if (moves.get(moves.size() - 1).isSurrender()){
-    		return true;
-    	}
-    	if(moves.get(moves.size() - 1).isPass() && moves.get(moves.size() - 2).isPass()) {
-    		return true;
-    	}
-    	return false;
+    	return true;
     }
     
     private boolean isMoveValid(Move move) {
-    	if(move.isPass() || move.isSurrender()) {
+    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
-    	int x = move.getX();
-    	int y = move.getY();
-    	Color color = move.getColor();
-
-    	//false if field is taken
-    	if(this.board.getStoneColor(move.getX(), move.getY()) != null){
-    		return false;
-    	}
-    	
-    	//false if out of bounds
-    	if(x >= this.size || x < 0 || y >= this.size || y < 0) {
-			return false;
-		}
-
-    	//false if ko
-    	
-    	if(move == moves.get(moves.size()-3)) {
-    		return false;
-    	}
-    	
+    	//...
     	
     	return true;
     }
