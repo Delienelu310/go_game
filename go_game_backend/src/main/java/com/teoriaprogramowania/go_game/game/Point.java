@@ -3,6 +3,7 @@ package com.teoriaprogramowania.go_game.game;
 import java.util.*;
 
 public class Point {
+	//class represents a singular point on the board
 	private int x;					//coordinate x
 	private int y;					//coordinate y
 	private Board board;			//board to which the point belongs

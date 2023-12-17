@@ -7,14 +7,14 @@ public class StoneGroup {
 	private Set<Point> breaths;
 	Color color;
 	
-	//group of stones
+	//group of stones constructor
 	public StoneGroup(Set<Point> stones, Set<Point> breaths, Color color) {
 		this.stones = stones;
 		this.breaths = breaths;
 		this.color = color;
 	}
 	
-	//singular stone
+	//singular stone constructor
 	public StoneGroup(Point point, Color color) {
 		this.stones = new HashSet<Point>();
 		stones.add(point);

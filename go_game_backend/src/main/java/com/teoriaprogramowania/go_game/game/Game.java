@@ -41,17 +41,11 @@ public class Game {
     private int blackPlayerCounter;
 
     private List<Move> moves;
-//    private Color[][] board;
     private Board board;
-    private int size;
 
     private State state;
-    
-    private List<Stone> blackStones;
-    private List<Stone> whiteStones;
-    
+        
     public Game(int size){
-        this.size = size;
         this.board = new Board(size);
         this.state = State.CREATED;
     }
@@ -59,10 +53,12 @@ public class Game {
     public void start(){
     	this.white = new Client();
     	this.black = new Client();
+    	
+    	
     	while(true) {
 /*    		this.state = State.BLACKMOVES;
         	pobierz x,y albo pass albo surr
-    		Move newMove = new Move(x, y, pass, Color.BLACK, surrender)
+    		Move newMove = new Move(x, y, moveType, Color.BLACK, surrender)
     		try{
     			addMove(move);
     		} catch(InvalidMoveException){
@@ -93,10 +89,6 @@ public class Game {
     public void addMove(Move move) throws InvalidMoveException{
         if(isMoveValid(move)) {
         	moves.add(move);
-        	if(move.isPass() || move.isSurrender()) {
-        		return;
-        	}
-            
         } else {
         	throw new InvalidMoveException("Invalid move.");
         }

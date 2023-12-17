@@ -6,6 +6,7 @@ public class Board {
 	private Point[][] board;
 	private int size;
 	
+	//new board initialization
 	public Board(int size){
 		this.size = size;
         this.board = new Point[size-1][size-1];
@@ -25,14 +26,6 @@ public class Board {
 	
 	public int getSize() {
 		return this.size;
-	}
-	/*
-	public void addStone(Stone stone) {
-		this.board[stone.getX()][stone.getY()] = stone.getColor();
-	}
-	*/
-	public Color getPointColor(int x, int y){
-		return board[x][y].getColor();
 	}
 	
 	public Point getPoint(int x, int y) {

@@ -6,22 +6,26 @@ import lombok.Data;
 
 @Data
 public class Move {
-    
-    private int x;
-    private int y;
-    private Boolean pass = false;
-    private Color color;
-    boolean surrender;
-    public Move(){
+	private Board board;			//state of board after move
+    private int x;					//coordinate x
+    private int y;					//coordinate y
+    private Color color;			//color of player moving
+    private MoveType moveType;		//type of move. Either normal move, pass or surrender
+//    private final int moveID;		//used to compare state of the board in different situations
 
+    //pass or surrender constructor
+    public Move(Board board, MoveType moveType) {
+    	this.board = board;
+    	this.moveType = moveType;
+    	
     }
-
-    public Move(int x, int y, Boolean pass, Color color, boolean surrender){
+    
+    //normal move constructor
+    public Move(Board board, int x, int y, Color color, MoveType moveType){
     	this.x = x;
     	this.y = y;
-    	this.pass = pass;
     	this.color = color;
-    	this.surrender = surrender;
+    	this.moveType = moveType;
     }
 
     public int getX() {
@@ -31,17 +35,13 @@ public class Move {
     public int getY() {
     	return this.y;
     }
-
-
-    public boolean isPass() {
-    	return this.pass;
+    
+    public MoveType getMoveType() {
+    	return this.moveType;
     }
     
     public Color getColor() {
     	return this.color;
     }
     
-    public boolean isSurrender() {
-    	return this.surrender;
-    }
 }
