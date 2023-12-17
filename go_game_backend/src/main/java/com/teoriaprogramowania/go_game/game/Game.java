@@ -12,6 +12,18 @@ import lombok.Data;
 @Data
 public class Game {
 
+	//represent board of the game and also handle all the rules
+	
+
+//INACZEJ:
+//		Point			// point
+//		StoneGroup		// stone chain
+//		GameHistory		// game record
+//		Move			// game turn
+//		Game			// Goban
+	
+	
+	
     /*TODO: 
         implement these methods in a way you like
         Remember to have high cohension
@@ -40,11 +52,7 @@ public class Game {
     
     public Game(int size){
         this.size = size;
-/*        this.board = new Color[size-1][size-1];
-        for(int i = 0; i < size; ++i) {
-        	Arrays.fill(this.board[i], null);
-        }
- */     this.board = new Board(size);
+        this.board = new Board(size);
         this.state = State.CREATED;
     }
 
@@ -77,8 +85,9 @@ public class Game {
     		if(gameResolved){
     			break;
     		}	
-*/   	
     	}
+    	this.state = FINISHED
+*/    	
     }
     
     public void addMove(Move move) throws InvalidMoveException{
@@ -87,13 +96,21 @@ public class Game {
         	if(move.isPass() || move.isSurrender()) {
         		return;
         	}
-            Stone newStone = new Stone(move, board);
-        	board.addStone(newStone);
-            addStone(newStone);
             
         } else {
         	throw new InvalidMoveException("Invalid move.");
         }
+    }
+    
+    public void makeMove(Move move, Board board) {
+    	if(!isMoveValid(move)) {
+    		throw new InvalidMoveException("Invalid move.");
+    	}
+    	addMove(move);
+    	Stone newStone = new Stone(move, board);
+    	board.addStone(newStone);
+        addStone(newStone);
+        
     }
     
     public List<Move> getMoves(){
@@ -127,7 +144,6 @@ public class Game {
     	Color color = move.getColor();
 
     	//false if field is taken
-    	
     	if(this.board.getStoneColor(move.getX(), move.getY()) != null){
     		return false;
     	}
@@ -137,12 +153,12 @@ public class Game {
 			return false;
 		}
 
-    	//false if fields around taken with stones of opposite color
-
+    	//false if ko
     	
-    	if(stone.getBreaths() == 0) {
+    	if(move == moves.get(moves.size()-3)) {
     		return false;
     	}
+    	
     	
     	return true;
     }
