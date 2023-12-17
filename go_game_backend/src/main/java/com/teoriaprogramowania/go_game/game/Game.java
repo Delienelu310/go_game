@@ -17,11 +17,6 @@ public class Game {
 
     private Player white;
     private Player black;
-    
-    
-
-    private int whitePlayerCounter;
-    private int blackPlayerCounter;
 
     private List<Move> moves;
     private Board board;
