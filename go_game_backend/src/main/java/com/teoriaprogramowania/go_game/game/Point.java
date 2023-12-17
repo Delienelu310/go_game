@@ -1,5 +1,5 @@
 package com.teoriaprogramowania.go_game.game;
-
+import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 import java.util.*;
 
 public class Point {
@@ -8,11 +8,13 @@ public class Point {
 	private int y;					//coordinate y
 	private Board board;			//board to which the point belongs
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
+	private boolean isEmpty;
 	
 	public Point(int x, int y, Board board) {
 		this.board = board;
 		this.x = x;
 		this.y = y;
+		isEmpty = true;
 	}
 	
 	public int getX() {
@@ -23,16 +25,33 @@ public class Point {
 		return this.y;
 	}
 	
+	public boolean isEmpty() {
+		return this.isEmpty;
+	}
+	
 	public StoneGroup getStoneGroup() {
 		return this.stoneGroup;
 	}
 	
 	public void setStoneGroup(StoneGroup stoneGroup) {
 		this.stoneGroup = stoneGroup;
+		this.isEmpty = false;
 	}
 	
 	public Player getOwner() {
 		return this.stoneGroup.getOwner();
+	}
+	
+	@Override 
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if(obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		Point point = (Point) obj;
+		return this.x == point.x && this.y == point.y && Objects.equals(board, point.board);
 	}
 	
 	public Set<StoneGroup> getNeighborStoneGroups(){
@@ -43,41 +62,44 @@ public class Point {
 		for(int i = 0; i < 4; ++i) {
 			int newX = this.x + dx[i];
 			int newY = this.y + dy[i];
-			//continue if point out of board
-			if(newX >= boardSize || newX < 0 || newY >= boardSize || newY < 0) {
+			
+			try {
+				Point newPoint = board.getPoint(newX, newY);	
+				//continue if point empty
+				if(!newPoint.isEmpty()) {
+					neighborStoneGroups.add(newPoint.getStoneGroup());
+				}	
+			} catch(OutOfBoardException e) {
+				//continue if point out of board
 				continue;
 			}
-			
-			//continue if point empty
-			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint != null) {
-				neighborStoneGroups.add(newPoint.getStoneGroup());
-			}			
+
+		
 		}
 		return neighborStoneGroups;
 	}
 	
 	//get empty neighbors
 	public Set<Point> getEmptyNeighborPoints(){
-		Set<Point> emptyNeighborStoneGroups = new HashSet<Point>();
-		int boardSize = this.board.getSize();
+		Set<Point> emptyNeighborPoints = new HashSet<Point>();
 		int dx[] = {-1, 1, 0, 0};
 		int dy[] = {0, 0, 1, -1};
 		for(int i = 0; i < 4; ++i) {
 			int newX = this.x + dx[i];
-			int newY = this.y + dy[i];
-			//continue if point out of board
-			if(newX >= boardSize || newX < 0 || newY >= boardSize || newY < 0) {
+			int newY = this.y + dy[i];			
+
+			try {
+				//continue if point empty
+				Point newPoint = board.getPoint(newX, newY);
+				if(newPoint.isEmpty()) {
+					emptyNeighborPoints.add(newPoint);
+				}
+			} catch(OutOfBoardException e) {
+				//continue if point out of board
 				continue;
 			}
-			
-			//continue if point empty
-			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint == null) {
-				emptyNeighborStoneGroups.add(newPoint);
-			}
 		}
-		return emptyNeighborStoneGroups;
+		return emptyNeighborPoints;
 	}
 
 	//get dead neighbors

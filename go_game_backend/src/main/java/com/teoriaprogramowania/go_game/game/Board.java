@@ -1,4 +1,5 @@
 package com.teoriaprogramowania.go_game.game;
+import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
 import java.util.Arrays;
 
@@ -10,9 +11,15 @@ public class Board {
 	public Board(int size){
 		this.size = size;
         this.board = new Point[size][size];
+
         for(int i = 0; i < size; ++i) {
-        	Arrays.fill(this.board[i], null);
-        }
+        	for(int j = 0; j < size; ++j) {
+        		Point newPoint = new Point(i, j, this);
+        		board[i][j] = newPoint;
+        	}
+//        	Arrays.fill(board[i], null);
+		}
+          
 	}
 
 	public Board(Point[][] board, int size) {
@@ -28,11 +35,15 @@ public class Board {
 		return this.size;
 	}
 	
-	public Point getPoint(int x, int y) {
+	public Point getPoint(int x, int y) throws OutOfBoardException {
+		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
+			throw new OutOfBoardException();
+		}
 		return board[x][y];
 	}
 	
 	public void addPoint(Point point) {
+
 		this.board[point.getX()][point.getY()] = point;
 	}
 }

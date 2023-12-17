@@ -28,6 +28,19 @@ public class PointTests {
 	}
 	
 	@Test
+	public void testIsEmpty() {
+		board = new Board(boardSize);
+		Point newPoint = new Point(1, 1, board);
+		assertTrue(newPoint.isEmpty());
+		
+		Client c = new Client();
+		Player p = new Player(c);
+		StoneGroup stoneGroup = new StoneGroup(newPoint, p);
+		newPoint.setStoneGroup(stoneGroup);
+		assertFalse(newPoint.isEmpty());
+	}
+	
+	@Test
 	public void testGetNeighborStoneGroups() {
 		board = new Board(boardSize);
 		point = new Point(4, 4, board);
@@ -47,13 +60,16 @@ public class PointTests {
 		board = new Board(boardSize);
 		point = new Point(3, 3, board);
 		
-		Board anotherBoard = new Board(boardSize);
-		Point p1 = new Point(3, 2, anotherBoard);
-		Point p2 = new Point(3, 4, anotherBoard);
-		Point p3 = new Point(2, 3, anotherBoard);
-		Point p4 = new Point(4, 3, anotherBoard);
+		Point p1 = new Point(3, 2, board);
+		Point p2 = new Point(3, 4, board);
+		Point p3 = new Point(2, 3, board);
+		Point p4 = new Point(4, 3, board);
 
 		board.addPoint(point);
+		board.addPoint(p1);
+		board.addPoint(p2);
+		board.addPoint(p3);
+		board.addPoint(p4);
 
 		Set<Point> correctEmptyNeighbors = new HashSet<>();
 		correctEmptyNeighbors.add(p1);
