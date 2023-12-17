@@ -50,11 +50,9 @@ public class Point {
 			
 			//continue if point empty
 			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint.getOwner() == null) {
-				continue;
-			}
-			
-			neighborStoneGroups.add(newPoint.getStoneGroup());
+			if(newPoint != null) {
+				neighborStoneGroups.add(newPoint.getStoneGroup());
+			}			
 		}
 		return neighborStoneGroups;
 	}
@@ -75,7 +73,7 @@ public class Point {
 			
 			//continue if point empty
 			Point newPoint = board.getPoint(newX, newY);
-			if(newPoint.getOwner() == null) {
+			if(newPoint == null) {
 				emptyNeighborStoneGroups.add(newPoint);
 			}
 		}

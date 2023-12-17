@@ -27,6 +27,14 @@ public class Game {
         this.board = new Board(size);
         this.state = State.CREATED;
     }
+    
+    public void setId(Long id) {
+    	this.id = id;
+    }
+    
+    public Long getId() {
+    	return this.id;
+    }
 
     public void start(){
     	Client whiteClient = new Client();
@@ -37,7 +45,9 @@ public class Game {
     	while(true) {
 /*    		this.state = State.BLACKMOVES;
         	pobierz x,y albo pass albo surr
-    		Move newMove = new Move(x, y, moveType, Color.BLACK, surrender)
+    		
+    		//MOZE BUILDER DO MOVE
+    		    		
     		try{
     			addMove(move);
     		} catch(InvalidMoveException){
@@ -60,9 +70,8 @@ public class Game {
     		if(gameResolved){
     			break;
     		}	
+*/   	
     	}
-    	this.state = FINISHED
-*/    	
     }
     
     public void addMove(Move move) throws InvalidMoveException{

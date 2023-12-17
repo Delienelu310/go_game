@@ -19,9 +19,9 @@ public class Move {
     }
     
     //normal move constructor
-    public Move(Board board, Point point, MoveType moveType){
+    public Move(Board board, Point point){
+    	this.board = board;
     	this.point = point;
-    	this.moveType = moveType;
     }
 
     public int getX() {

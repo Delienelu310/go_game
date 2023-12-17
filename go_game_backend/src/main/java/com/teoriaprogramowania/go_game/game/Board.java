@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 public class Board {
 	private Point[][] board;
-	private int size;
+	private final int size;
 	
 	//new board initialization
 	public Board(int size){
 		this.size = size;
-        this.board = new Point[size-1][size-1];
+        this.board = new Point[size][size];
         for(int i = 0; i < size; ++i) {
         	Arrays.fill(this.board[i], null);
         }
@@ -30,5 +30,9 @@ public class Board {
 	
 	public Point getPoint(int x, int y) {
 		return board[x][y];
+	}
+	
+	public void addPoint(Point point) {
+		this.board[point.getX()][point.getY()] = point;
 	}
 }
