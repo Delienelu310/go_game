@@ -15,7 +15,6 @@ public class Point {
 		this.x = x;
 		this.y = y;
 		isEmpty = true;
-		board.addPoint(this);
 	}
 	
 	public int getX() {

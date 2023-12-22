@@ -62,15 +62,18 @@ public class StoneGroupTests {
 	    
 	    // Create two points and their respective stone groups
 	    Point point1 = new Point(10, 10, board);
+	    board.addPoint(point1);
 	    StoneGroup group1 = new StoneGroup(point1, white);
 	    //point1.setStoneGroup(group1);
 	    
 	    Point point2 = new Point(10, 11, board);
+	    board.addPoint(point2);
 	    StoneGroup group2 = new StoneGroup(point2, white);
 	    //point2.setStoneGroup(group2);
 
 	    Set<Point> initialBreathsGroup1 = group1.getBreaths(); 										//should be 3
 	    Set<Point> initialBreathsGroup2 = group2.getBreaths(); 										//should be 3
+	    
 	    
 	    int expectedTotalStones = group1.getStones().size() + group2.getStones().size(); 			//2
 	    int expectedTotalBreaths = initialBreathsGroup1.size() + initialBreathsGroup2.size();		//should be 6
@@ -196,6 +199,35 @@ public class StoneGroupTests {
 	    assertEquals(2, breaths.size());
 	    assertEquals(3, wsg.getBreaths().size());
 	    assertEquals(3, wsg2.getBreaths().size());
+	}
+
+	@Test
+	void testBigGroup() {
+	    Board board = new Board(19);
+	    
+	    Point b1 = new Point(10, 10, board);
+	    StoneGroup bs1 = new StoneGroup(b1, black);
+	    b1.setStoneGroup(bs1);
+	    
+	    Point b2 = board.getPoint(11, 10);
+	    StoneGroup bs2 = new StoneGroup(b2, black);
+	    
+	    bs1.joinStoneGroup(bs2, b2);
+	    
+	    assertEquals(6, bs1.getBreaths().size());
+	    
+	    Point b3 = board.getPoint(11, 11);
+	    StoneGroup bs3 = new StoneGroup(b3, black);
+	    bs1.joinStoneGroup(bs3, b3);
+
+	    assertEquals(7, bs1.getBreaths().size());
+	    
+	    Point b4 = board.getPoint(10, 11);
+	    StoneGroup bs4 = new StoneGroup(b4, black);
+	    bs1.joinStoneGroup(bs4, b4);
+
+	    assertEquals(8, bs1.getBreaths().size());
+	    
 	}
 	
 }
