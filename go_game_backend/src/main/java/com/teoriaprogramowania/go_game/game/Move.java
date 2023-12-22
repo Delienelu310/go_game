@@ -12,7 +12,7 @@ public class Move {
     private Point point;			//added point
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
 //    private final int moveID;		//used to compare state of the board in different situations
-
+    
     //pass or surrender constructor
     public Move(Board board, MoveType moveType) {
     	this.board = board;
@@ -21,11 +21,10 @@ public class Move {
     }
     
     //normal move constructor
-    public Move(Board board, Point point){
-    	this.board = board;
+    public Move(Point point){
     	this.point = point;
     }
-
+    
     public int getX() {
     	return this.point.getX();
     }

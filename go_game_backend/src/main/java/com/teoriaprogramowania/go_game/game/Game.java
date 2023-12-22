@@ -1,7 +1,6 @@
 package com.teoriaprogramowania.go_game.game;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
@@ -20,7 +19,8 @@ public class Game {
 
     private List<Move> moves;
     private Board board;
-
+    
+    private Set<String> previousBoardStates = new HashSet<>();
         
     public Game(int size){
         this.board = new Board(size);
@@ -93,7 +93,6 @@ public class Game {
     	return this.moves;
     }
     
-
     private boolean gameResolved() {
     	if(moves.get(moves.size()-1).getMoveType() == MoveType.SURRENDER) {
     		return true;
@@ -105,8 +104,9 @@ public class Game {
     	}
     	return false;
     }
-    public boolean simulateMove(Board tempBoard, Move move, Player player) {
-    	Point simulatedPoint = tempBoard.getPoint(move.getX(), move.getY());
+    
+    public boolean simulateMove(Board board, Move move, Player player) {
+    	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
     	simulatedPoint.setStoneGroup(new StoneGroup(simulatedPoint, player));
     	
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
@@ -127,6 +127,14 @@ public class Game {
     	if(newStoneGroup.getBreaths().size() == 0) {
     		return false;
     	}
+
+    	//ko rule check;
+    	String currentBoardState = board.toString();
+        if(previousBoardStates.contains(currentBoardState)) {
+            return false;
+        }
+        previousBoardStates.add(currentBoardState);
+        
     	return true;
     }
     
@@ -138,13 +146,9 @@ public class Game {
     		return false;
     	}
     	
-    	//ko
-    	if(moves.size() > 1 && moves.get(moves.size() - 2).equals(move)) {
-    		return false;
-    	}
-    	
+    	Player fakePlayer = player;
     	Board tempBoard = new Board(board.getBoard(), board.getSize());
-    	if(simulateMove(tempBoard, move, player) == false) {
+    	if(simulateMove(tempBoard, move, fakePlayer) == false) {
     		return false;
     	}
     	

@@ -172,27 +172,30 @@ public class StoneGroupTests {
 	
 	}
 	
-/*
+
 	@Test
 	void testBreathsNearbyEnemies() {
 	    Board board = new Board(19);
 	    
 	    Point bPoint = new Point(10, 10, board);
 	    StoneGroup bsg = new StoneGroup(bPoint, black);
-	    bPoint.setStoneGroup(bsg);
 	    board.addPoint(bPoint);
 
 	    Point wPoint = new Point(11, 10, board);
 	    StoneGroup wsg = new StoneGroup(wPoint, white);
-	    wPoint.setStoneGroup(wsg);
 	    board.addPoint(wPoint);
 	    
 	    Point w2 = new Point(9, 10, board);
 	    StoneGroup wsg2 = new StoneGroup(w2, white);
-	    board.setPointStoneGroup(w2, wsg2);
+	    board.addPoint(w2);
+
+	    bsg.removeBreath(wPoint);
+	    bsg.removeBreath(w2);
 	    
 	    Set<Point> breaths = bsg.getBreaths();
 	    assertEquals(2, breaths.size());
+	    assertEquals(3, wsg.getBreaths().size());
+	    assertEquals(3, wsg2.getBreaths().size());
 	}
-	*/
+	
 }

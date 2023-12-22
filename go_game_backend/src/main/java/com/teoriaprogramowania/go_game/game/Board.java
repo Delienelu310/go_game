@@ -33,7 +33,6 @@ public class Board {
 	public int getSize() {
 		return this.size;
 	}
-	//PRZETESTUJ BOARD
 	
 	public Point getPoint(int x, int y) throws OutOfBoardException {
 		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
@@ -50,4 +49,21 @@ public class Board {
 		this.board[point.getX()][point.getY()].setStoneGroup(stoneGroup);
 	}
 	
+	@Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                StoneGroup stoneGroup = board[i][j].getStoneGroup();
+                if (stoneGroup == null) {
+                    sb.append('.');
+                } else {
+                    sb.append(stoneGroup.getOwner());
+                }
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
 }
