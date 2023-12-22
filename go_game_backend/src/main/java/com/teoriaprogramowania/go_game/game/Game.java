@@ -21,11 +21,13 @@ public class Game {
     private List<Move> moves;
     private Board board;
 
-    private State state;
         
     public Game(int size){
         this.board = new Board(size);
-        this.state = State.CREATED;
+    }
+    
+    public Game(Board board){
+        this.board = board;
     }
     
     public void setId(Long id) {
@@ -43,8 +45,7 @@ public class Game {
     	this.black = new Player(blackClient);
     	
     	while(true) {
-/*    		this.state = State.BLACKMOVES;
-        	pobierz x,y albo pass albo surr
+/*      	pobierz x,y albo pass albo surr
     		
     		//MOZE BUILDER DO MOVE
     		    		
@@ -58,9 +59,8 @@ public class Game {
     			break;
     		}
     		
-    		this.state = State.WHITEMOVES;
     		pobierz x,y albo pass
-    		Move newMove = new Move(x, y, pass, Color.WHITE, surrender)
+    		Move newMove = new Move()
     		try{
     			addMove(move);
     		} catch(InvalidMoveException){
@@ -74,16 +74,19 @@ public class Game {
     	}
     }
     
-    public void addMove(Move move) throws InvalidMoveException{
-        if(isMoveValid(move)) {
+    public void addMove(Move move, Player player) throws InvalidMoveException{
+        if(isMoveValid(move, player)) {
         	moves.add(move);
         } else {
         	throw new InvalidMoveException("Invalid move.");
         }
     }
     
-    public void makeMove(Move move, Board board) {
-
+    public void makeMove(Move move, Board board, Player player) {
+    	if(!isMoveValid(move, player)) {
+    		throw new InvalidMoveException();
+    	}
+    	
     }
     
     public List<Move> getMoves(){
@@ -92,14 +95,62 @@ public class Game {
     
 
     private boolean gameResolved() {
+    	if(moves.get(moves.size()-1).getMoveType() == MoveType.SURRENDER) {
+    		return true;
+    	}
+    	if(moves.get(moves.size()-1).getMoveType() == MoveType.PASS) {
+        	if(moves.get(moves.size()-2).getMoveType() == MoveType.PASS) {
+        		return true;
+        	}
+    	}
+    	return false;
+    }
+    public boolean simulateMove(Board tempBoard, Move move, Player player) {
+    	Point simulatedPoint = tempBoard.getPoint(move.getX(), move.getY());
+    	simulatedPoint.setStoneGroup(new StoneGroup(simulatedPoint, player));
+    	
+    	//merge neighbor stone groups
+    	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
+    	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
+    		if(neighbor.getOwner().equals(player)) {
+                newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
+            }
+    	}
+    	
+    	//remove breaths from enemy stone groups
+    	for(StoneGroup enemy : simulatedPoint.getNeighborStoneGroups()) {
+    		if(!enemy.getOwner().equals(player)) {
+    			enemy.removeBreath(simulatedPoint);
+    		}
+    		
+    		if(enemy.getBreaths().isEmpty()) {
+    			enemy.removeStoneGroup();
+    		}
+    	}
+    	
+    	if(newStoneGroup.getBreaths().isEmpty()) {
+    		return false;
+    	}
     	return true;
     }
     
-    private boolean isMoveValid(Move move) {
+    private boolean isMoveValid(Move move, Player player) {
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
-    	//...
+    	if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
+    		return false;
+    	}
+    	
+    	//ko
+    	if(moves.size() > 1 && moves.get(moves.size() - 2).equals(move)) {
+    		return false;
+    	}
+    	
+    	Board tempBoard = new Board(board.getBoard(), board.getSize());
+    	if(simulateMove(tempBoard, move, player) == false) {
+    		return false;
+    	}
     	
     	return true;
     }

@@ -1,5 +1,7 @@
 package com.teoriaprogramowania.go_game.game;
 
+import java.util.Objects;
+
 import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
 
 import lombok.Data;
@@ -35,4 +37,16 @@ public class Move {
     public MoveType getMoveType() {
     	return this.moveType;
     }
+
+    @Override 
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if(obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		Move move = (Move) obj;
+		return this.point == move.point && Objects.equals(this.board, move.board);
+	}
 }

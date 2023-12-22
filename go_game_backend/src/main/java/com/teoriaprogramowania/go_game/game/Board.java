@@ -17,7 +17,6 @@ public class Board {
         		Point newPoint = new Point(i, j, this);
         		board[i][j] = newPoint;
         	}
-//        	Arrays.fill(board[i], null);
 		}
           
 	}
@@ -34,6 +33,7 @@ public class Board {
 	public int getSize() {
 		return this.size;
 	}
+	//PRZETESTUJ BOARD
 	
 	public Point getPoint(int x, int y) throws OutOfBoardException {
 		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
@@ -43,7 +43,11 @@ public class Board {
 	}
 	
 	public void addPoint(Point point) {
-
 		this.board[point.getX()][point.getY()] = point;
 	}
+	
+	public void setPointStoneGroup(Point point, StoneGroup stoneGroup){
+		this.board[point.getX()][point.getY()].setStoneGroup(stoneGroup);
+	}
+	
 }

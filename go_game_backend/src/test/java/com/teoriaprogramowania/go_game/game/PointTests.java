@@ -80,4 +80,7 @@ public class PointTests {
 		assertEquals(correctEmptyNeighbors, point.getEmptyNeighborPoints());
 	}
 	
+
+	
+	
 }

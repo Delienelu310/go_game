@@ -19,7 +19,6 @@ public class BoardTests {
 		for(int i = 0; i < boardSize1; ++i) {
 			for(int j = 0; j < boardSize1; ++j) {
 				assertEquals(new Point(i, j, board), board.getPoint(i, j));
-	//			assertNull(board.getPoint(i, j));
 			}
 		}
 	}
@@ -32,8 +31,42 @@ public class BoardTests {
 		assertEquals(point, board.getPoint(12,15));
 	}
 	
+	@Test
+	public void testBoardSize() {
+		board = new Board(boardSize2);
+		assertEquals(boardSize2, board.getSize());
+	}
 	
+	@Test
+	public void testStoneGroupOnBoard() {
+		Client c = new Client();
+		Player p = new Player(c);
+		board = new Board(boardSize3);
+		Point point = new Point(12, 15, board);
+		StoneGroup stoneGroup = new StoneGroup(point, p);
+		point.setStoneGroup(stoneGroup);
+		board.addPoint(point);
+		
+		Point check = board.getPoint(12, 15);
+//		check.getStoneGroup();
+		
+		assertEquals(stoneGroup, check.getStoneGroup());
+	}
 	
-	
-	
+	@Test
+	public void testStoneGroupOnBoardDifferent() {
+		Client c = new Client();
+		Player p = new Player(c);
+		board = new Board(boardSize3);
+		Point point = new Point(12, 15, board);
+		StoneGroup stoneGroup = new StoneGroup(point, p);
+//		point.setStoneGroup(stoneGroup);
+		board.addPoint(point);
+		board.setPointStoneGroup(point, stoneGroup);
+		
+		Point check = board.getPoint(12, 15);
+//		check.getStoneGroup();
+		
+		assertEquals(stoneGroup, check.getStoneGroup());
+	}
 }
