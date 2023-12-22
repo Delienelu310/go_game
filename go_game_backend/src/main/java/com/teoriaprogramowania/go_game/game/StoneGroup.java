@@ -21,6 +21,14 @@ public class StoneGroup {
 		stones.add(point);
 		this.owner = owner;
 		this.breaths = new HashSet<Point>(point.getEmptyNeighborPoints());
+		point.setStoneGroup(this);
+	}
+	
+	//copy constructor
+	public StoneGroup(StoneGroup stoneGroup) {
+		this.stones = stoneGroup.getStones();
+		this.breaths = stoneGroup.getBreaths();
+		this.owner = stoneGroup.getOwner();
 	}
 	
 	public Player getOwner() {
@@ -42,14 +50,38 @@ public class StoneGroup {
 
 		//remove connecting point from breaths;
 		this.breaths.remove(connectingPoint);
+		
 	}
+	
+	
 	
 	//when enemy player puts his stone in the neighborhood of our's stone group
 	public StoneGroup removeBreath(Point enemyPoint) {
 		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
-		newStoneGroup.breaths.remove(enemyPoint);
+		//newStoneGroup.breaths.remove(enemyPoint);
+		
+		Iterator<Point> iterator = newStoneGroup.breaths.iterator();
+	    while(iterator.hasNext()) {
+	        Point breath = iterator.next();
+	        if(breath.equals(enemyPoint)){
+	            iterator.remove();
+	        }
+	    }
+		
 		return newStoneGroup;
 	}
+	
+	/*
+	public void removeBreath(Point enemyPoint) {
+		Iterator<Point> iterator = this.breaths.iterator();
+	    while(iterator.hasNext()) {
+	        Point breath = iterator.next();
+	        if(breath.equals(enemyPoint)){
+	            iterator.remove();
+	        }
+	    }
+	}
+	*/
 	
 	//remove stone group and update breaths of neighbor points
 	//return number of stones from this group

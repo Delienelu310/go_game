@@ -8,13 +8,14 @@ public class Point {
 	private int y;					//coordinate y
 	private Board board;			//board to which the point belongs
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
-	private boolean isEmpty;
+	private boolean isEmpty;		//true if the point belongs to some stone group
 	
 	public Point(int x, int y, Board board) {
 		this.board = board;
 		this.x = x;
 		this.y = y;
 		isEmpty = true;
+		board.addPoint(this);
 	}
 	
 	public int getX() {
@@ -36,6 +37,10 @@ public class Point {
 	public void setStoneGroup(StoneGroup stoneGroup) {
 		this.stoneGroup = stoneGroup;
 		this.isEmpty = false;
+		if(stoneGroup == null) {
+			this.isEmpty = true;
+		}
+		this.board.addPoint(this);
 	}
 	
 	public Player getOwner() {
@@ -51,12 +56,12 @@ public class Point {
 			return false;
 		}
 		Point point = (Point) obj;
-		return this.x == point.x && this.y == point.y && Objects.equals(board, point.board);
+//		return this.x == point.x && this.y == point.y && Objects.equals(board, point.board);
+		return this.x == point.x && this.y == point.y;
 	}
 	
 	public Set<StoneGroup> getNeighborStoneGroups(){
 		Set<StoneGroup> neighborStoneGroups = new HashSet<StoneGroup>();
-		int boardSize = this.board.getSize();
 		int dx[] = {-1, 1, 0, 0};
 		int dy[] = {0, 0, 1, -1};
 		for(int i = 0; i < 4; ++i) {
@@ -67,6 +72,9 @@ public class Point {
 				Point newPoint = board.getPoint(newX, newY);	
 				//continue if point empty
 				if(!newPoint.isEmpty()) {
+					if(newPoint.getStoneGroup() == this.getStoneGroup()) {
+						continue;
+					}
 					neighborStoneGroups.add(newPoint.getStoneGroup());
 				}	
 			} catch(OutOfBoardException e) {
@@ -101,7 +109,7 @@ public class Point {
 		}
 		return emptyNeighborPoints;
 	}
-
+	
 	//get dead neighbors
 	
 }

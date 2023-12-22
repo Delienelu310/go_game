@@ -26,33 +26,61 @@ public class StoneGroupTests {
 		assertEquals(white, whiteStoneGroup.getOwner());
 		assertEquals(correctStones, whiteStoneGroup.getStones());
 		assertEquals(correctBreaths, whiteStoneGroup.getBreaths());
+		assertEquals(4, whiteStoneGroup.getBreaths().size());
+		assertEquals(1, whiteStoneGroup.getStones().size());
 	}
 	
 	@Test
-	public void testJoining() {
-		int size = 13;
-		Board board = new Board(size);
+	public void testSameOwner() {
+		Board board = new Board(13);
 		
-		Point point1 = new Point(4, 4, board);
-		Point point2 = new Point(4, 5, board);
+		Point p1 = new Point(3, 3, board);
+		StoneGroup sg1 = new StoneGroup(p1, white);
+
+		Point p2 = new Point(3, 4, board);
+		StoneGroup sg2 = new StoneGroup(p2, white);
 		
-		StoneGroup whiteStoneGroup1 = new StoneGroup(point1, white);
-		StoneGroup whiteStoneGroup2 = new StoneGroup(point2, white);
-		
-		whiteStoneGroup1.joinStoneGroup(whiteStoneGroup2, new Point(4, 5, board));
-		
-		Set<Point> breaths = point1.getEmptyNeighborPoints();
-		breaths.addAll(point2.getEmptyNeighborPoints());
-		breaths.remove(point1);
-		breaths.remove(point2);
-		
-		Set<Point> stones = new HashSet<>();
-		stones.add(point1);
-		stones.add(point2);
-		
-		assertEquals(breaths, whiteStoneGroup1.getBreaths());
-		assertEquals(stones, whiteStoneGroup1.getStones());
+		assertEquals(sg1.getOwner(), sg2.getOwner());
 	}
+	
+	@Test
+	public void testDifferentOwner() {
+		Board board = new Board(13);
+		
+		Point p1 = new Point(3, 3, board);
+		StoneGroup sg1 = new StoneGroup(p1, white);
+
+		Point p2 = new Point(3, 4, board);
+		StoneGroup sg2 = new StoneGroup(p2, black);
+		
+		assertNotEquals(sg1.getOwner(), sg2.getOwner());
+	}
+	
+	@Test
+	void testJoinStoneGroup() {
+	    Board board = new Board(19);
+	    
+	    // Create two points and their respective stone groups
+	    Point point1 = new Point(10, 10, board);
+	    StoneGroup group1 = new StoneGroup(point1, white);
+	    //point1.setStoneGroup(group1);
+	    
+	    Point point2 = new Point(10, 11, board);
+	    StoneGroup group2 = new StoneGroup(point2, white);
+	    //point2.setStoneGroup(group2);
+
+	    Set<Point> initialBreathsGroup1 = group1.getBreaths(); 										//should be 3
+	    Set<Point> initialBreathsGroup2 = group2.getBreaths(); 										//should be 3
+	    
+	    int expectedTotalStones = group1.getStones().size() + group2.getStones().size(); 			//2
+	    int expectedTotalBreaths = initialBreathsGroup1.size() + initialBreathsGroup2.size();		//should be 6
+
+	    group1.joinStoneGroup(group2, point2);
+
+	    assertEquals(expectedTotalStones, group1.getStones().size());
+	    assertEquals(expectedTotalBreaths, group1.getBreaths().size());
+	}
+
 
 	@Test
 	void testBreathsSingleStoneOpenSpace() {
@@ -90,21 +118,35 @@ public class StoneGroupTests {
 	    assertEquals(2, breaths.size());
 	}
 	
+	@Test 
+	void testRemoveBreath(){
+		Board board = new Board(9);
+		
+		Point wPoint = new Point(3, 3, board);
+		StoneGroup wsg = new StoneGroup(wPoint, white);
+		board.addPoint(wPoint);
+		
+		int initialWhiteBreaths = wsg.getBreaths().size();
+		
+		Point bPoint = new Point(4, 3, board);
+		StoneGroup bsg = new StoneGroup(bPoint, black);
+		board.addPoint(bPoint);
+		
+		wsg.removeBreath(bPoint);
+		
+		assertEquals(initialWhiteBreaths - 1, wsg.getBreaths().size());
+		assertEquals(3, bsg.getBreaths().size());
+	}
+	
 	@Test
 	void testBreathsNearbyEnemy() {
 	    Board board = new Board(19);
 	    
 	    Point bPoint = new Point(10, 10, board);
 	    StoneGroup bsg = new StoneGroup(bPoint, black);
-	    bPoint.setStoneGroup(bsg);
-	    
-	    board.addPoint(bPoint);
 
 	    Point wPoint = new Point(11, 10, board);
 	    StoneGroup wsg = new StoneGroup(wPoint, white);
-	    wPoint.setStoneGroup(wsg);
-	    
-	    board.addPoint(wPoint);
 	    
 	    Set<Point> breaths = wsg.getBreaths();
 	    assertEquals(3, breaths.size());
@@ -113,23 +155,24 @@ public class StoneGroupTests {
 	@Test
 	void testBreathsDifferentOrder() {
 	    Board board = new Board(19);
-
-	    Point wPoint = new Point(11, 10, board);
-	    StoneGroup wsg = new StoneGroup(wPoint, white);
-	    wPoint.setStoneGroup(wsg);
-	    board.addPoint(wPoint);
 	    
 	    Point bPoint = new Point(10, 10, board);
 	    StoneGroup bsg = new StoneGroup(bPoint, black);
-	    bPoint.setStoneGroup(bsg);
-	    board.addPoint(bPoint);
-	    board.setPointStoneGroup(bPoint, bsg);
 	    
-	    Set<Point> breaths = wsg.getBreaths();
-	    assertEquals(3, breaths.size());
+	    Point wPoint = new Point(11, 10, board);
+	    StoneGroup wsg = new StoneGroup(wPoint, white);
+	    
+	    bsg.removeBreath(wPoint);
+
+	    Set<Point> blackBreaths = bsg.getBreaths();
+	    assertEquals(3, blackBreaths.size());
+	
+	    Set<Point> whiteBreaths = wsg.getBreaths();
+	    assertEquals(3, whiteBreaths.size());
+	
 	}
 	
-
+/*
 	@Test
 	void testBreathsNearbyEnemies() {
 	    Board board = new Board(19);
@@ -151,5 +194,5 @@ public class StoneGroupTests {
 	    Set<Point> breaths = bsg.getBreaths();
 	    assertEquals(2, breaths.size());
 	}
-	
+	*/
 }

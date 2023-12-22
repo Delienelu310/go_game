@@ -22,6 +22,8 @@ public class PointTests {
 		assertEquals(4, point.getY());
 		assertNull(point.getStoneGroup());
 		
+		Player white = new Player(new Client());
+		stoneGroup = new StoneGroup(point, white);
 		point.setStoneGroup(stoneGroup);
 		
 		assertEquals(stoneGroup, point.getStoneGroup());
@@ -43,12 +45,22 @@ public class PointTests {
 	@Test
 	public void testGetNeighborStoneGroups() {
 		board = new Board(boardSize);
-		point = new Point(4, 4, board);
-		board.addPoint(point);
 		
+		Player white = new Player(new Client());
+		Player black = new Player(new Client());
+
+		point = new Point(4, 4, board);
+		stoneGroup = new StoneGroup(point, white);
+
 		Point neighborPoint = new Point(5, 4, board);
-		board.addPoint(neighborPoint);
+		anotherStoneGroup = new StoneGroup(point, black);
+		
+		point.setStoneGroup(stoneGroup);
 		neighborPoint.setStoneGroup(anotherStoneGroup);
+
+		board.addPoint(point);
+		board.addPoint(neighborPoint);
+
 		Set<StoneGroup> neighborStoneGroups = new HashSet<>();
 		neighborStoneGroups.add(anotherStoneGroup);
 		
@@ -80,7 +92,19 @@ public class PointTests {
 		assertEquals(correctEmptyNeighbors, point.getEmptyNeighborPoints());
 	}
 	
+	void testEnemyNeighborsLoseBreath() {
+	    // Setup
+		Player player = new Player(new Client());		
+		Point point = new Point(10, 10, board);
+	    StoneGroup playerGroup = new StoneGroup(point, player);
+	    point.setStoneGroup(playerGroup);	    
+	    int initialBreaths = playerGroup.getBreaths().size();
 
-	
-	
+		Player enemy = new Player(new Client());
+		Point enemyPoint = new Point(10, 11, board);
+	    StoneGroup enemyGroup = new StoneGroup(enemyPoint, enemy);
+	    enemyPoint.setStoneGroup(enemyGroup);
+
+	    assertEquals(initialBreaths - 1, playerGroup.getBreaths().size());
+	}
 }

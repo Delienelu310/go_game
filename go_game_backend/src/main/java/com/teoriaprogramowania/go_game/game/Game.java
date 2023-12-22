@@ -109,26 +109,22 @@ public class Game {
     	Point simulatedPoint = tempBoard.getPoint(move.getX(), move.getY());
     	simulatedPoint.setStoneGroup(new StoneGroup(simulatedPoint, player));
     	
-    	//merge neighbor stone groups
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
     	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
     		if(neighbor.getOwner().equals(player)) {
+    	    	//merge friendly neighbor stone groups
                 newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
             }
-    	}
-    	
-    	//remove breaths from enemy stone groups
-    	for(StoneGroup enemy : simulatedPoint.getNeighborStoneGroups()) {
-    		if(!enemy.getOwner().equals(player)) {
-    			enemy.removeBreath(simulatedPoint);
-    		}
-    		
-    		if(enemy.getBreaths().isEmpty()) {
-    			enemy.removeStoneGroup();
+    		else {
+    			//remove breath from enemy stone group
+    			neighbor.removeBreath(simulatedPoint);
+    			if(neighbor.getBreaths().size() == 0) {
+    				player.addCaptives(neighbor.removeStoneGroup());
+    			}
     		}
     	}
     	
-    	if(newStoneGroup.getBreaths().isEmpty()) {
+    	if(newStoneGroup.getBreaths().size() == 0) {
     		return false;
     	}
     	return true;
