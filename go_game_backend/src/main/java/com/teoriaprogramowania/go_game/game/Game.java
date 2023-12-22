@@ -16,6 +16,7 @@ public class Game {
 
     private Player white;
     private Player black;
+	private Player fakePlayer = new Player(new Client());
 
     private List<Move> moves;
     private Board board;
@@ -146,7 +147,6 @@ public class Game {
     		return false;
     	}
     	
-    	Player fakePlayer = player;
     	Board tempBoard = new Board(board.getBoard(), board.getSize());
     	if(simulateMove(tempBoard, move, fakePlayer) == false) {
     		return false;
