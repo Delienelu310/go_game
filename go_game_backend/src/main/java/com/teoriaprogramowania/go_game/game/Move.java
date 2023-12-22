@@ -13,7 +13,7 @@ public class Move {
 //    private final int moveID;		//used to compare state of the board in different situations
     
     //pass or surrender constructor
-    public Move(Board board, MoveType moveType) {
+    public Move(MoveType moveType) {
     	this.moveType = moveType;
     	
     }

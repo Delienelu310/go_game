@@ -26,6 +26,14 @@ public class Board {
 		this.size = size;
 	}
 	
+	public BoardMemento createMemento() {
+		return new BoardMemento(this.board);
+	}
+	
+	public void restore(BoardMemento memento) {
+		this.board = memento.getState();
+	}
+	
 	public Point[][] getBoard(){
 		return board;
 	}

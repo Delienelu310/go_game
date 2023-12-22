@@ -16,7 +16,6 @@ public class Game {
 
     private Player white;
     private Player black;
-	private Player fakePlayer = new Player(new Client());
 
     private List<Move> moves;
     private Board board;
@@ -107,6 +106,7 @@ public class Game {
     }
     
     public boolean simulateMove(Board board, Move move, Player player) {
+    	BoardMemento memento = board.createMemento();
     	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
     	simulatedPoint.setStoneGroup(new StoneGroup(simulatedPoint, player));
     	
@@ -132,6 +132,7 @@ public class Game {
     	//ko rule check;
     	String currentBoardState = board.toString();
         if(previousBoardStates.contains(currentBoardState)) {
+        	board.restore(memento);
             return false;
         }
         previousBoardStates.add(currentBoardState);
@@ -148,6 +149,7 @@ public class Game {
     	}
     	
     	Board tempBoard = new Board(board.getBoard(), board.getSize());
+    	Player fakePlayer = new Player(new Client());
     	if(simulateMove(tempBoard, move, fakePlayer) == false) {
     		return false;
     	}
