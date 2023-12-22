@@ -205,7 +205,35 @@ public class StoneGroupTests {
 	void testBigGroup() {
 	    Board board = new Board(19);
 	    
-	    Point b1 = new Point(10, 10, board);
+	    Point b1 = board.getPoint(10, 10);
+	    StoneGroup bs1 = new StoneGroup(b1, black);
+	    b1.setStoneGroup(bs1);
+	    
+	    Point b2 = board.getPoint(11, 10);
+	    StoneGroup bs2 = new StoneGroup(b2, black);
+	    
+	    bs1.joinStoneGroup(bs2, b2);
+	    
+	    assertEquals(6, bs1.getBreaths().size());
+	    
+	    Point b3 = board.getPoint(11, 11);
+	    StoneGroup bs3 = new StoneGroup(b3, black);
+	    bs1.joinStoneGroup(bs3, b3);
+
+	    assertEquals(7, bs1.getBreaths().size());
+	    
+	    Point b4 = board.getPoint(10, 11);
+	    StoneGroup bs4 = new StoneGroup(b4, black);
+	    bs1.joinStoneGroup(bs4, b4);
+
+	    assertEquals(8, bs1.getBreaths().size());
+	}
+
+	@Test
+	void testBigGroupCapture() {
+	    Board board = new Board(19);
+	    
+	    Point b1 = board.getPoint(10, 10);
 	    StoneGroup bs1 = new StoneGroup(b1, black);
 	    b1.setStoneGroup(bs1);
 	    
@@ -228,6 +256,44 @@ public class StoneGroupTests {
 
 	    assertEquals(8, bs1.getBreaths().size());
 	    
+	    Point w1 = board.getPoint(12,11);
+	    StoneGroup ws1 = new StoneGroup(w1, white);
+	    bs1.removeBreath(w1);
+	    
+	    Point w2 = board.getPoint(12, 10);
+	    StoneGroup ws2 = new StoneGroup(w2, white);
+	    ws1.joinStoneGroup(ws2, w2);
+	    bs1.removeBreath(w2);
+
+	    assertEquals(6, bs1.getBreaths().size());
+	    assertEquals(4, ws1.getBreaths().size());
+
+	    Point w3 = board.getPoint(10, 9);
+	    StoneGroup ws3 = new StoneGroup(w3, white);
+	    bs1.removeBreath(w3);
+	    
+	    Point w4 = board.getPoint(11, 9);
+	    StoneGroup ws4 = new StoneGroup(w4, white);
+	    ws3.joinStoneGroup(ws4, w4);
+	    bs1.removeBreath(w4);
+
+	    assertEquals(4, bs1.getBreaths().size());
+	    assertEquals(4, ws1.getBreaths().size());
+	    assertEquals(4, ws3.getBreaths().size());
+	    
+	    //join white stone groups
+	    
+	    Point w5 = board.getPoint(12, 9);
+	    StoneGroup ws5 = new StoneGroup(w5, white);
+	    ws3.joinStoneGroup(ws5, w5);
+	    
+	    assertEquals(5, ws3.getBreaths().size());
+	    
+	    ws1.joinStoneGroup(ws3, w5);
+
+	    assertEquals(8, ws1.getBreaths().size());
+	    assertEquals(4, bs1.getBreaths().size());
+		
 	}
 	
 }
