@@ -19,7 +19,6 @@ public class Game {
     private List<Move> moves;
     private Board board;
     private Set<String> previousBoardStates = new HashSet<>();
-    private int passCount;
     
     public Game(int size){
         this.board = new Board(size);
@@ -31,12 +30,26 @@ public class Game {
         this.moves = new ArrayList<>();
     }
     
+    public Game(Game game) {
+    	this.moves = game.getMoves();
+    	this.board = game.getBoard();
+    	this.previousBoardStates = game.getPreviousBoardStates();
+    }
+    
     public void setId(Long id) {
     	this.id = id;
     }
     
     public Long getId() {
     	return this.id;
+    }
+    
+    public Board getBoard() {
+    	return this.board;
+    }
+    
+    public Set<String> getPreviousBoardStates(){
+    	return this.previousBoardStates;
     }
 
     public void start(){
@@ -68,12 +81,11 @@ public class Game {
  				moves.add(move);
  				break;
  			} else if(move.getMoveType() == MoveType.PASS){
- 				passCount++;
  				moves.add(move);
- 				continue;
+ 			} else {
+ 				simulateMove(this.board, move, black);
+ 				moves.add(move);
  			}
- 			simulateMove(this.board, move, black);
- 			moves.add(move);
  			
  			//change player
  			if(currentPlayer == black) {
@@ -107,6 +119,11 @@ public class Game {
         	}
     	}
     	return false;
+    }
+    
+    public void makeMove(Move move, Player player) {
+    	simulateMove(this.board, move, player);
+    	moves.add(move);
     }
     
     public boolean simulateMove(Board board, Move move, Player player) {
