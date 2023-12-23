@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
+import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 import com.teoriaprogramowania.go_game.game.Move;
 
 import lombok.Data;
@@ -22,10 +23,12 @@ public class Game {
     
     public Game(int size){
         this.board = new Board(size);
+        this.moves = new ArrayList<>();
     }
     
     public Game(Board board){
         this.board = board;
+        this.moves = new ArrayList<>();
     }
     
     public void setId(Long id) {
@@ -42,7 +45,9 @@ public class Game {
     	this.white = new Player(whiteClient);
     	this.black = new Player(blackClient);
     	
-    	while(!gameResolved()) {
+    	Player currentPlayer = black;
+    	
+    	 do {
  			Move move;
  			if(/*pass*/){
  				move = new Move(MoveType.PASS);
@@ -67,8 +72,9 @@ public class Game {
  				simulateMove(this.board, move, black);
  				moves.add(move);
  			}
-    		
-    	}
+    	} while(!gameResolved());
+    	
+    	Player winner = pickWinner(black, white);
     }
     
     public void addMove(Move move){
@@ -79,13 +85,15 @@ public class Game {
     	return this.moves;
     }
     
-    private boolean gameResolved() {
+    public boolean gameResolved() {
     	if(moves.get(moves.size()-1).getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
     	if(moves.get(moves.size()-1).getMoveType() == MoveType.PASS) {
-        	if(moves.get(moves.size()-2).getMoveType() == MoveType.PASS) {
-        		return true;
+    		if(moves.size() > 1);{
+    			if(moves.get(moves.size()-2).getMoveType() == MoveType.PASS) {
+    				return true;
+    			}
         	}
     	}
     	return false;
@@ -110,6 +118,7 @@ public class Game {
     		}
     	}
     	
+    	//suicide move check
     	if(newStoneGroup.getBreaths().size() == 0) {
         	board.restore(memento);
     		return false;
@@ -126,14 +135,17 @@ public class Game {
     	return true;
     }
     
-    private boolean isMoveValid(Move move) {
+    public boolean isMoveValid(Move move){
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
-    	if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
+    	try {
+    		if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
+    			return false;
+    		}
+    	} catch(OutOfBoardException e) {
     		return false;
     	}
-    	
     	Board tempBoard = new Board(board.getBoard(), board.getSize());
     	Player fakePlayer = new Player(new Client());
     	if(simulateMove(tempBoard, move, fakePlayer) == false) {
@@ -141,5 +153,9 @@ public class Game {
     	}
     	
     	return true;
+    }
+    
+    public Player pickWinner(Player p1, Player p2) {
+    	return p1;
     }
 }
