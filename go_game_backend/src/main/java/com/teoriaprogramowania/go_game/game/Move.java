@@ -21,6 +21,7 @@ public class Move {
     //normal move constructor
     public Move(Point point){
     	this.point = point;
+    	this.moveType = MoveType.NORMAL;
     }
     
     public int getX() {
@@ -29,6 +30,14 @@ public class Move {
     
     public int getY() {
     	return this.point.getY();
+    }
+    
+    public void setX(int x) {
+    	this.point.setX(x);
+    }
+
+    public void setY(int y) {
+    	this.point.setY(y);
     }
     
     public MoveType getMoveType() {

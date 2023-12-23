@@ -13,15 +13,13 @@ public class Game {
 	//class Game is handling rules of the game
 	
 	private Long id;
-
     private Player white;
     private Player black;
-
     private List<Move> moves;
     private Board board;
-    
     private Set<String> previousBoardStates = new HashSet<>();
-        
+    private int passCount;
+    
     public Game(int size){
         this.board = new Board(size);
     }
@@ -44,49 +42,37 @@ public class Game {
     	this.white = new Player(whiteClient);
     	this.black = new Player(blackClient);
     	
-    	while(true) {
-/*      	pobierz x,y albo pass albo surr
+    	while(!gameResolved()) {
+ 			Move move;
+ 			if(/*pass*/){
+ 				move = new Move(MoveType.PASS);
+ 			} else if (/*surr*/){
+ 				move = new Move(MoveType.SURRENDER);
+ 			} else{
+ 				int x = //pobierz x
+ 				int y = //pobierz y
+ 				Point blackPoint = new Point(x, y, this.board);
+ 				move = new Move(blackPoint);
+ 			}
+ 			
+ 			if(isMoveValid(move)){
+ 				if(move.getMoveType() == MoveType.SURRENDER) {
+ 					moves.add(move);
+ 					break;
+ 				} else if(move.getMoveType() == MoveType.PASS){
+ 					passCount++;
+ 					moves.add(move);
+ 					continue;
+ 				}
+ 				simulateMove(this.board, move, black);
+ 				moves.add(move);
+ 			}
     		
-    		//MOZE BUILDER DO MOVE
-    		    		
-    		try{
-    			addMove(move);
-    		} catch(InvalidMoveException){
-    			handle exception
-    		}
-    		
-    		if(gameResolved){
-    			break;
-    		}
-    		
-    		pobierz x,y albo pass
-    		Move newMove = new Move()
-    		try{
-    			addMove(move);
-    		} catch(InvalidMoveException){
-    			handle exception
-    		}
-    		
-    		if(gameResolved){
-    			break;
-    		}	
-*/   	
     	}
     }
     
-    public void addMove(Move move, Player player) throws InvalidMoveException{
-        if(isMoveValid(move, player)) {
-        	moves.add(move);
-        } else {
-        	throw new InvalidMoveException("Invalid move.");
-        }
-    }
-    
-    public void makeMove(Move move, Board board, Player player) {
-    	if(!isMoveValid(move, player)) {
-    		throw new InvalidMoveException();
-    	}
-    	
+    public void addMove(Move move){
+        moves.add(move);
     }
     
     public List<Move> getMoves(){
@@ -107,9 +93,8 @@ public class Game {
     
     public boolean simulateMove(Board board, Move move, Player player) {
     	BoardMemento memento = board.createMemento();
-    	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
-    	simulatedPoint.setStoneGroup(new StoneGroup(simulatedPoint, player));
     	
+    	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
     	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
     		if(neighbor.getOwner().equals(player)) {
@@ -126,6 +111,7 @@ public class Game {
     	}
     	
     	if(newStoneGroup.getBreaths().size() == 0) {
+        	board.restore(memento);
     		return false;
     	}
 
@@ -140,7 +126,7 @@ public class Game {
     	return true;
     }
     
-    private boolean isMoveValid(Move move, Player player) {
+    private boolean isMoveValid(Move move) {
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
