@@ -104,7 +104,10 @@ public class Game {
     	
     	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
-    	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
+    	
+    	int captives = 0;
+    	
+      	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
     		if(neighbor.getOwner().equals(player)) {
     	    	//merge friendly neighbor stone groups
                 newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
@@ -113,7 +116,7 @@ public class Game {
     			//remove breath from enemy stone group
     			neighbor.removeBreath(simulatedPoint);
     			if(neighbor.getBreaths().size() == 0) {
-    				player.addCaptives(neighbor.removeStoneGroup());
+    				captives = neighbor.removeStoneGroup();
     			}
     		}
     	}
@@ -131,7 +134,7 @@ public class Game {
             return false;
         }
         previousBoardStates.add(currentBoardState);
-        
+        player.addCaptives(captives);
     	return true;
     }
     
@@ -146,9 +149,9 @@ public class Game {
     	} catch(OutOfBoardException e) {
     		return false;
     	}
-    	Board tempBoard = new Board(board.getBoard(), board.getSize());
+    	
     	Player fakePlayer = new Player(new Client());
-    	if(simulateMove(tempBoard, move, fakePlayer) == false) {
+    	if(simulateMove(this.board, move, fakePlayer) == false) {
     		return false;
     	}
     	
@@ -157,5 +160,9 @@ public class Game {
     
     public Player pickWinner(Player p1, Player p2) {
     	return p1;
+    }
+    
+    public int getPlayerCaptives(Player player) {
+    	return player.getCaptives();
     }
 }
