@@ -48,33 +48,43 @@ public class Game {
     	Player currentPlayer = black;
     	
     	 do {
- 			Move move;
- 			if(/*pass*/){
- 				move = new Move(MoveType.PASS);
- 			} else if (/*surr*/){
- 				move = new Move(MoveType.SURRENDER);
- 			} else{
- 				int x = //pobierz x
- 				int y = //pobierz y
- 				Point blackPoint = new Point(x, y, this.board);
- 				move = new Move(blackPoint);
+  			//loop untill player makes a valid move
+  			do {
+	    		//create appropriate move type
+	 			Move move;
+	 			if(/*pass*/){
+	 				move = new Move(MoveType.PASS);
+	 			} else if (/*surr*/){
+	 				move = new Move(MoveType.SURRENDER);
+	 			} else{
+	 				int x = //pobierz x
+	 				int y = //pobierz y
+	 				Point point = new Point(x, y, this.board);
+	 				move = new Move(point);
+	 			}
+ 			} while(!isMoveValid(move));
+ 			
+ 			if(move.getMoveType() == MoveType.SURRENDER) {
+ 				moves.add(move);
+ 				break;
+ 			} else if(move.getMoveType() == MoveType.PASS){
+ 				passCount++;
+ 				moves.add(move);
+ 				continue;
+ 			}
+ 			simulateMove(this.board, move, black);
+ 			moves.add(move);
+ 			
+ 			//change player
+ 			if(currentPlayer == black) {
+ 				currentPlayer = white;
+ 			} else {
+ 				currentPlayer = black;
  			}
  			
- 			if(isMoveValid(move)){
- 				if(move.getMoveType() == MoveType.SURRENDER) {
- 					moves.add(move);
- 					break;
- 				} else if(move.getMoveType() == MoveType.PASS){
- 					passCount++;
- 					moves.add(move);
- 					continue;
- 				}
- 				simulateMove(this.board, move, black);
- 				moves.add(move);
- 			}
     	} while(!gameResolved());
     	
-    	Player winner = pickWinner(black, white);
+    	Player winner = pickWinner(black, white, currentPlayer);
     }
     
     public void addMove(Move move){
@@ -158,8 +168,20 @@ public class Game {
     	return true;
     }
     
-    public Player pickWinner(Player p1, Player p2) {
-    	return p1;
+    public Player pickWinner(Player p1, Player p2, Player currentPlayer) {
+    	if(moves.get(moves.size() - 1).getMoveType() == MoveType.SURRENDER) {
+    		if(currentPlayer == p1) {
+    			return p2;
+    		}
+    		return p2;
+    	}
+//    	int p1Territory = p1.calculateTeritory();
+//    	int p2Territory = p2.calculateTeritory();
+    	
+    	if(p1.getCaptives() > p2.getCaptives()) {
+        	return p1;	
+    	}
+    	return p2;
     }
     
     public int getPlayerCaptives(Player player) {
