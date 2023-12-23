@@ -36,6 +36,30 @@ public class Game {
     	this.previousBoardStates = game.getPreviousBoardStates();
     }
     
+    public void setMoves(List<Move> moves) {
+    	int boardSize = this.board.getSize();
+    	this.board = new Board(boardSize);
+    	this.moves = new ArrayList<>();
+    	this.previousBoardStates = new HashSet<>();
+
+    	Player currentPlayer = this.black;
+    	for(Move move : moves) {
+    		makeMove(move, currentPlayer);
+ 			if(currentPlayer == this.black) {
+ 				currentPlayer = this.white;
+ 			} else {
+ 				currentPlayer = this.black;
+ 			}
+    	}
+    }
+    
+    private Player getLastMovePlayer() {
+    	if(moves.size()%2 == 0) {
+    		return this.white;
+    	}
+    	return this.black;
+    }
+    
     public void setId(Long id) {
     	this.id = id;
     }
@@ -185,9 +209,9 @@ public class Game {
     	return true;
     }
     
-    public Player pickWinner(Player p1, Player p2, Player currentPlayer) {
+    public Player pickWinner(Player p1, Player p2) {
     	if(moves.get(moves.size() - 1).getMoveType() == MoveType.SURRENDER) {
-    		if(currentPlayer == p1) {
+    		if(this.getLastMovePlayer() == p1) {
     			return p2;
     		}
     		return p2;
