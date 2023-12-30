@@ -76,7 +76,7 @@ public class Point {
 			int newY = this.y + dy[i];
 			
 			try {
-				Point newPoint = board.getPoint(newX, newY);	
+				Point newPoint = this.board.getPoint(newX, newY);	
 				//continue if point empty
 				if(!newPoint.isEmpty()) {
 					if(newPoint.getStoneGroup() == this.getStoneGroup()) {
@@ -105,7 +105,7 @@ public class Point {
 
 			try {
 				//continue if point empty
-				Point newPoint = board.getPoint(newX, newY);
+				Point newPoint = this.board.getPoint(newX, newY);
 				if(newPoint.isEmpty()) {
 					emptyNeighborPoints.add(newPoint);
 				}

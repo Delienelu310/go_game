@@ -8,40 +8,40 @@ import lombok.Data;
 
 @Data
 public class Move {
-    private Point point;			//added point
+	private int x;
+	private int y;
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
-//    private final int moveID;		//used to compare state of the board in different situations
-    
-    //pass or surrender constructor
-    public Move(MoveType moveType) {
+    private Player player;
+ 
+    public Move(int x, int y, MoveType moveType, Player player) {
+    	this.x = x;
+    	this.y = y;
     	this.moveType = moveType;
-    	
-    }
-    
-    //normal move constructor
-    public Move(Point point){
-    	this.point = point;
-    	this.moveType = MoveType.NORMAL;
+    	this.player = player;
     }
     
     public int getX() {
-    	return this.point.getX();
+    	return this.x;
     }
     
     public int getY() {
-    	return this.point.getY();
+    	return this.y;
     }
     
     public void setX(int x) {
-    	this.point.setX(x);
+    	this.x = x;
     }
 
     public void setY(int y) {
-    	this.point.setY(y);
+    	this.y = y;
     }
     
     public MoveType getMoveType() {
     	return this.moveType;
+    }
+    
+    public Player getPlayer() {
+    	return this.player;
     }
 
     @Override 
@@ -53,6 +53,6 @@ public class Move {
 			return false;
 		}
 		Move move = (Move) obj;
-		return this.point == move.point;
+		return this.x == move.x && this.y == move.y;
 	}
 }
