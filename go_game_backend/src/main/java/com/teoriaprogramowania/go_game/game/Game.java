@@ -19,21 +19,25 @@ public class Game {
     private List<Move> moves;
     private Board board;
     private Set<String> previousBoardStates = new HashSet<>();
+    private State state;
     
     public Game(int size){
         this.board = new Board(size);
         this.moves = new ArrayList<>();
+        this.state = State.CREATED;
     }
     
     public Game(Board board){
         this.board = board;
         this.moves = new ArrayList<>();
+        this.state = State.CREATED;
     }
     
     public Game(Game game) {
     	this.moves = game.getMoves();
     	this.board = game.getBoard();
     	this.previousBoardStates = game.getPreviousBoardStates();
+    	this.state = State.CREATED;
     }
     
     public void setMoves(List<Move> moves) {
@@ -42,14 +46,8 @@ public class Game {
     	this.moves = new ArrayList<>();
     	this.previousBoardStates = new HashSet<>();
 
-    	Player currentPlayer = this.black;
     	for(Move move : moves) {
-    		makeMove(move, currentPlayer);
- 			if(currentPlayer == this.black) {
- 				currentPlayer = this.white;
- 			} else {
- 				currentPlayer = this.black;
- 			}
+    		makeMove(move);
     	}
     }
     
@@ -72,55 +70,16 @@ public class Game {
     	return this.board;
     }
     
-    public Set<String> getPreviousBoardStates(){
+    public State getState() {
+    	return this.state;
+    }
+    
+    private Set<String> getPreviousBoardStates(){
     	return this.previousBoardStates;
     }
 
-    public void start(){
-    	Client whiteClient = new Client();
-    	Client blackClient = new Client();
-    	this.white = new Player(whiteClient);
-    	this.black = new Player(blackClient);
-    	
-    	Player currentPlayer = black;
-    	
-    	 do {
-  			//loop untill player makes a valid move
-  			do {
-	    		//create appropriate move type
-	 			Move move;
-	 			if(/*pass*/){
-	 				move = new Move(MoveType.PASS);
-	 			} else if (/*surr*/){
-	 				move = new Move(MoveType.SURRENDER);
-	 			} else{
-	 				int x = //pobierz x
-	 				int y = //pobierz y
-	 				Point point = new Point(x, y, this.board);
-	 				move = new Move(point);
-	 			}
- 			} while(!isMoveValid(move));
- 			
- 			if(move.getMoveType() == MoveType.SURRENDER) {
- 				moves.add(move);
- 				break;
- 			} else if(move.getMoveType() == MoveType.PASS){
- 				moves.add(move);
- 			} else {
- 				simulateMove(this.board, move, black);
- 				moves.add(move);
- 			}
- 			
- 			//change player
- 			if(currentPlayer == black) {
- 				currentPlayer = white;
- 			} else {
- 				currentPlayer = black;
- 			}
- 			
-    	} while(!gameResolved());
-    	
-    	Player winner = pickWinner(black, white, currentPlayer);
+    public void start() {
+    	this.state = State.ONGOING;
     }
     
     public void addMove(Move move){
@@ -133,11 +92,13 @@ public class Game {
     
     public boolean gameResolved() {
     	if(moves.get(moves.size()-1).getMoveType() == MoveType.SURRENDER) {
+    		this.state = State.FINISHED;
     		return true;
     	}
     	if(moves.get(moves.size()-1).getMoveType() == MoveType.PASS) {
     		if(moves.size() > 1);{
     			if(moves.get(moves.size()-2).getMoveType() == MoveType.PASS) {
+    	    		this.state = State.FINISHED;
     				return true;
     			}
         	}
@@ -145,21 +106,21 @@ public class Game {
     	return false;
     }
     
-    public void makeMove(Move move, Player player) {
-    	simulateMove(this.board, move, player);
+    public void makeMove(Move move) {
+    	simulateMove(this.board, move);
     	moves.add(move);
     }
     
-    public boolean simulateMove(Board board, Move move, Player player) {
+    public boolean simulateMove(Board board, Move move) {
     	BoardMemento memento = board.createMemento();
     	
     	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
-    	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, player);
+    	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, move.getPlayer());
     	
     	int captives = 0;
     	
       	for(StoneGroup neighbor : simulatedPoint.getNeighborStoneGroups()) {
-    		if(neighbor.getOwner().equals(player)) {
+    		if(neighbor.getOwner().equals(move.getPlayer())) {
     	    	//merge friendly neighbor stone groups
                 newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
             }
@@ -185,7 +146,7 @@ public class Game {
             return false;
         }
         previousBoardStates.add(currentBoardState);
-        player.addCaptives(captives);
+        move.getPlayer().addCaptives(captives);
     	return true;
     }
     
@@ -201,8 +162,7 @@ public class Game {
     		return false;
     	}
     	
-    	Player fakePlayer = new Player(new Client());
-    	if(simulateMove(this.board, move, fakePlayer) == false) {
+    	if(simulateMove(this.board, move) == false) {
     		return false;
     	}
     	

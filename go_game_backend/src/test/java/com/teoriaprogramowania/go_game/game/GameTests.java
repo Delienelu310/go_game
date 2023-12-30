@@ -17,9 +17,9 @@ public class GameTests {
     void testNormalMoveValidation() {
         Board board = new Board(19);
         Game game = new Game(19);
-        Move normalMove = new Move(new Point(10, 10, board));
+        Move normalMove = new Move(10, 10, MoveType.NORMAL, white);
 
-        boolean result = game.simulateMove(board, normalMove, white);
+        boolean result = game.simulateMove(board, normalMove);
 
         assertTrue(result, "Normal move should be valid.");
     }
@@ -46,9 +46,9 @@ public class GameTests {
 
         Game game = new Game(board);
 	    
-        Move suicideMove = new Move(new Point(10, 10, board));
+        Move suicideMove = new Move(10, 10, MoveType.NORMAL, white);
         
-        boolean result = game.simulateMove(board, suicideMove, white);
+        boolean result = game.simulateMove(board, suicideMove);
 
         assertFalse(result, "Suicide move should be invalid.");
     }
@@ -77,8 +77,8 @@ public class GameTests {
         Point p3 = new Point(10, 9, board);
         p3.setStoneGroup(new StoneGroup(p3, white));
 
-        Move capturingMove = new Move(new Point(10, 11, board));
-        boolean result = game.simulateMove(board, capturingMove, white);
+        Move capturingMove = new Move(10, 11, MoveType.NORMAL, white);
+        boolean result = game.simulateMove(board, capturingMove);
 
         // Verify
         assertTrue(result);
@@ -112,9 +112,9 @@ public class GameTests {
 	    board.addPoint(p3);
 	    board.addPoint(p4);
 	    
-        Move captureMove = new Move(new Point(10, 10, board));
+        Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
 	    
-        boolean result = game.simulateMove(board, captureMove, white);
+        boolean result = game.simulateMove(board, captureMove);
 
         assertTrue(result);
     }
@@ -144,17 +144,19 @@ public class GameTests {
 	    board.addPoint(p2);
 	    board.addPoint(p3);
 	    
-	    Move normalMove = new Move(new Point(11, 10, board));
-	    boolean result = game.simulateMove(board, normalMove, black);
+	    Move normalMove = new Move(11, 10 ,MoveType.NORMAL, black);
+	    boolean result = game.simulateMove(board, normalMove);
         assertTrue(result);
+        game.makeMove(normalMove);
 
-	    Move captureMove = new Move(new Point(10, 10, board));
-	    boolean captureResult = game.simulateMove(board, captureMove, white);
+	    Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
+	    boolean captureResult = game.simulateMove(board, captureMove);
         assertTrue(captureResult);
+        game.makeMove(captureMove);
 	    
         //now game should remember this state of the board.
-	    Move koMove = new Move(new Point(11, 10, board));
-	    boolean koResult = game.simulateMove(board, koMove, black);
+	    Move koMove = new Move(11, 10, MoveType.NORMAL, black);
+	    boolean koResult = game.simulateMove(board, koMove);
         assertFalse(koResult);
     }
     
@@ -183,26 +185,26 @@ public class GameTests {
 	    board.addPoint(p2);
 	    board.addPoint(p3);
 	    
-	    Move normalMove = new Move(new Point(11, 10, board));
-	    boolean result = game.simulateMove(board, normalMove, black);
+	    Move normalMove = new Move(11, 10, MoveType.NORMAL, black);
+	    boolean result = game.simulateMove(board, normalMove);
         assertTrue(result);
 
-	    Move captureMove = new Move(new Point(10, 10, board));
-	    boolean captureResult = game.simulateMove(board, captureMove, white);
+	    Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
+	    boolean captureResult = game.simulateMove(board, captureMove);
         assertTrue(captureResult);
         
         //instead of ko move, make 2 random moves, and then try to capture once again
-	    Move normalMove2 = new Move(new Point(1, 1, board));
-	    boolean result2 = game.simulateMove(board, normalMove2, black);
+	    Move normalMove2 = new Move(1, 1, MoveType.NORMAL, black);
+	    boolean result2 = game.simulateMove(board, normalMove2);
         assertTrue(result2);
         
-	    Move normalMove3 = new Move(new Point(2, 2, board));
-	    boolean result3 = game.simulateMove(board, normalMove3, white);
+	    Move normalMove3 = new Move(2, 2, MoveType.NORMAL, white);
+	    boolean result3 = game.simulateMove(board, normalMove3);
         assertTrue(result3);
         
         //now try to capture
-	    Move captureMove2 = new Move(new Point(11, 10, board));
-	    boolean captureResult2 = game.simulateMove(board, captureMove2, black);
+	    Move captureMove2 = new Move(11, 10, MoveType.NORMAL, black);
+	    boolean captureResult2 = game.simulateMove(board, captureMove2);
         assertTrue(captureResult2);
         
     }
@@ -233,31 +235,36 @@ public class GameTests {
 	    board.addPoint(p2);
 	    board.addPoint(p3);
 	    
-	    Move normalMove = new Move(new Point(11, 10, board));
-	    boolean result = game.simulateMove(board, normalMove, black);
+	    Move normalMove = new Move(11, 10, MoveType.NORMAL, black);
+	    boolean result = game.simulateMove(board, normalMove);
         assertTrue(result);
+        game.makeMove(normalMove);
 
-	    Move captureMove = new Move(new Point(10, 10, board));
-	    boolean captureResult = game.simulateMove(board, captureMove, white);
+	    Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
+	    boolean captureResult = game.simulateMove(board, captureMove);
         assertTrue(captureResult);
+        game.makeMove(captureMove);
         
         //instead of ko move, make 2 random moves, and then try to capture once again
-	    Move normalMove2 = new Move(new Point(1, 1, board));
-	    boolean result2 = game.simulateMove(board, normalMove2, black);
+	    Move normalMove2 = new Move(1, 1, MoveType.NORMAL, black);
+	    boolean result2 = game.simulateMove(board, normalMove2);
         assertTrue(result2);
+        game.makeMove(normalMove2);
         
-	    Move normalMove3 = new Move(new Point(2, 2, board));
-	    boolean result3 = game.simulateMove(board, normalMove3, white);
+	    Move normalMove3 = new Move(2, 2, MoveType.NORMAL, white);
+	    boolean result3 = game.simulateMove(board, normalMove3);
         assertTrue(result3);
+        game.makeMove(normalMove3);
         
         //now try to capture
-	    Move captureMove2 = new Move(new Point(11, 10, board));
-	    boolean captureResult2 = game.simulateMove(board, captureMove2, black);
+	    Move captureMove2 = new Move(11, 10, MoveType.NORMAL, black);
+	    boolean captureResult2 = game.simulateMove(board, captureMove2);
         assertTrue(captureResult2);
+        game.makeMove(captureMove2);
         
         //now capture for white should not pass, since ko rule applies
-	    Move captureMove3 = new Move(new Point(10, 10, board));
-	    boolean captureResult3 = game.simulateMove(board, captureMove3, white);
+	    Move captureMove3 = new Move(10, 10, MoveType.NORMAL, white);
+	    boolean captureResult3 = game.simulateMove(board, captureMove3);
         assertFalse(captureResult3);
     }
     
@@ -266,8 +273,8 @@ public class GameTests {
     	int boardSize = 13;
     	Game game = new Game(boardSize);
     	
-    	Move pass1 = new Move(MoveType.PASS);
-    	Move pass2 = new Move(MoveType.PASS);
+    	Move pass1 = new Move(-1, -1, MoveType.PASS, white);
+    	Move pass2 = new Move(-1, -1, MoveType.PASS, black);
     	
     	boolean validation1 = game.isMoveValid(pass1);
     	assertTrue(validation1);
@@ -287,7 +294,7 @@ public class GameTests {
     	int boardSize = 13;
     	Game game = new Game(boardSize);
     	
-    	Move surr = new Move(MoveType.SURRENDER);
+    	Move surr = new Move(-1, -1, MoveType.SURRENDER, black);
     	
     	boolean validation1 = game.isMoveValid(surr);
     	assertTrue(validation1);
@@ -304,11 +311,11 @@ public class GameTests {
     	Board board = new Board(19);
     	Game game = new Game(board);
     	
-    	Move m1 = new Move(new Point(4, 4, board));
+    	Move m1 = new Move(4, 4, MoveType.NORMAL, white);
     	boolean v1 = game.isMoveValid(m1);
     	assertTrue(v1);
     	
-    	Move m2 = new Move(new Point(20, 20, board));
+    	Move m2 = new Move(20, 20, MoveType.NORMAL, black);
     	boolean v2 = game.isMoveValid(m2);
     	assertFalse(v2);
     }
@@ -338,19 +345,19 @@ public class GameTests {
 	    board.addPoint(p2);
 	    board.addPoint(p3);
 	    
-	    Move normalMove = new Move(new Point(11, 10, board));
+	    Move normalMove = new Move(11, 10, MoveType.NORMAL, black);
 	    boolean v1 = game.isMoveValid(normalMove);
         assertTrue(v1);
-        game.simulateMove(board, normalMove, black);
+        game.simulateMove(board, normalMove);
         game.addMove(normalMove);
         
-	    Move captureMove = new Move(new Point(10, 10, board));
+	    Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
 	    boolean v2 = game.isMoveValid(captureMove);
         assertTrue(v2);
-	    game.simulateMove(board, captureMove, white);
+	    game.simulateMove(board, captureMove);
 	    game.addMove(captureMove);
 	    
-	    Move koMove = new Move(new Point(11, 10, board));
+	    Move koMove = new Move(11, 10, MoveType.NORMAL, black);
 	    boolean v3 = game.isMoveValid(koMove);
         assertFalse(v3);
         
@@ -386,9 +393,8 @@ public class GameTests {
 	    board.addPoint(p3);
 	    board.addPoint(p4);
 	    
-        Move captureMove = new Move(new Point(10, 10, board));
-	    
-        boolean result = game.simulateMove(board, captureMove, white);
+        Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
+        boolean result = game.simulateMove(board, captureMove);
         assertTrue(result);
         
         int captives = game.getPlayerCaptives(white);
