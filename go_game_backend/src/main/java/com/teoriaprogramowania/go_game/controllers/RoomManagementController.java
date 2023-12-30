@@ -72,23 +72,23 @@ public class RoomManagementController {
         repositoryInterface.getRoomRepository().updateRoom(room);
     }
 
-    @PutMapping("/rooms/{id}/set/white/{client_id}")
-    public void setWhitePlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
-        Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
-        room.getGame().setWhite(whitePlayer);
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
-        repositoryInterface.getRoomRepository().updateRoom(room);
-    }
+    // @PutMapping("/rooms/{id}/set/white/{client_id}")
+    // public void setWhitePlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
+    //     Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+    //     Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+    //     room.getGame().setWhite(whitePlayer);
+    //     repositoryInterface.getGameRepository().updateGame(room.getGame());
+    //     repositoryInterface.getRoomRepository().updateRoom(room);
+    // }
 
-    @PutMapping("/rooms/{id}/set/black/{client_id}")
-    public void setBlackPlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
-        Client blackPlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
-        room.getGame().setBlack(blackPlayer);
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
-        repositoryInterface.getRoomRepository().updateRoom(room);
-    }
+    // @PutMapping("/rooms/{id}/set/black/{client_id}")
+    // public void setBlackPlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
+    //     Client blackPlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+    //     Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+    //     room.getGame().setBlack(blackPlayer);
+    //     repositoryInterface.getGameRepository().updateGame(room.getGame());
+    //     repositoryInterface.getRoomRepository().updateRoom(room);
+    // }
 
     @PutMapping("/rooms/{id}/remove/white")
     public void removeWhitePlayer(@PathVariable("id") Long roomId){

@@ -84,43 +84,43 @@ public class Game {
     	
     	Player currentPlayer = black;
     	
-    	 do {
-  			//loop untill player makes a valid move
-  			do {
-	    		//create appropriate move type
-	 			Move move;
-	 			if(/*pass*/){
-	 				move = new Move(MoveType.PASS);
-	 			} else if (/*surr*/){
-	 				move = new Move(MoveType.SURRENDER);
-	 			} else{
-	 				int x = //pobierz x
-	 				int y = //pobierz y
-	 				Point point = new Point(x, y, this.board);
-	 				move = new Move(point);
-	 			}
- 			} while(!isMoveValid(move));
+		// do {
+  		// 	//loop untill player makes a valid move
+  		// 	do {
+	    // 		//create appropriate move type
+	 	// 		Move move;
+	 	// 		if(/*pass*/){
+	 	// 			move = new Move(MoveType.PASS);
+	 	// 		} else if (/*surr*/){
+	 	// 			move = new Move(MoveType.SURRENDER);
+	 	// 		} else{
+	 	// 			int x = //pobierz x
+	 	// 			int y = //pobierz y
+	 	// 			Point point = new Point(x, y, this.board);
+	 	// 			move = new Move(point);
+	 	// 		}
+ 		// 	} while(!isMoveValid(move));
  			
- 			if(move.getMoveType() == MoveType.SURRENDER) {
- 				moves.add(move);
- 				break;
- 			} else if(move.getMoveType() == MoveType.PASS){
- 				moves.add(move);
- 			} else {
- 				simulateMove(this.board, move, black);
- 				moves.add(move);
- 			}
+ 		// 	if(move.getMoveType() == MoveType.SURRENDER) {
+ 		// 		moves.add(move);
+ 		// 		break;
+ 		// 	} else if(move.getMoveType() == MoveType.PASS){
+ 		// 		moves.add(move);
+ 		// 	} else {
+ 		// 		simulateMove(this.board, move, black);
+ 		// 		moves.add(move);
+ 		// 	}
  			
- 			//change player
- 			if(currentPlayer == black) {
- 				currentPlayer = white;
- 			} else {
- 				currentPlayer = black;
- 			}
+ 		// 	//change player
+ 		// 	if(currentPlayer == black) {
+ 		// 		currentPlayer = white;
+ 		// 	} else {
+ 		// 		currentPlayer = black;
+ 		// 	}
  			
-    	} while(!gameResolved());
+    	// } while(!gameResolved());
     	
-    	Player winner = pickWinner(black, white, currentPlayer);
+    	// Player winner = pickWinner(black, white, currentPlayer);
     }
     
     public void addMove(Move move){
