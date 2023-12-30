@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from "react";
 
-export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
+export default function Board({ size, cellSize, boardMatrix, sendMove, clientId, white, black }){
     const canvasRef = useRef(null);
 
     const handleCanvasClick = (event) => {
@@ -16,7 +16,7 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
         const row = Math.floor(clickY / cellSize);
     
         // moves.push({x: row, y: col, color: color});
-        sendMove({x: col, y: row, color});
+        sendMove({x: col, y: row, moveType: "NORMAL", clientId});
         
         // boardMatrix[col][row] = color;
         // refresh();
@@ -36,26 +36,31 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
         // Draw the Go board
         context.strokeStyle = '#000';
         for (let i = 0; i < size; i++) {
-        const linePosition = i * cellSize;
-        context.beginPath();
-        context.moveTo(linePosition + 0.5 * cellSize, cellSize * 0.5);
-        context.lineTo(linePosition + 0.5 * cellSize, canvas.height - cellSize * 0.5);
-        context.stroke();
-    
-        context.beginPath();
-        context.moveTo(0.5 * cellSize, linePosition + 0.5 * cellSize);
-        context.lineTo(canvas.width - cellSize * 0.5, linePosition + 0.5 * cellSize );
-        context.stroke();
+            const linePosition = i * cellSize;
+            context.beginPath();
+            context.moveTo(linePosition + 0.5 * cellSize, cellSize * 0.5);
+            context.lineTo(linePosition + 0.5 * cellSize, canvas.height - cellSize * 0.5);
+            context.stroke();
+        
+            context.beginPath();
+            context.moveTo(0.5 * cellSize, linePosition + 0.5 * cellSize);
+            context.lineTo(canvas.width - cellSize * 0.5, linePosition + 0.5 * cellSize );
+            context.stroke();
         }
     
         // Draw stones
         
         boardMatrix.forEach((row, r) => {
             row.forEach( (cell, c) => {
-                if(!cell) return;
-                context.fillStyle = cell;
+                if(cell.stoneGroup == null || cell.isEmpty) return;
+
                 const x = r * cellSize + cellSize / 2;
                 const y = c * cellSize + cellSize / 2;
+                
+                const isWhite = cell.stoneGroup.owner.client.id == white;
+                
+                context.fillStyle = isWhite ?  "#eee" : "#333";
+                
             
                 context.beginPath();
                 context.arc(x, y, cellSize / 3, 0, 2 * Math.PI);
@@ -79,9 +84,14 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, color }){
                 style={{ border: '1px solid #000' }} 
                 onClick={handleCanvasClick}
             />
+
             <button className="btn btn-danger m-2" onClick={e => {
-                sendMove({x: 0, y: 0, pass: true, color: color});
+                sendMove({x: 0, y: 0, moveType: "PASS", clientId });
             }}>Pass</button>
+
+            <button className="btn btn-danger m-2" onClick={e => {
+                sendMove({x: 0, y: 0, moveType: "SURRENDER", clientId });
+            }}>Surrender</button>
         </div>
         
     );

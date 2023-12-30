@@ -27,7 +27,13 @@ public class RoomSocketsController {
 
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
         Game game = room.getGame();
-        game.addMove(move);
+
+        if(move.getPlayer().getClient().getId() == game.getWhite().getClient().getId()){
+            move.setPlayer(game.getWhite());
+        }else if(move.getPlayer().getClient().getId() == game.getBlack().getClient().getId()){
+            move.setPlayer(game.getBlack());
+        } 
+        game.makeMove(move);
 
         repositoryInterface.getRoomRepository().updateRoom(room);
         repositoryInterface.getGameRepository().updateGame(game);

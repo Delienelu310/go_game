@@ -58,9 +58,18 @@ export default function GamePage(){
         console.log('Disconnected');
     };
 
-    function sendMove({x, y, color, pass}){
+    function sendMove({x, y, clientId, moveType}){
         stompClient &&
-        stompClient.send( `/room/${roomId}/move`,  {},  JSON.stringify({x ,y, color, pass }));
+        stompClient.send( `/room/${roomId}/move`,  {},  JSON.stringify({
+            x ,
+            y,
+            moveType, 
+            player: {
+                client: {
+                    id: clientId
+                }
+            } 
+        }));
     };
 
     function refreshRoomForAll(){
@@ -100,8 +109,8 @@ export default function GamePage(){
                     <div className="m-3">Game state: {room.game.state}</div>
                     <div className="m-3">White Player: {room.game.white ? 
                         <div>
-                            {room.game.white.clientDetails.username}
-                            {(room.game.white.id == id || room.admin.id == id) &&
+                            {room.game.white.client.clientDetails.username}
+                            {(room.game.white.client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
                                     removeWhitePlayer(room.id)
                                         .then(response => {
@@ -123,8 +132,8 @@ export default function GamePage(){
                     }</div>
                     <div className="m-3">Black player: {room.game.black ? 
                         <div>
-                            {room.game.black.clientDetails.username}
-                            {(room.game.black.id == id || room.admin.id == id) &&
+                            {room.game.black.client.clientDetails.username}
+                            {(room.game.black.client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
                                     removeBlackPlayer(room.id)
                                         .then(response => {
@@ -174,16 +183,13 @@ export default function GamePage(){
                 {room.game.state != "CREATED" && <div>
                     <button className="btn btn-danger m-2">Surrender</button>
                     <Board
-                        size={room.game.size}
+                        size={room.game.board.size}
                         cellSize={50}
-                        boardMatrix={room.game.field}
-                        color={room.game.white.id == id ? 
-                            "WHITE" :
-                            room.game.black.id == id ? 
-                            "BLACK"
-                            : null
-                        }
+                        boardMatrix={room.game.board.board}
+                        clientId={id}
                         sendMove={sendMove}
+                        white={room.game.white ? room.game.white.client.id : null}
+                        black={room.game.black ? room.game.black.client.id : null}
                     /> 
                 </div>}
                 
