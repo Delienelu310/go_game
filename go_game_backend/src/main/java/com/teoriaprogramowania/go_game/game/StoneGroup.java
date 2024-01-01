@@ -50,22 +50,6 @@ public class StoneGroup {
 		this.breaths.remove(connectingPoint);
 	}
 	
-	//when enemy player puts his stone in the neighborhood of our's stone group
-/*	public StoneGroup removeBreath(Point enemyPoint) {
-		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
-
-		Iterator<Point> iterator = newStoneGroup.breaths.iterator();
-	    while(iterator.hasNext()) {
-	        Point breath = iterator.next();
-	        if(breath.equals(enemyPoint)){
-	            iterator.remove();
-	        }
-	    }
-		
-		return newStoneGroup;
-	}
-*/
-	
 	public StoneGroup removeBreath(Point enemyPoint) {
 		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
 		newStoneGroup.breaths.remove(enemyPoint);
@@ -86,6 +70,4 @@ public class StoneGroup {
 		}
 		return capturedStones;
 	}
-	
-	
 }

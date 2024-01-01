@@ -63,7 +63,6 @@ public class Point {
 			return false;
 		}
 		Point point = (Point) obj;
-//		return this.x == point.x && this.y == point.y && Objects.equals(board, point.board);
 		return this.x == point.x && this.y == point.y;
 	}
 	
@@ -88,8 +87,6 @@ public class Point {
 				//continue if point out of board
 				continue;
 			}
-
-		
 		}
 		return neighborStoneGroups;
 	}

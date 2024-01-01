@@ -888,7 +888,4 @@ public class GameTests {
         assertFalse(game.isMoveValid(move));
         
     }
-
-    
-    
 }

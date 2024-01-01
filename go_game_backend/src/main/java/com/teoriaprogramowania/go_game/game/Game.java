@@ -143,11 +143,6 @@ public class Game {
     	
     	String currentBoardState = this.board.toString();
         previousBoardStates.add(currentBoardState);
-/*
-    	if(simulateMove(this.board, move)) {
-    		this.moves.add(move);
-    	}
-*/
     }
     
     public boolean simulateMove(Board board, Move move) {
@@ -181,8 +176,6 @@ public class Game {
     	        newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
             }
       	}
-      	
-      	
     	
     	//suicide move check
     	if(newStoneGroup.getBreaths().size() == 0) {
@@ -202,15 +195,11 @@ public class Game {
         }
         
         //if ok then apply changes
-
       	for(Point stone : newStoneGroup.getStones()) {
       		stone.setStoneGroup(newStoneGroup);
       	}
-      	
-      	
         move.getPlayer().addCaptives(captives);
         
-        //previousBoardStates.add(currentBoardState);
         return true;
     }
     
@@ -228,7 +217,6 @@ public class Game {
 
     	if(simulateMove(this.board, move) == false) {
     		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
-        	
     		return false;
     	}
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
