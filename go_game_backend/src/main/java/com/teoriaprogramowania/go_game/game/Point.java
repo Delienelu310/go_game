@@ -113,6 +113,28 @@ public class Point {
 		}
 		return emptyNeighborPoints;
 	}
+
+	public Set<Point> getEmptyNeighborPoints(Set<StoneGroup> deadStoneGroups){
+		Set<Point> emptyNeighborPoints = new HashSet<Point>();
+		int dx[] = {-1, 1, 0, 0};
+		int dy[] = {0, 0, 1, -1};
+		for(int i = 0; i < 4; ++i) {
+			int newX = this.x + dx[i];
+			int newY = this.y + dy[i];			
+
+			try {
+				//continue if point empty
+				Point newPoint = this.board.getPoint(newX, newY);
+				if(newPoint.isEmpty() || deadStoneGroups.contains(newPoint.getStoneGroup())) {
+					emptyNeighborPoints.add(newPoint);
+				}
+			} catch(OutOfBoardException e) {
+				//continue if point out of board
+				continue;
+			}
+		}
+		return emptyNeighborPoints;
+	}
 	
 	public void removeStone() {
 		if(!this.isEmpty) {
@@ -124,7 +146,4 @@ public class Point {
 			this.board.addPoint(this);
 		}
 	}
-	
-	//get dead neighbors
-	
 }

@@ -21,6 +21,7 @@ public class Game {
     private Set<String> previousBoardStates = new HashSet<>();
     private State state;
     private Set<StoneGroup> deadStoneGroups = new HashSet<>();
+    private Set<Territory> territories = new HashSet<>();
     
     public Game(int size){
         this.board = new Board(size);
@@ -103,33 +104,6 @@ public class Game {
     	return false;
     }
     
-    public void resumeGame() {
-    	if(this.state == State.NEGOTIATION) {
-        	this.state = State.ONGOING;
-    	}
-    }
-    
-    public void finalizeGame() {
-    	if(this.state != State.NEGOTIATION) {
-    		return;
-    	}
-    	this.state = State.FINISHED;
-    	
-    	//obliczanie terytorium i wybieranie zwyciezcy
-    }
-    
-    public void pickDeadStones(int x, int y) {
-    	try {
-        	Point point = this.board.getPoint(x, y);
-    		if(point.isEmpty()) {
-    			return;
-    		}
-        	deadStoneGroups.add(point.getStoneGroup());
-    	} catch(OutOfBoardException e) {
-    		return;
-    	}
-    }
-        
     public void makeMove(Move move) {
     	simulateMove(this.board, move);
     	this.moves.add(move);
@@ -213,9 +187,20 @@ public class Game {
     		return false;
     	}
 
-    	
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
+    }
+
+    public void pickDeadStoneGroups(int x, int y) {
+    	try {
+        	Point point = this.board.getPoint(x, y);
+    		if(point.isEmpty()) {
+    			return;
+    		}
+        	deadStoneGroups.add(point.getStoneGroup());
+    	} catch(OutOfBoardException e) {
+    		return;
+    	}
     }
     
     public Player pickWinner(Player p1, Player p2) {
@@ -225,8 +210,6 @@ public class Game {
     		}
     		return p2;
     	}
-//    	int p1Territory = p1.calculateTeritory();
-//    	int p2Territory = p2.calculateTeritory();
     	
     	if(p1.getCaptives() > p2.getCaptives()) {
         	return p1;	
@@ -237,4 +220,73 @@ public class Game {
     public int getPlayerCaptives(Player player) {
     	return player.getCaptives();
     }
+    
+    private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
+		Set<Point> potentialTerritory = new HashSet<Point>();
+		Set<Territory> territories = new HashSet<Territory>();
+		Territory newTerritory;
+		
+		Point point;
+		for(int i = 0; i < this.board.getSize(); ++i) {
+			for(int j = 0; j < this.board.getSize(); ++j) {
+				point = this.board.getPoint(i, j);
+				if(point.isEmpty() || deadStoneGroups.contains(point.getStoneGroup())) {
+					potentialTerritory.add(point);
+				}
+			}
+		}
+		
+		while(potentialTerritory.size() > 0) {
+			point = potentialTerritory.iterator().next();
+			newTerritory = new Territory();
+			
+			Set<Point> newTerritoryPoints = new HashSet<Point>();
+			newTerritoryPoints.add(point);
+			
+			int prev_size;
+			int curr_size;
+			do {
+				prev_size = newTerritoryPoints.size();
+				Set<Point> actualTerritory = newTerritoryPoints;
+				for(Point deadOrEmptyPoint : actualTerritory) {
+					newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
+				}
+				curr_size = newTerritoryPoints.size();
+			} while(curr_size > prev_size);
+			
+			newTerritory.addPoints(newTerritoryPoints);
+			for(Point emptyOrDeadPoint : newTerritoryPoints) {
+				newTerritory.addNeighborStoneGroups(emptyOrDeadPoint.getNeighborStoneGroups());
+			}
+			
+			newTerritory.removeNeighborStoneGroups(deadStoneGroups);
+			potentialTerritory.removeAll(newTerritoryPoints);
+			territories.add(newTerritory);
+		}
+		
+		for(Territory territory : territories) {
+			territory.setOwner();
+		}
+		
+		return territories;
+ 	}
+    
+
+    public void resumeGame() {
+    	if(this.state == State.NEGOTIATION) {
+        	this.state = State.ONGOING;
+    	}
+    }
+    
+    public void finalizeGame() {
+    	if(this.state != State.NEGOTIATION) {
+    		return;
+    	}
+    	this.state = State.FINISHED;
+    	
+    	territories = establishTerritories(deadStoneGroups);
+    	//obliczanie terytorium i wybieranie zwyciezcy
+    }
+    
+        
 }
