@@ -626,60 +626,6 @@ public class GameTests {
     }
     
     @Test
-    public void testGame2() {
-    	Board board = new Board(9);
-    	Game game = new Game(board);
-    	
-    	Player white = new Player(new Client());
-    	Player black = new Player(new Client());
-    	
-    	Move move = new Move(0, 0, MoveType.NORMAL, black);
-    	
-    	boolean validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-    	
-    	move = new Move(1, 0, MoveType.NORMAL, white);
-    	
-    	validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-    	
-    	StoneGroup sg1 = board.getPoint(1, 0).getStoneGroup();
-    	int breaths1 = sg1.getBreaths().size();
-    	assertEquals(2, breaths1);
-
-    	StoneGroup sg2 = board.getPoint(0, 0).getStoneGroup();
-    	int breaths2 = sg2.getBreaths().size();
-    	assertEquals(1, breaths2);
-    	
-    	move = new Move(4, 4, MoveType.NORMAL, black);
-    	
-    	validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-
-    	
-    	move = new Move(0, 1, MoveType.NORMAL, white);
-    	
-    	validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-    	
-    	move = new Move(4, 5, MoveType.NORMAL, black);
-    	
-    	validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-    	
-    	move = new Move(0, 0, MoveType.NORMAL, white);
-    	
-    	validation = game.isMoveValid(move);
-    	assertTrue(validation);
-    	game.makeMove(move);
-    }
-    
-    @Test
     void testGameWithKo(){
     	Board board = new Board(9);
     	Game game = new Game(board);
@@ -788,8 +734,161 @@ public class GameTests {
     	
     	assertFalse(board.getPoint(2, 1).isEmpty());
     	assertTrue(board.getPoint(1, 1).isEmpty());
-    	assertEquals(movesSizeBeforeWrongMove + 1, game.getMoves().size());
-    	
+    	assertEquals(movesSizeBeforeWrongMove + 1, game.getMoves().size());	
     }
+    
+    @Test
+    void testBigGroupCapture() {
+    	Board board = new Board(9);
+    	Game game = new Game(board);
+    	
+    	Move move = new Move(0, 0, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(2, 0, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(0, 1, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(2, 1, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(1, 1, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(1, 2, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(1, 0, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(0, 2, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	assertTrue(board.getPoint(0, 0).isEmpty());
+    	assertTrue(board.getPoint(0, 1).isEmpty());
+    	assertTrue(board.getPoint(1, 1).isEmpty());
+    	assertTrue(board.getPoint(1, 0).isEmpty());
+    	
+    	assertEquals(5, board.getPoint(2, 0).getStoneGroup().getBreaths().size());
+    	assertEquals(2, board.getPoint(2, 0).getStoneGroup().getStones().size());
+
+    	assertEquals(5, board.getPoint(0, 2).getStoneGroup().getBreaths().size());
+    	assertEquals(2, board.getPoint(0, 2).getStoneGroup().getStones().size());
+    	
+    	assertEquals(board.getPoint(0, 2).getStoneGroup(), board.getPoint(1, 2).getStoneGroup());
+    	
+    	//does joining work?
+    	
+    	move = new Move(-1, -1, MoveType.PASS, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	move = new Move(2, 2, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	assertEquals(9, board.getPoint(0, 2).getStoneGroup().getBreaths().size());
+    	assertEquals(5, board.getPoint(0, 2).getStoneGroup().getStones().size());
+    }   
+    
+    @Test
+    void testBigGroupCaptureMiddleOfABoard() {
+        Board board = new Board(9);
+        Game game = new Game(board);
+        
+        Move move = new Move(3, 3, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(3, 4, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(4, 3, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(4, 4, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        move = new Move(2, 4, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(2, 3, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(5, 4, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(4, 5, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(4, 2, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(3, 5, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(3, 2, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(5, 3, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        assertTrue(board.getPoint(3, 3).isEmpty());
+        assertTrue(board.getPoint(3, 4).isEmpty());
+        assertTrue(board.getPoint(4, 3).isEmpty());
+        assertTrue(board.getPoint(4, 4).isEmpty());
+        
+        move = new Move(3, 3, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(3, 4, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        move = new Move(4, 3, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        move = new Move(4, 4, MoveType.NORMAL, black);
+        assertFalse(game.isMoveValid(move));
+        
+    }
+
+    
     
 }
