@@ -51,13 +51,6 @@ public class Game {
     	}
     }
     
-    private Player getLastMovePlayer() {
-    	if(moves.size()%2 == 0) {
-    		return this.white;
-    	}
-    	return this.black;
-    }
-    
     public void setId(Long id) {
     	this.id = id;
     }
@@ -82,7 +75,7 @@ public class Game {
     	this.state = State.ONGOING;
     }
     
-    private void addMove(Move move){
+    public void addMove(Move move){
         moves.add(move);
     }
     
@@ -219,13 +212,15 @@ public class Game {
     		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     		return false;
     	}
+
+    	
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }
     
     public Player pickWinner(Player p1, Player p2) {
     	if(moves.get(moves.size() - 1).getMoveType() == MoveType.SURRENDER) {
-    		if(this.getLastMovePlayer() == p1) {
+    		if(this.moves.get(moves.size() - 1).getPlayer() == p1) {
     			return p2;
     		}
     		return p2;
