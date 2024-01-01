@@ -272,6 +272,7 @@ public class Game {
     
 
     public void resumeGame() {
+    	this.deadStoneGroups = null;
     	if(this.state == State.NEGOTIATION) {
         	this.state = State.ONGOING;
     	}
@@ -284,8 +285,44 @@ public class Game {
     	this.state = State.FINISHED;
     	
     	territories = establishTerritories(deadStoneGroups);
-    	//obliczanie terytorium i wybieranie zwyciezcy
     }
     
-        
+    public void setScore(Player p1, Player p2) {
+    	for(Territory territory : territories) {
+    		if(territory.getOwner() == p1) {
+    			for(StoneGroup deadStoneGroup : deadStoneGroups) {
+    				if(territory.getPoints().containsAll(deadStoneGroup.getStones())) {
+    					p1.addCaptives(deadStoneGroup.getStones());
+    				}
+    			}
+    			p1.addTerritory(territory);
+    		}
+    		else {
+    			for(StoneGroup deadStoneGroup : deadStoneGroups) {
+    				if(territory.getPoints().containsAll(deadStoneGroup.getStones())) {
+    					p2.addCaptives(deadStoneGroup.getStones());
+    				}
+    			}
+    			p2.addTerritory(territory);
+    		}
+    	}
+    	
+    	if(p1.getCaptives().size() > p1.getTerritory().getPoints().size()) {
+    		p1.setFinalScore(p1.getTerritory().getPoints().size());
+    	}
+    	else {
+    		p1.setFinalScore(p1.getCaptives().size());
+    	}
+
+    	if(p2.getCaptives().size() > p2.getTerritory().getPoints().size()) {
+    		p2.setFinalScore(p2.getTerritory().getPoints().size());
+    	}
+    	else {
+    		p2.setFinalScore(p2.getCaptives().size());
+    	}
+    }
+    
+    public int getPlayerScore(Player player) {
+    	return player.getFinalScore();
+    }
 }

@@ -9,6 +9,7 @@ public class Player {
 //	private int captives;
 	private int finalScore;
 	private List<Point> captives = new ArrayList<>();
+	private Territory territory;
 	
 	public Player(Client client) {
 		this.client = client;
@@ -30,11 +31,19 @@ public class Player {
 		this.captives.removeAll(captvies);
 	}
 	
+	public void addTerritory(Territory territory) {
+		this.territory.addPoints(territory.getPoints());
+	}
+	
+	public Territory getTerritory() {
+		return this.territory;
+	}
+	
 	public void setFinalScore(int finalScore) {
 		this.finalScore = finalScore;
 	}
 	
-	public int getFinalScore(int finalScore) {
+	public int getFinalScore() {
 		return this.finalScore;
 	}
 }
