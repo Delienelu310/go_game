@@ -357,7 +357,7 @@ public class GameTests {
         assertTrue(result);
         game.makeMove(captureMove);
         
-        int captives = game.getPlayerCaptives(white);
+        int captives = game.getPlayerCaptives(white).size();
         assertEquals(1, captives);
     }
     
@@ -583,7 +583,7 @@ public class GameTests {
     	}
 
     	//white player should have 4 captives after capture
-    	assertEquals(4, white.getCaptives());
+    	assertEquals(4, white.getCaptives().size());
     	
        	for(int k = 0; k < 2; ++k) {
     		for(int l = 0; l < 2; ++l) {
