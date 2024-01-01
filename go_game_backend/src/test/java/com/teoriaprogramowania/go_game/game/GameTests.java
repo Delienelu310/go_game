@@ -720,4 +720,123 @@ public class GameTests {
     	assertTrue(validation);
     	game.makeMove(move);
     }
+    
+    @Test
+    void testGameWithKo(){
+    	Board board = new Board(9);
+    	Game game = new Game(board);
+    	
+    	Move move = new Move(0, 1, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(3, 1, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	assertEquals(1, board.getPoint(3, 1).getStoneGroup().getStones().size());
+    	assertEquals(4, board.getPoint(3, 1).getStoneGroup().getBreaths().size());
+
+    	move = new Move(1, 2, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(2, 2, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(1, 0, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	move = new Move(2, 0, MoveType.NORMAL, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	//now check ko situation
+    	
+    	move = new Move(2, 1, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	assertEquals(1, board.getPoint(2, 1).getStoneGroup().getBreaths().size());
+    	
+    	//now white captures
+    	Move captureMove = new Move(1, 1, MoveType.NORMAL, white);
+     	if(game.isMoveValid(captureMove)) {
+    		game.makeMove(captureMove);
+    	}
+
+    	int movesSizeBeforeWrongMove = game.getMoves().size();
+
+    	assertTrue(board.getPoint(2, 1).isEmpty());
+    	assertEquals(null, board.getPoint(2, 1).getStoneGroup());
+    	assertFalse(board.getPoint(1, 1).isEmpty());
+    	
+    	//now move should be impossible
+    	Move wrongMove = new Move(2, 1, MoveType.NORMAL, black);
+    	assertFalse(game.isMoveValid(wrongMove));
+    	if(game.isMoveValid(wrongMove)) {
+    		game.makeMove(wrongMove);
+    	}
+    	
+    	assertTrue(board.getPoint(2, 1).isEmpty());
+    	assertEquals(null, board.getPoint(2, 1).getStoneGroup());
+    	
+    	assertEquals(movesSizeBeforeWrongMove, game.getMoves().size());
+    	
+    	//ok so make some random moves and that move should be legal again
+    	
+    	move = new Move(0, 8, MoveType.NORMAL, black);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+    	
+    	//random pass
+    	move = new Move(-1, -1, MoveType.PASS, white);
+    	if(game.isMoveValid(move)) {
+    		game.makeMove(move);
+    	}
+
+    	assertTrue(board.getPoint(2, 1).isEmpty());
+    	assertEquals(null, board.getPoint(2, 1).getStoneGroup());
+    	assertFalse(board.getPoint(1, 1).isEmpty());
+    	
+    	//should be legal now
+    	movesSizeBeforeWrongMove = game.getMoves().size();
+    	if(game.isMoveValid(wrongMove)) {
+    		game.makeMove(wrongMove);
+    	}
+    	
+
+    	assertFalse(board.getPoint(2, 1).isEmpty());
+    	assertNotEquals(null, board.getPoint(2, 1).getStoneGroup());
+    	assertTrue(board.getPoint(1, 1).isEmpty());
+    	
+    	assertEquals(movesSizeBeforeWrongMove + 1, game.getMoves().size());
+    	
+    	System.out.println(game.getMoves().size());
+    	
+    	//now capture move for white should be illegal
+    	Move wrongMove2 = new Move(1, 1, MoveType.NORMAL, white);
+    	if(game.isMoveValid(wrongMove2)) {
+    		System.out.println("cos poszlo zle");
+    		game.makeMove(wrongMove2);
+    	}
+
+    	System.out.println(game.getMoves().size());
+    	
+    	assertFalse(board.getPoint(2, 1).isEmpty());
+    	assertTrue(board.getPoint(1, 1).isEmpty());
+    	assertEquals(movesSizeBeforeWrongMove + 1, game.getMoves().size());
+    	
+    }
+    
 }

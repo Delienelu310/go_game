@@ -16,7 +16,7 @@ public class Game {
 	private Long id;
     private Player white;
     private Player black;
-    private List<Move> moves;
+    private List<Move> moves = new ArrayList<>();;
     private Board board;
     private Set<String> previousBoardStates = new HashSet<>();
     private State state;
@@ -24,7 +24,6 @@ public class Game {
     
     public Game(int size){
         this.board = new Board(size);
-        this.moves = new ArrayList<>();
         this.state = State.CREATED;
     }
     
@@ -139,9 +138,16 @@ public class Game {
     }
         
     public void makeMove(Move move) {
+    	simulateMove(this.board, move);
+    	this.moves.add(move);
+    	
+    	String currentBoardState = this.board.toString();
+        previousBoardStates.add(currentBoardState);
+/*
     	if(simulateMove(this.board, move)) {
-    		moves.add(move);
+    		this.moves.add(move);
     	}
+*/
     }
     
     public boolean simulateMove(Board board, Move move) {
@@ -157,6 +163,7 @@ public class Game {
     	Set<StoneGroup> neighbors = simulatedPoint.getNeighborStoneGroups();
     	
     	Set<StoneGroup> capturedStoneGroups = new HashSet<>();
+    	Set<Point> capturedStones = new HashSet<>();
 
       	//remove breath from enemy stone group and kill it if appropriate
       	for(StoneGroup neighbor : neighbors) {
@@ -164,6 +171,7 @@ public class Game {
     			neighbor = neighbor.removeBreath(simulatedPoint);
     			if(neighbor.getBreaths().size() == 0) {
     				capturedStoneGroups.add(neighbor);
+    				capturedStones.addAll(neighbor.getStones());
     				captives += neighbor.removeStoneGroup(this.board);
     			}
     		}
@@ -175,27 +183,36 @@ public class Game {
     	        newStoneGroup.joinStoneGroup(neighbor, simulatedPoint);
             }
       	}
-      	for(Point stone : newStoneGroup.getStones()) {
-      		stone.setStoneGroup(newStoneGroup);
-      	}
       	
       	
     	
     	//suicide move check
     	if(newStoneGroup.getBreaths().size() == 0) {
+    		this.board.setPointStoneGroup(simulatedPoint, null);
     		return false;
     	}
 
     	//ko rule check;
     	String currentBoardState = this.board.toString();
         if(previousBoardStates.contains(currentBoardState)) {
+        	for(StoneGroup sg : capturedStoneGroups) {
+        		for(Point stone : sg.getStones()) {
+        			this.board.setPointStoneGroup(stone, sg);
+        		}
+        	}
         	return false;
         }
         
         //if ok then apply changes
+
+      	for(Point stone : newStoneGroup.getStones()) {
+      		stone.setStoneGroup(newStoneGroup);
+      	}
+      	
+      	
         move.getPlayer().addCaptives(captives);
         
-        previousBoardStates.add(currentBoardState);
+        //previousBoardStates.add(currentBoardState);
         return true;
     }
     
@@ -211,12 +228,15 @@ public class Game {
     		return false;
     	}
 
-    	BoardMemento memento = this.board.createMemento();
+//    	BoardMemento memento = this.board.createMemento();
     	if(simulateMove(this.board, move) == false) {
-    		this.board.restore(memento);
+ //   		this.board.restore(memento);
+    		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
+        	
     		return false;
     	}
-    	this.board.restore(memento);
+ //   	this.board.restore(memento);
+    	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }
     
