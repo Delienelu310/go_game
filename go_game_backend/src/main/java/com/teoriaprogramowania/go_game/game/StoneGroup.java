@@ -6,7 +6,7 @@ public class StoneGroup {
 	//represents a group of stones 
 	private Set<Point> stones;
 	private Set<Point> breaths;
-	Player owner;
+	private Player owner;
 	
 	//group of stones constructor
 	public StoneGroup(Set<Point> stones, Set<Point> breaths, Player owner) {
@@ -45,21 +45,15 @@ public class StoneGroup {
 	
 	//connect stone chains
 	public void joinStoneGroup(StoneGroup newStones, Point connectingPoint) {
-		this.stones.addAll(newStones.getStones());
-		this.breaths.addAll(newStones.getBreaths());
-
-		//remove connecting point from breaths;
+		this.stones.addAll(newStones.stones);
+		this.breaths.addAll(newStones.breaths);
 		this.breaths.remove(connectingPoint);
-		
 	}
 	
-	
-	
 	//when enemy player puts his stone in the neighborhood of our's stone group
-	public StoneGroup removeBreath(Point enemyPoint) {
+/*	public StoneGroup removeBreath(Point enemyPoint) {
 		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
-		//newStoneGroup.breaths.remove(enemyPoint);
-		
+
 		Iterator<Point> iterator = newStoneGroup.breaths.iterator();
 	    while(iterator.hasNext()) {
 	        Point breath = iterator.next();
@@ -70,31 +64,28 @@ public class StoneGroup {
 		
 		return newStoneGroup;
 	}
+*/
 	
-	/*
-	public void removeBreath(Point enemyPoint) {
-		Iterator<Point> iterator = this.breaths.iterator();
-	    while(iterator.hasNext()) {
-	        Point breath = iterator.next();
-	        if(breath.equals(enemyPoint)){
-	            iterator.remove();
-	        }
-	    }
+	public StoneGroup removeBreath(Point enemyPoint) {
+		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
+		newStoneGroup.breaths.remove(enemyPoint);
+		return newStoneGroup;
 	}
-	*/
 	
-	//remove stone group and update breaths of neighbor points
+	public void addBreath(Point breath) {
+		this.breaths.add(breath);
+	}
+	
+	//remove stone group and update breaths of neighbor stone groups
 	//return number of stones from this group
-	public int removeStoneGroup() {
+	public int removeStoneGroup(Board board) {
 		int capturedStones = this.stones.size();
 		for(Point stone : this.stones) {
-			stone.setStoneGroup(null);
-			Set<StoneGroup> neighbors = stone.getNeighborStoneGroups();
-			for(StoneGroup neighbor : neighbors) {
-				neighbor.breaths.add(stone);
-			}
+			Point actualPoint = board.getPoint(stone.getX(), stone.getY());
+			actualPoint.removeStone();
 		}
 		return capturedStones;
 	}
+	
 	
 }

@@ -26,6 +26,19 @@ public class Board {
 		this.size = size;
 	}
 	
+	private Point[][] deepCopyBoard(){
+		Point[][] newBoard = new Point[this.size][];
+		for(int i = 0; i < this.size; ++i) {
+			newBoard[i] = new Point[this.size];
+			for(int j = 0; j < this.size; ++j) {
+				newBoard[i][j] = new Point(i, j, this);
+				newBoard[i][j].setStoneGroup(this.board[i][j].getStoneGroup());
+			}
+		}
+		return newBoard;
+	}
+			
+	
 	public BoardMemento createMemento() {
 		return new BoardMemento(this.board);
 	}

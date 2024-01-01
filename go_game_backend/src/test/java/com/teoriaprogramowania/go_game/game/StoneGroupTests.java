@@ -296,4 +296,68 @@ public class StoneGroupTests {
 		
 	}
 	
+	@Test
+	public void testRemoveStoneGroup_RemovesAllStones() {
+	    Board board = new Board(9);
+	    
+	    Point p1 = new Point(0, 0, board);
+	    StoneGroup g1 = new StoneGroup(p1, white);
+	    
+	    
+	    Point p2 = new Point(0, 1, board);
+	    StoneGroup g2 = new StoneGroup(p2, white);
+	    
+	    g2.joinStoneGroup(g1, p2);
+	    
+	    int removedStones = g2.removeStoneGroup();
+	    
+	    assertEquals(2, removedStones);
+	    
+	    assertTrue(board.getPoint(0, 0).isEmpty());
+	    assertTrue(board.getPoint(0, 1).isEmpty());
+	}
+
+	@Test
+	public void testRemoveStoneGroup_AddBreathsToNeighbors() {
+	    Board board = new Board(9);
+	    
+	    //add 2 white stones
+	    Point p1 = new Point(0, 0, board);
+	    StoneGroup g1 = new StoneGroup(p1, white);
+	    
+	    assertEquals(2, g1.getBreaths().size());
+	    
+	    Point p2 = new Point(0, 1, board);
+	    StoneGroup g2 = new StoneGroup(p2, white);
+
+	    assertEquals(2, g2.getBreaths().size());
+	    
+	    g2.joinStoneGroup(g1, p2);
+	    p1.setStoneGroup(g2);
+	    
+	    g2 = board.getPoint(p1.getX(), p1.getY()).getStoneGroup();
+
+	    assertEquals(2, g2.getStones().size());
+	    assertEquals(3, g2.getBreaths().size());
+	    
+	    //add 2 black stones
+	    Point p3 = new Point(1, 0, board);
+	    g2.removeBreath(p3);
+	    StoneGroup g3 = new StoneGroup(p3, black);
+	    Point p4 = new Point(1, 1, board);
+	    g2.removeBreath(p4);
+	    StoneGroup g4 = new StoneGroup(p4, black);
+	    g4.joinStoneGroup(g3, p4);
+	    
+	    
+	    //white stones should have 1 breath
+	    assertEquals(1, g2.getBreaths().size());
+	    
+	    int removedStones = g2.removeStoneGroup();
+	    
+	    assertEquals(2, removedStones);
+	    
+	    assertTrue(board.getPoint(0, 0).isEmpty());
+	    assertTrue(board.getPoint(0, 1).isEmpty());
+	}
 }

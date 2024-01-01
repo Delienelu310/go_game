@@ -117,6 +117,17 @@ public class Point {
 		return emptyNeighborPoints;
 	}
 	
+	public void removeStone() {
+		if(!this.isEmpty) {
+			this.stoneGroup = null;
+			this.isEmpty = true;
+			for(StoneGroup neighborStoneGroup : this.getNeighborStoneGroups()) {
+				neighborStoneGroup.addBreath(this);
+			}
+			this.board.addPoint(this);
+		}
+	}
+	
 	//get dead neighbors
 	
 }
