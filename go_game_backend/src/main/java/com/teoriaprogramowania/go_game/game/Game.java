@@ -163,7 +163,6 @@ public class Game {
     	Set<StoneGroup> neighbors = simulatedPoint.getNeighborStoneGroups();
     	
     	Set<StoneGroup> capturedStoneGroups = new HashSet<>();
-    	Set<Point> capturedStones = new HashSet<>();
 
       	//remove breath from enemy stone group and kill it if appropriate
       	for(StoneGroup neighbor : neighbors) {
@@ -171,7 +170,6 @@ public class Game {
     			neighbor = neighbor.removeBreath(simulatedPoint);
     			if(neighbor.getBreaths().size() == 0) {
     				capturedStoneGroups.add(neighbor);
-    				capturedStones.addAll(neighbor.getStones());
     				captives += neighbor.removeStoneGroup(this.board);
     			}
     		}
@@ -228,14 +226,11 @@ public class Game {
     		return false;
     	}
 
-//    	BoardMemento memento = this.board.createMemento();
     	if(simulateMove(this.board, move) == false) {
- //   		this.board.restore(memento);
     		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
         	
     		return false;
     	}
- //   	this.board.restore(memento);
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }

@@ -325,48 +325,6 @@ public class GameTests {
     }
     
     @Test
-    void testBoardMemento() {
-        Board board = new Board(19);
-        Game game = new Game(board);
-
-	    Move move = new Move(9, 10, MoveType.NORMAL, black);
-	    game.makeMove(move);
-
-        move = new Move(12, 10, MoveType.NORMAL, white);
-	    game.makeMove(move);
-	    
-	    move = new Move(10, 11, MoveType.NORMAL, black);
-	    game.makeMove(move);
-
-	    move = new Move(11, 11, MoveType.NORMAL, white);
-	    game.makeMove(move);
-
-	    move = new Move(10, 9, MoveType.NORMAL, black);
-	    game.makeMove(move);
-
-	    move = new Move(11, 9, MoveType.NORMAL, white);
-	    game.makeMove(move);
-	    
-	    
-	    Move normalMove = new Move(11, 10, MoveType.NORMAL, black);
-	    boolean v1 = game.isMoveValid(normalMove);
-        assertTrue(v1);
-        game.makeMove(normalMove);
-        
-	    Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
-	    boolean v2 = game.isMoveValid(captureMove);
-	    assertTrue(v2);
-	    game.makeMove(captureMove);
-	    
-	    Move koMove = new Move(11, 10, MoveType.NORMAL, black);
-	    boolean v3 = game.isMoveValid(koMove);
-        assertFalse(v3);
-        
-        boolean isResolved = game.hasChangedState();
-        assertFalse(isResolved);
-    }
-    
-    @Test
     void testGetPlayerCaptives() {
         Board board = new Board(19);
         Game game = new Game(board);
@@ -814,7 +772,6 @@ public class GameTests {
     	if(game.isMoveValid(wrongMove)) {
     		game.makeMove(wrongMove);
     	}
-    	
 
     	assertFalse(board.getPoint(2, 1).isEmpty());
     	assertNotEquals(null, board.getPoint(2, 1).getStoneGroup());
@@ -822,16 +779,12 @@ public class GameTests {
     	
     	assertEquals(movesSizeBeforeWrongMove + 1, game.getMoves().size());
     	
-    	System.out.println(game.getMoves().size());
-    	
     	//now capture move for white should be illegal
     	Move wrongMove2 = new Move(1, 1, MoveType.NORMAL, white);
     	if(game.isMoveValid(wrongMove2)) {
     		System.out.println("cos poszlo zle");
     		game.makeMove(wrongMove2);
     	}
-
-    	System.out.println(game.getMoves().size());
     	
     	assertFalse(board.getPoint(2, 1).isEmpty());
     	assertTrue(board.getPoint(1, 1).isEmpty());
