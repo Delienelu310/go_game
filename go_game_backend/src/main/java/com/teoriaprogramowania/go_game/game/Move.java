@@ -13,7 +13,10 @@ public class Move {
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
     private Player player;
  
-    public Move(int x, int y, MoveType moveType, Player player) {
+    public Move() {
+	}
+
+	public Move(int x, int y, MoveType moveType, Player player) {
     	this.x = x;
     	this.y = y;
     	this.moveType = moveType;

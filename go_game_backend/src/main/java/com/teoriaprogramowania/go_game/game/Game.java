@@ -21,7 +21,10 @@ public class Game {
     private Set<String> previousBoardStates = new HashSet<>();
     private State state;
     
-    public Game(int size){
+    public Game() {
+	}
+
+	public Game(int size){
         this.board = new Board(size);
         this.moves = new ArrayList<>();
         this.state = State.CREATED;

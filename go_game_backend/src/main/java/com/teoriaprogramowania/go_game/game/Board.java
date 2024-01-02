@@ -5,8 +5,11 @@ import java.util.Arrays;
 
 public class Board {
 	private Point[][] board;
-	private final int size;
+	private int size;
 	
+	public Board() {
+	}
+
 	//new board initialization
 	public Board(int size){
 		this.size = size;

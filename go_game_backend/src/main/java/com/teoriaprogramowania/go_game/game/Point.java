@@ -1,4 +1,5 @@
 package com.teoriaprogramowania.go_game.game;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 import java.util.*;
 
@@ -6,10 +7,14 @@ public class Point {
 	//class represents a singular point on the board
 	private int x;					//coordinate x
 	private int y;					//coordinate y
+	@JsonIgnore
 	private Board board;			//board to which the point belongs
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
 	private boolean isEmpty;		//true if the point belongs to some stone group
 	
+	public Point() {
+	}
+
 	public Point(int x, int y, Board board) {
 		this.board = board;
 		this.x = x;
@@ -49,7 +54,7 @@ public class Point {
 		}
 		this.board.addPoint(this);
 	}
-	
+	@JsonIgnore
 	public Player getOwner() {
 		return this.stoneGroup.getOwner();
 	}
@@ -66,7 +71,7 @@ public class Point {
 //		return this.x == point.x && this.y == point.y && Objects.equals(board, point.board);
 		return this.x == point.x && this.y == point.y;
 	}
-	
+	@JsonIgnore
 	public Set<StoneGroup> getNeighborStoneGroups(){
 		Set<StoneGroup> neighborStoneGroups = new HashSet<StoneGroup>();
 		int dx[] = {-1, 1, 0, 0};
@@ -95,6 +100,7 @@ public class Point {
 	}
 	
 	//get empty neighbors
+	@JsonIgnore
 	public Set<Point> getEmptyNeighborPoints(){
 		Set<Point> emptyNeighborPoints = new HashSet<Point>();
 		int dx[] = {-1, 1, 0, 0};
