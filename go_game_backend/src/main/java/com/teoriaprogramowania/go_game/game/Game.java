@@ -201,7 +201,7 @@ public class Game {
     	}
     }
     
-    public void undoDeadStoneGroup(int x, int y) {
+    public void removeDeadStoneGroup(int x, int y) {
     	try {
         	Point point = this.board.getPoint(x, y);
     		if(point.isEmpty()) {
@@ -268,7 +268,6 @@ public class Game {
 		return territories;
  	}
     
-
     public void resumeGame() {
     	this.deadStoneGroups = null;
     	this.agreed.clear();
@@ -288,12 +287,12 @@ public class Game {
     	this.state = State.FINISHED;
     }
     
-    public int getTerritoriesSize() {
-    	return this.territories.size();
-    }
-    
     public void agreeToFinalize(Player p) {
     	this.agreed.add(p);
+    }
+    
+    public boolean bothPlayersAgreed() {
+    	return this.agreed.size() == 2;
     }
     
     public void setScore(Player p1, Player p2) {

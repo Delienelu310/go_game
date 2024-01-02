@@ -895,9 +895,9 @@ public class GameTests {
     	game.agreeToFinalize(black);
     	game.agreeToFinalize(white);
     	
-    	game.finalizeGame();
-    	
-    	assertEquals(3, game.getTerritoriesSize());
+    	if(game.bothPlayersAgreed()) {
+    		game.finalizeGame();
+    	}
     	
     	game.setScore(white, black);
     	assertEquals(9, game.getPlayerScore(black));
@@ -964,9 +964,96 @@ public class GameTests {
     	game.agreeToFinalize(white);
     	
     	//now one territory should be corrupted with enemy stone not considered dead, so 4 territories
-    	game.finalizeGame();
+    	if(game.bothPlayersAgreed()) {
+    		game.finalizeGame();
+    	}
     	
-    	assertEquals(4, game.getTerritoriesSize());
+    	game.setScore(white, black);
+    	assertEquals(9, game.getPlayerScore(black));
+    	assertEquals(0, game.getPlayerScore(white));
+    }
+    
+    @Test
+    void testDeadStonesBiggerGroupEstablishTerritory() {
+    	Board board = new Board(9);
+    	Game game = new Game(board);
+    	
+    	for(int i = 0; i < 9; ++i) {
+    		Move blackMove = new Move(7, i, MoveType.NORMAL, black);
+    		Move whiteMove = new Move(1, i, MoveType.NORMAL, white);
+
+    		if(game.isMoveValid(blackMove )) {
+    			game.makeMove(blackMove );
+    		}
+    		
+    		if(game.isMoveValid(whiteMove )) {
+    			game.makeMove(whiteMove );
+    		}
+    	}
+    	
+    	//check if everything went well
+    	assertEquals(18, board.getPoint(1, 1).getStoneGroup().getBreaths().size());
+    	assertEquals(9, board.getPoint(1, 1).getStoneGroup().getStones().size());
+    	
+    	//add stones which will be later considered dead
+    	Move deadBlackMove = new Move(0, 4, MoveType.NORMAL, black);
+    	if(game.isMoveValid(deadBlackMove)) {
+    		game.makeMove(deadBlackMove);
+    	}
+    	
+    	Move deadWhiteMove = new Move(8, 4, MoveType.NORMAL, white);
+    	if(game.isMoveValid(deadWhiteMove)) {
+    		game.makeMove(deadWhiteMove);
+    	}
+
+    	Move deadBlackMove2 = new Move(0, 5, MoveType.NORMAL, black);
+    	if(game.isMoveValid(deadBlackMove2)) {
+    		game.makeMove(deadBlackMove2);
+    	}
+    	
+    	Move whitePass = new Move(-1, -1, MoveType.PASS, white);
+    	if(game.isMoveValid(whitePass)) {
+    		game.makeMove(whitePass);
+    	}
+
+    	Move deadBlackMove3 = new Move(0, 6, MoveType.NORMAL, black);
+    	if(game.isMoveValid(deadBlackMove3)) {
+    		game.makeMove(deadBlackMove3);
+    	}
+    	    	
+
+    	//check if everything went well
+    	assertEquals(15, board.getPoint(1, 1).getStoneGroup().getBreaths().size());
+    	assertEquals(9, board.getPoint(1, 1).getStoneGroup().getStones().size());
+    	
+    	//now get to negotiation stage by making to passes
+    	
+    	Move blackPass = new Move(-1, -1, MoveType.PASS, black);
+    	whitePass = new Move(-1, -1, MoveType.PASS, white);
+    	
+    	if(game.isMoveValid(blackPass)) {
+    		game.makeMove(blackPass);
+    	}
+    	if(game.isMoveValid(whitePass)) {
+    		game.makeMove(whitePass);
+    	}
+    	
+    	//game should be in negotiation state
+    	assertTrue(game.hasChangedState());
+    	assertEquals(State.NEGOTIATION, game.getState());
+    	
+    	//pick dead stone groups
+    	game.pickDeadStoneGroup(8, 4);
+    	
+    	//adding same player 2 times shouldnt change anything
+    	game.agreeToFinalize(black);
+    	game.agreeToFinalize(black);
+    	game.agreeToFinalize(white);
+    	
+    	//now one territory should be corrupted with enemy stone not considered dead, so 4 territories
+    	if(game.bothPlayersAgreed()) {
+    		game.finalizeGame();
+    	}
     	
     	game.setScore(white, black);
     	assertEquals(9, game.getPlayerScore(black));
