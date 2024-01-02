@@ -13,6 +13,8 @@ public class Player {
 	
 	public Player(Client client) {
 		this.client = client;
+		this.territory = new Territory();
+		this.territory.setOwner(this);
 	}
 	
 	public Client getClient() {

@@ -24,7 +24,6 @@ public class Territory {
 		return this.neighbors;
 	}
 	
-	
 	public void addNeighborStoneGroups(Set<StoneGroup> neighborStoneGroups) {
 		this.neighbors.addAll(neighborStoneGroups);
 	}
@@ -37,19 +36,23 @@ public class Territory {
 		return this.owner;
 	}
 	
-	public Player setOwner() {
+	public void setOwner() {
 		Set<Player> neighborStonesOwners = new HashSet<Player>();
 		for(StoneGroup stoneGroup : neighbors) {
 			neighborStonesOwners.add(stoneGroup.getOwner());
 			if(neighborStonesOwners.size() > 1) {
-				return null;
+				this.owner = null;
+				return;
 			}
 		}
 		if(neighborStonesOwners.size() == 1) {
-			return (Player)neighborStonesOwners.toArray()[0];
+			this.owner =  (Player)neighborStonesOwners.toArray()[0];
+		}else {
+			this.owner = null;
 		}
-		return null;
 	}
 	
-	
+	public void setOwner(Player player) {
+		this.owner = player; 
+	}
 }

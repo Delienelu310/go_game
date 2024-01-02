@@ -4,6 +4,8 @@ import com.teoriaprogramowania.go_game.resources.Client;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -887,5 +889,57 @@ public class GameTests {
         move = new Move(4, 4, MoveType.NORMAL, black);
         assertFalse(game.isMoveValid(move));
         
+    }
+    
+    @Test
+    void testEstablishTerritory(){
+    	Board board = new Board(9);
+    	Game game = new Game(board);
+    	
+    	for(int i = 0; i < 9; ++i) {
+    		Move blackMove = new Move(7, i, MoveType.NORMAL, black);
+    		Move whiteMove = new Move(1, i, MoveType.NORMAL, white);
+
+    		if(game.isMoveValid(blackMove )) {
+    			game.makeMove(blackMove );
+    		}
+    		
+    		if(game.isMoveValid(whiteMove )) {
+    			game.makeMove(whiteMove );
+    		}
+    	}
+    	
+    	//check if everything went well
+    	assertEquals(18, board.getPoint(1, 1).getStoneGroup().getBreaths().size());
+    	assertEquals(9, board.getPoint(1, 1).getStoneGroup().getStones().size());
+    	
+    	//now get to negotiation stage by making to passes
+    	
+    	Move blackPass = new Move(-1, -1, MoveType.PASS, black);
+    	Move whitePass = new Move(-1, -1, MoveType.PASS, white);
+    	
+    	if(game.isMoveValid(blackPass)) {
+    		game.makeMove(blackPass);
+    	}
+    	if(game.isMoveValid(whitePass)) {
+    		game.makeMove(whitePass);
+    	}
+    	
+    	assertTrue(game.hasChangedState());
+    	
+    	assertEquals(State.NEGOTIATION, game.getState());
+    	
+    	game.finalizeGame();
+    	
+    	assertEquals(3, game.getTerritoriesSize());
+    	
+    	game.setScore(white, black);
+    	assertEquals(9, game.getPlayerScore(black));
+    	assertEquals(9, game.getPlayerScore(white));
+    }
+    
+    @Test
+    void testDeadStonesEstablishTerritory() {
+    	
     }
 }

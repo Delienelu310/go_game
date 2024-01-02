@@ -190,7 +190,7 @@ public class Game {
     	return true;
     }
 
-    public void pickDeadStoneGroups(int x, int y) {
+    public void pickDeadStoneGroup(int x, int y) {
     	try {
         	Point point = this.board.getPoint(x, y);
     		if(point.isEmpty()) {
@@ -202,18 +202,19 @@ public class Game {
     	}
     }
     
-    public Player pickWinner(Player p1, Player p2) {
-    	if(moves.get(moves.size() - 1).getMoveType() == MoveType.SURRENDER) {
-    		if(this.moves.get(moves.size() - 1).getPlayer() == p1) {
-    			return p2;
+    public void undoDeadStoneGroup(int x, int y) {
+    	try {
+        	Point point = this.board.getPoint(x, y);
+    		if(point.isEmpty()) {
+    			return;
     		}
-    		return p2;
+    		StoneGroup toBeRemoved = point.getStoneGroup();
+        	if(this.deadStoneGroups.contains(toBeRemoved)) {
+        		deadStoneGroups.remove(toBeRemoved);
+        	}
+    	} catch(OutOfBoardException e) {
+    		return;
     	}
-    	
-    	if(p1.getCaptives().size() > p2.getCaptives().size()) {
-        	return p1;	
-    	}
-    	return p2;
     }
     
     public List<Point> getPlayerCaptives(Player player) {
@@ -238,28 +239,30 @@ public class Game {
 		while(potentialTerritory.size() > 0) {
 			point = potentialTerritory.iterator().next();
 			newTerritory = new Territory();
-			
-			Set<Point> newTerritoryPoints = new HashSet<Point>();
-			newTerritoryPoints.add(point);
+
+			Set<Point> expandedTerritory = new HashSet<>();
+			Set<Point> newTerritoryPoints = new HashSet<>();
+			expandedTerritory.add(point);
 			
 			int prev_size;
 			int curr_size;
 			do {
-				prev_size = newTerritoryPoints.size();
-				Set<Point> actualTerritory = newTerritoryPoints;
-				for(Point deadOrEmptyPoint : actualTerritory) {
+				prev_size = expandedTerritory.size();
+				newTerritoryPoints.clear();
+				for(Point deadOrEmptyPoint : new HashSet<>(expandedTerritory)) {
 					newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
 				}
-				curr_size = newTerritoryPoints.size();
+				expandedTerritory.addAll(newTerritoryPoints);
+				curr_size = expandedTerritory.size();
 			} while(curr_size > prev_size);
 			
-			newTerritory.addPoints(newTerritoryPoints);
-			for(Point emptyOrDeadPoint : newTerritoryPoints) {
+			newTerritory.addPoints(expandedTerritory);
+			for(Point emptyOrDeadPoint : expandedTerritory) {
 				newTerritory.addNeighborStoneGroups(emptyOrDeadPoint.getNeighborStoneGroups());
 			}
 			
 			newTerritory.removeNeighborStoneGroups(deadStoneGroups);
-			potentialTerritory.removeAll(newTerritoryPoints);
+			potentialTerritory.removeAll(expandedTerritory);
 			territories.add(newTerritory);
 		}
 		
@@ -282,14 +285,20 @@ public class Game {
     	if(this.state != State.NEGOTIATION) {
     		return;
     	}
-    	this.state = State.FINISHED;
-    	
     	territories = establishTerritories(deadStoneGroups);
+    	this.state = State.FINISHED;
+    }
+    
+    public int getTerritoriesSize() {
+    	return this.territories.size();
     }
     
     public void setScore(Player p1, Player p2) {
     	for(Territory territory : territories) {
-    		if(territory.getOwner() == p1) {
+    		if(territory.getOwner() == null) {
+    			continue;
+    		}
+    		if(territory.getOwner().equals(p1)) {
     			for(StoneGroup deadStoneGroup : deadStoneGroups) {
     				if(territory.getPoints().containsAll(deadStoneGroup.getStones())) {
     					p1.addCaptives(deadStoneGroup.getStones());
@@ -297,7 +306,7 @@ public class Game {
     			}
     			p1.addTerritory(territory);
     		}
-    		else {
+    		else if (territory.getOwner().equals(p2)) {
     			for(StoneGroup deadStoneGroup : deadStoneGroups) {
     				if(territory.getPoints().containsAll(deadStoneGroup.getStones())) {
     					p2.addCaptives(deadStoneGroup.getStones());
@@ -307,19 +316,8 @@ public class Game {
     		}
     	}
     	
-    	if(p1.getCaptives().size() > p1.getTerritory().getPoints().size()) {
-    		p1.setFinalScore(p1.getTerritory().getPoints().size());
-    	}
-    	else {
-    		p1.setFinalScore(p1.getCaptives().size());
-    	}
-
-    	if(p2.getCaptives().size() > p2.getTerritory().getPoints().size()) {
-    		p2.setFinalScore(p2.getTerritory().getPoints().size());
-    	}
-    	else {
-    		p2.setFinalScore(p2.getCaptives().size());
-    	}
+    	p1.setFinalScore(p1.getTerritory().getPoints().size() - p2.getCaptives().size());
+    	p2.setFinalScore(p2.getTerritory().getPoints().size() - p1.getCaptives().size());
     }
     
     public int getPlayerScore(Player player) {
