@@ -327,43 +327,6 @@ public class GameTests {
     }
     
     @Test
-    void testGetPlayerCaptives() {
-        Board board = new Board(19);
-        Game game = new Game(board);
-
-        Point p5 = new Point(12, 10, board);
-	    Point p6 = new Point(11, 11, board);
-	    Point p7 = new Point(11, 9, board);
-	    StoneGroup stoneGroup5 = new StoneGroup(p5, white);
-	    StoneGroup stoneGroup6 = new StoneGroup(p6, white);
-	    StoneGroup stoneGroup7 = new StoneGroup(p7, white);
-	    board.addPoint(p5);
-	    board.addPoint(p6);
-	    board.addPoint(p7);
-	    
-        Point p1 = new Point(9, 10, board);
-	    Point p2 = new Point(11, 10, board);
-	    Point p3 = new Point(10, 9, board);
-	    Point p4 = new Point(10, 11, board);
-	    StoneGroup stoneGroup1 = new StoneGroup(p1, black);
-	    StoneGroup stoneGroup2 = new StoneGroup(p2, black);
-	    StoneGroup stoneGroup3 = new StoneGroup(p3, black);
-	    StoneGroup stoneGroup4 = new StoneGroup(p4, black);
-	    board.addPoint(p1);
-	    board.addPoint(p2);
-	    board.addPoint(p3);
-	    board.addPoint(p4);
-	    
-        Move captureMove = new Move(10, 10, MoveType.NORMAL, white);
-        boolean result = game.simulateMove(board, captureMove);
-        assertTrue(result);
-        game.makeMove(captureMove);
-        
-        int captives = game.getPlayerCaptives(white).size();
-        assertEquals(1, captives);
-    }
-    
-    @Test
     void testRemoveStoneAddBreath() {
     	Board board = new Board(9);
     	Game game = new Game(board);
@@ -928,6 +891,9 @@ public class GameTests {
     	assertTrue(game.hasChangedState());
     	
     	assertEquals(State.NEGOTIATION, game.getState());
+
+    	game.agreeToFinalize(black);
+    	game.agreeToFinalize(white);
     	
     	game.finalizeGame();
     	
@@ -940,6 +906,70 @@ public class GameTests {
     
     @Test
     void testDeadStonesEstablishTerritory() {
+    	Board board = new Board(9);
+    	Game game = new Game(board);
     	
+    	for(int i = 0; i < 9; ++i) {
+    		Move blackMove = new Move(7, i, MoveType.NORMAL, black);
+    		Move whiteMove = new Move(1, i, MoveType.NORMAL, white);
+
+    		if(game.isMoveValid(blackMove )) {
+    			game.makeMove(blackMove );
+    		}
+    		
+    		if(game.isMoveValid(whiteMove )) {
+    			game.makeMove(whiteMove );
+    		}
+    	}
+    	
+    	//check if everything went well
+    	assertEquals(18, board.getPoint(1, 1).getStoneGroup().getBreaths().size());
+    	assertEquals(9, board.getPoint(1, 1).getStoneGroup().getStones().size());
+    	
+    	//add stones which will be later considered dead
+    	Move deadBlackMove = new Move(0, 4, MoveType.NORMAL, black);
+    	if(game.isMoveValid(deadBlackMove)) {
+    		game.makeMove(deadBlackMove);
+    	}
+    	
+    	Move deadWhiteMove = new Move(8, 4, MoveType.NORMAL, white);
+    	if(game.isMoveValid(deadWhiteMove)) {
+    		game.makeMove(deadWhiteMove);
+    	}
+
+    	//check if everything went well
+    	assertEquals(17, board.getPoint(1, 1).getStoneGroup().getBreaths().size());
+    	assertEquals(9, board.getPoint(1, 1).getStoneGroup().getStones().size());
+    	
+    	//now get to negotiation stage by making to passes
+    	
+    	Move blackPass = new Move(-1, -1, MoveType.PASS, black);
+    	Move whitePass = new Move(-1, -1, MoveType.PASS, white);
+    	
+    	if(game.isMoveValid(blackPass)) {
+    		game.makeMove(blackPass);
+    	}
+    	if(game.isMoveValid(whitePass)) {
+    		game.makeMove(whitePass);
+    	}
+    	
+    	//game should be in negotiation state
+    	assertTrue(game.hasChangedState());
+    	assertEquals(State.NEGOTIATION, game.getState());
+    	
+    	//pick dead stone groups
+    	game.pickDeadStoneGroup(8, 4);
+    	
+    	game.agreeToFinalize(black);
+    	game.agreeToFinalize(white);
+    	
+    	//now one territory should be corrupted with enemy stone not considered dead, so 4 territories
+    	game.finalizeGame();
+    	
+    	assertEquals(4, game.getTerritoriesSize());
+    	
+    	game.setScore(white, black);
+    	assertEquals(9, game.getPlayerScore(black));
+    	assertEquals(0, game.getPlayerScore(white));
     }
 }

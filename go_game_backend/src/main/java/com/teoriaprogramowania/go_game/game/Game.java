@@ -14,14 +14,13 @@ public class Game {
 	//class Game is handling rules of the game
 	
 	private Long id;
-    private Player white;
-    private Player black;
-    private List<Move> moves = new ArrayList<>();;
     private Board board;
-    private Set<String> previousBoardStates = new HashSet<>();
     private State state;
+    private List<Move> moves = new ArrayList<>();
+    private Set<String> previousBoardStates = new HashSet<>();
     private Set<StoneGroup> deadStoneGroups = new HashSet<>();
     private Set<Territory> territories = new HashSet<>();
+    private Set<Player> agreed = new HashSet<>();
     
     public Game(int size){
         this.board = new Board(size);
@@ -217,10 +216,6 @@ public class Game {
     	}
     }
     
-    public List<Point> getPlayerCaptives(Player player) {
-    	return player.getCaptives();
-    }
-    
     private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
 		Set<Point> potentialTerritory = new HashSet<Point>();
 		Set<Territory> territories = new HashSet<Territory>();
@@ -276,12 +271,16 @@ public class Game {
 
     public void resumeGame() {
     	this.deadStoneGroups = null;
+    	this.agreed.clear();
     	if(this.state == State.NEGOTIATION) {
         	this.state = State.ONGOING;
     	}
     }
     
     public void finalizeGame() {
+    	if(this.agreed.size() != 2) {
+    		return;
+    	}
     	if(this.state != State.NEGOTIATION) {
     		return;
     	}
@@ -291,6 +290,10 @@ public class Game {
     
     public int getTerritoriesSize() {
     	return this.territories.size();
+    }
+    
+    public void agreeToFinalize(Player p) {
+    	this.agreed.add(p);
     }
     
     public void setScore(Player p1, Player p2) {
@@ -316,8 +319,18 @@ public class Game {
     		}
     	}
     	
-    	p1.setFinalScore(p1.getTerritory().getPoints().size() - p2.getCaptives().size());
-    	p2.setFinalScore(p2.getTerritory().getPoints().size() - p1.getCaptives().size());
+    	int p1Score = p1.getTerritory().getPoints().size() - p2.getCaptives().size();
+    	if(p1Score < 0) {
+    		p1Score = 0;
+    	}
+    	
+    	int p2Score = p2.getTerritory().getPoints().size() - p1.getCaptives().size();
+    	if(p2Score < 0) {
+    		p2Score = 0;
+    	}
+    	
+    	p1.setFinalScore(p1Score);
+    	p2.setFinalScore(p2Score);
     }
     
     public int getPlayerScore(Player player) {
