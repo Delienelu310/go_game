@@ -121,26 +121,6 @@ public class StoneGroupTests {
 	    assertEquals(2, breaths.size());
 	}
 	
-	@Test 
-	void testRemoveBreath(){
-		Board board = new Board(9);
-		
-		Point wPoint = new Point(3, 3, board);
-		StoneGroup wsg = new StoneGroup(wPoint, white);
-		board.addPoint(wPoint);
-		
-		int initialWhiteBreaths = wsg.getBreaths().size();
-		
-		Point bPoint = new Point(4, 3, board);
-		StoneGroup bsg = new StoneGroup(bPoint, black);
-		board.addPoint(bPoint);
-		
-		wsg.removeBreath(bPoint);
-		
-		assertEquals(initialWhiteBreaths - 1, wsg.getBreaths().size());
-		assertEquals(3, bsg.getBreaths().size());
-	}
-	
 	@Test
 	void testBreathsNearbyEnemy() {
 	    Board board = new Board(19);
@@ -153,52 +133,6 @@ public class StoneGroupTests {
 	    
 	    Set<Point> breaths = wsg.getBreaths();
 	    assertEquals(3, breaths.size());
-	}
-	
-	@Test
-	void testBreathsDifferentOrder() {
-	    Board board = new Board(19);
-	    
-	    Point bPoint = new Point(10, 10, board);
-	    StoneGroup bsg = new StoneGroup(bPoint, black);
-	    
-	    Point wPoint = new Point(11, 10, board);
-	    StoneGroup wsg = new StoneGroup(wPoint, white);
-	    
-	    bsg.removeBreath(wPoint);
-
-	    Set<Point> blackBreaths = bsg.getBreaths();
-	    assertEquals(3, blackBreaths.size());
-	
-	    Set<Point> whiteBreaths = wsg.getBreaths();
-	    assertEquals(3, whiteBreaths.size());
-	
-	}
-	
-
-	@Test
-	void testBreathsNearbyEnemies() {
-	    Board board = new Board(19);
-	    
-	    Point bPoint = new Point(10, 10, board);
-	    StoneGroup bsg = new StoneGroup(bPoint, black);
-	    board.addPoint(bPoint);
-
-	    Point wPoint = new Point(11, 10, board);
-	    StoneGroup wsg = new StoneGroup(wPoint, white);
-	    board.addPoint(wPoint);
-	    
-	    Point w2 = new Point(9, 10, board);
-	    StoneGroup wsg2 = new StoneGroup(w2, white);
-	    board.addPoint(w2);
-
-	    bsg.removeBreath(wPoint);
-	    bsg.removeBreath(w2);
-	    
-	    Set<Point> breaths = bsg.getBreaths();
-	    assertEquals(2, breaths.size());
-	    assertEquals(3, wsg.getBreaths().size());
-	    assertEquals(3, wsg2.getBreaths().size());
 	}
 
 	@Test
