@@ -2,10 +2,7 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
-import com.teoriaprogramowania.go_game.resources.Client;
-import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
-import com.teoriaprogramowania.go_game.game.Move;
 
 import lombok.Data;
 
@@ -21,7 +18,7 @@ public class Game {
     private Set<StoneGroup> deadStoneGroups = new HashSet<>();
     private Set<Territory> territories = new HashSet<>();
     private Set<Player> agreed = new HashSet<>();
-    private Set<Player> players = new HashSet<>();
+    private List<Player> players = new ArrayList<>();
     private Player currentPlayer;
     
     public Game(int size){
@@ -83,6 +80,14 @@ public class Game {
     
     public List<Move> getMoves(){
     	return this.moves;
+    }
+    
+    public List<Player> getPlayers(){
+    	return this.players;
+    }
+    
+    public void setPlayers(List<Player> players) {
+    	this.players = players;
     }
     
     public boolean hasChangedState() {
@@ -173,10 +178,6 @@ public class Game {
     }
     
     public boolean isMoveValid(Move move){
-    	players.add(move.getPlayer());
-    	if(players.size() > 2) {
-    		return false;
-    	}
     	if(move.getPlayer() == currentPlayer) {
     		return false;
     	}
@@ -211,7 +212,7 @@ public class Game {
     	} catch(OutOfBoardException e) {
     		return;
     	}
-    }
+    }	
     
     public void removeDeadStoneGroup(int x, int y) {
     	try {

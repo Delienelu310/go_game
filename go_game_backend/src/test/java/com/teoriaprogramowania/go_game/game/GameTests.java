@@ -1100,24 +1100,4 @@ public class GameTests {
     	assertEquals(9, game.getPlayerScore(black));
     	assertEquals(0, game.getPlayerScore(white));
     }
-    
-    @Test
-    void testAddThirdPlayer() {
-    	Board board = new Board(9);
-    	Game game = new Game(board);
-    	
-    	Move blackMove = new Move(2, 2, MoveType.NORMAL, black);
-    	if(game.isMoveValid(blackMove)) {
-    		game.makeMove(blackMove);
-    	}
-    	Move whiteMove = new Move(4, 4, MoveType.NORMAL, white);
-    	if(game.isMoveValid(whiteMove)) {
-    		game.makeMove(whiteMove);
-    	}
-    	
-    	Player newPlayer = new Player(new Client());
-    	Move illegalMove = new Move(5, 5, MoveType.NORMAL, newPlayer);
-    	assertFalse(game.isMoveValid(illegalMove));
-    	
-    }
 }
