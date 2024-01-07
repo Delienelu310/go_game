@@ -21,6 +21,8 @@ public class Game {
     private Set<StoneGroup> deadStoneGroups = new HashSet<>();
     private Set<Territory> territories = new HashSet<>();
     private Set<Player> agreed = new HashSet<>();
+    private Set<Player> players = new HashSet<>();
+    private Player currentPlayer;
     
     public Game(int size){
         this.board = new Board(size);
@@ -109,6 +111,8 @@ public class Game {
     	
     	String currentBoardState = this.board.toString();
         previousBoardStates.add(currentBoardState);
+
+    	currentPlayer = move.getPlayer();
     }
     
     public boolean simulateMove(Board board, Move move) {
@@ -169,6 +173,14 @@ public class Game {
     }
     
     public boolean isMoveValid(Move move){
+    	players.add(move.getPlayer());
+    	if(players.size() > 2) {
+    		return false;
+    	}
+    	if(move.getPlayer() == currentPlayer) {
+    		return false;
+    	}
+    	
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}

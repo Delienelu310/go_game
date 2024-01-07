@@ -567,11 +567,9 @@ public class GameTests {
     	game.makeMove(move);
        	
     	move = new Move(1, 1, MoveType.NORMAL, black);       	
-       	assertTrue(game.isMoveValid(move));
     	game.makeMove(move);
 
-    	move = new Move(0, 1, MoveType.NORMAL, black);       	
-       	assertTrue(game.isMoveValid(move));
+    	move = new Move(0, 1, MoveType.NORMAL, black);
     	game.makeMove(move);
     	
     	assertEquals(1, board.getPoint(0, 1).getStoneGroup().getBreaths().size());
@@ -785,69 +783,112 @@ public class GameTests {
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
-        move = new Move(3, 4, MoveType.NORMAL, black);
-        if(game.isMoveValid(move)) {
-            game.makeMove(move);
-        }
-        move = new Move(4, 3, MoveType.NORMAL, black);
-        if(game.isMoveValid(move)) {
-            game.makeMove(move);
-        }
-        move = new Move(4, 4, MoveType.NORMAL, black);
-        if(game.isMoveValid(move)) {
-            game.makeMove(move);
-        }
 
         move = new Move(2, 4, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        
+        move = new Move(3, 4, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
         move = new Move(2, 3, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        
+        move = new Move(4, 3, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
         move = new Move(5, 4, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        
+        move = new Move(4, 4, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        
+        Move blackPass = new Move(-1, -1, MoveType.PASS, black);
+
+
         move = new Move(4, 5, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        
+        if(game.isMoveValid(blackPass)) {
+        	game.makeMove(blackPass);
+        }
+        
         move = new Move(4, 2, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        if(game.isMoveValid(blackPass)) {
+        	game.makeMove(blackPass);
+        }
+        
         move = new Move(3, 5, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        if(game.isMoveValid(blackPass)) {
+        	game.makeMove(blackPass);
+        }
+        
         move = new Move(3, 2, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        if(game.isMoveValid(blackPass)) {
+        	game.makeMove(blackPass);
+        }
+        
         move = new Move(5, 3, MoveType.NORMAL, white);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
 
+
+        
         assertTrue(board.getPoint(3, 3).isEmpty());
         assertTrue(board.getPoint(3, 4).isEmpty());
         assertTrue(board.getPoint(4, 3).isEmpty());
         assertTrue(board.getPoint(4, 4).isEmpty());
         
+        
+        
         move = new Move(3, 3, MoveType.NORMAL, black);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        Move whitePass = new Move(-1, -1, MoveType.PASS, white);
+        if(game.isMoveValid(whitePass)) {
+            game.makeMove(move);
+        }
+        
         move = new Move(3, 4, MoveType.NORMAL, black);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        if(game.isMoveValid(whitePass)) {
+            game.makeMove(move);
+        }
+        
         move = new Move(4, 3, MoveType.NORMAL, black);
         if(game.isMoveValid(move)) {
             game.makeMove(move);
         }
+        if(game.isMoveValid(whitePass)) {
+            game.makeMove(move);
+        }
+        
 
         move = new Move(4, 4, MoveType.NORMAL, black);
         assertFalse(game.isMoveValid(move));
@@ -1030,12 +1071,12 @@ public class GameTests {
     	
     	Move blackPass = new Move(-1, -1, MoveType.PASS, black);
     	whitePass = new Move(-1, -1, MoveType.PASS, white);
-    	
-    	if(game.isMoveValid(blackPass)) {
-    		game.makeMove(blackPass);
-    	}
+
     	if(game.isMoveValid(whitePass)) {
     		game.makeMove(whitePass);
+    	}
+    	if(game.isMoveValid(blackPass)) {
+    		game.makeMove(blackPass);
     	}
     	
     	//game should be in negotiation state
@@ -1058,5 +1099,25 @@ public class GameTests {
     	game.setScore(white, black);
     	assertEquals(9, game.getPlayerScore(black));
     	assertEquals(0, game.getPlayerScore(white));
+    }
+    
+    @Test
+    void testAddThirdPlayer() {
+    	Board board = new Board(9);
+    	Game game = new Game(board);
+    	
+    	Move blackMove = new Move(2, 2, MoveType.NORMAL, black);
+    	if(game.isMoveValid(blackMove)) {
+    		game.makeMove(blackMove);
+    	}
+    	Move whiteMove = new Move(4, 4, MoveType.NORMAL, white);
+    	if(game.isMoveValid(whiteMove)) {
+    		game.makeMove(whiteMove);
+    	}
+    	
+    	Player newPlayer = new Player(new Client());
+    	Move illegalMove = new Move(5, 5, MoveType.NORMAL, newPlayer);
+    	assertFalse(game.isMoveValid(illegalMove));
+    	
     }
 }
