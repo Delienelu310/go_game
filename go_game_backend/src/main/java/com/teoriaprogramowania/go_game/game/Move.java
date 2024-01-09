@@ -41,6 +41,10 @@ public class Move {
     	return this.player;
     }
 
+	public void setPlayer(Player player){
+		this.player = player;
+	}
+
     @Override 
 	public boolean equals(Object obj) {
 		if(this == obj) {
