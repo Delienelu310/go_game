@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addBlackPlayer, addWhitePlayer, enterRoom, leaveRoom, removeBlackPlayer, removeWhitePlayer, retrieveRoom, startGame } from "../api/roomsApi"
+import { enterRoom, leaveRoom } from "../api/roomsApi"
+import { setPlayer, makeMove, startGame, setPlayersCount } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
 import SockJS from "sockjs-client"
@@ -30,6 +31,11 @@ export default function GamePage(){
             console.log('Connected');
             client.subscribe(`/game/${roomId}`, (room) => {
                 console.log(JSON.parse(room.body));
+                if(room.game.players.length != 2){
+                    setPlayersCount(room.game.id, 2)
+                        .then(response => console.log(response))
+                        .catch(e => console.log(e));
+                }
                 setRoom(JSON.parse(room.body));
             });
         });
@@ -58,42 +64,16 @@ export default function GamePage(){
         console.log('Disconnected');
     };
 
-    function sendMove({x, y, clientId, moveType}){
-        stompClient &&
-        stompClient.send( `/room/${roomId}/move`,  {},  JSON.stringify({
-            x ,
-            y,
-            moveType, 
-            player: {
-                client: {
-                    id: clientId
-                }
-            } 
-        }));
-    };
-
     function refreshRoomForAll(){
         stompClient &&
         stompClient.send( `/room/${roomId}/refresh`,  {},  "{}");
-    }
-
-    function getRoomInfo(){
-        retrieveRoom(roomId)
-            .then(response => {
-                console.log(response);
-                setRoom(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-                setException(true);
-            });
     }
 
     useEffect(() => {
         enterRoom(roomId, id)
             .then(response => {
                 initializeStompClient();
-                getRoomInfo();
+                refreshRoomForAll();
             })
             .catch(e => {
                 console.log(e);
@@ -107,12 +87,12 @@ export default function GamePage(){
                 <div>You are in the Room {room.title}</div>
                 <div>
                     <div className="m-3">Game state: {room.game.state}</div>
-                    <div className="m-3">White Player: {room.game.white ? 
+                    <div className="m-3">White Player: {room.game.players[0] ? 
                         <div>
-                            {room.game.white.client.clientDetails.username}
-                            {(room.game.white.client.id == id || room.admin.id == id) &&
+                            {room.game.players[0].client.clientDetails.username}
+                            {(room.game.players[0].client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
-                                    removeWhitePlayer(room.id)
+                                    setPlayer(room.game.id, -1, 0)
                                         .then(response => {
                                             refreshRoomForAll();
                                         })
@@ -123,19 +103,19 @@ export default function GamePage(){
                         </div>
                         :
                         <button className="btn btn-success m-2" onClick={e => {
-                            addWhitePlayer(room.id, id)
+                            setPlayer(room.game.id, id, 0)
                                 .then(response => {
                                     refreshRoomForAll();
                                 })
                                 .catch(e =>  console.log(e));
                         }}>Play white</button>
                     }</div>
-                    <div className="m-3">Black player: {room.game.black ? 
+                    <div className="m-3">Black player: {room.game.players[1] ? 
                         <div>
-                            {room.game.black.client.clientDetails.username}
-                            {(room.game.black.client.id == id || room.admin.id == id) &&
+                            {room.game.players[1].client.clientDetails.username}
+                            {(room.game.players[1].client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
-                                    removeBlackPlayer(room.id)
+                                    setPlayer(room.game.id, -1, 1)
                                         .then(response => {
                                             refreshRoomForAll();
                                         })
@@ -145,7 +125,7 @@ export default function GamePage(){
                         </div>
                         :
                         <button className="btn btn-success m-2" onClick={e => {
-                            addBlackPlayer(room.id, id)
+                            setPlayer(room.game.id, id, 1)
                                 .then(response => {
                                     refreshRoomForAll();
                                 })
@@ -169,7 +149,7 @@ export default function GamePage(){
                         )}
                     </div>
                     {room.admin.id == id && <button onClick={e => {
-                        startGame(room.id)
+                        startGame(room.game.id)
                             .then(response => {
                                 refreshRoomForAll();
                             })
@@ -187,9 +167,13 @@ export default function GamePage(){
                         cellSize={50}
                         boardMatrix={room.game.board.board}
                         clientId={id}
-                        sendMove={sendMove}
-                        white={room.game.white ? room.game.white.client.id : null}
-                        black={room.game.black ? room.game.black.client.id : null}
+                        sendMove={(move) => {
+                            makeMove(room.game.id, move)
+                                .then(response => refreshRoomForAll())
+                                .catch(e => console.log(e));
+                        }}
+                        white={room.game.players[0] ? room.game.players[0].client.id : null}
+                        black={room.game.players[1] ? room.game.players[1].client.id : null}
                     /> 
                 </div>}
                 
