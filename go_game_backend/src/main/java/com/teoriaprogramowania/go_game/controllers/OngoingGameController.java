@@ -13,20 +13,21 @@ import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.Player;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
+import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 
 @RestController
 public class OngoingGameController {
     private RepositoryInterface repositoryInterface;
-    private JacksonMapper jacksonMapper;
+    private JacksonMapperCollection jacksonMapper;
 
-    public OngoingGameController(RepositoryInterface repositoryInterface, JacksonMapper jacksonMapper){
+    public OngoingGameController(RepositoryInterface repositoryInterface, JacksonMapperCollection jacksonMapper){
         this.repositoryInterface = repositoryInterface;
         this.jacksonMapper = jacksonMapper;
     }
 
     private MappingJacksonValue getMappedGameMain(Game game){
         MappingJacksonValue gameJackson = new MappingJacksonValue(game);
-        gameJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        gameJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
         return gameJackson;
     }
 

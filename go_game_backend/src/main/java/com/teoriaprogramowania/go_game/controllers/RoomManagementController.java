@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Room;
 import com.teoriaprogramowania.go_game.resources.RoomDetails;
+import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.resources.Client;
 
 @RestController
 public class RoomManagementController {
     RepositoryInterface repositoryInterface;
-    JacksonMapper jacksonMapper;
+    JacksonMapperCollection jacksonMapper;
     
-    public RoomManagementController(RepositoryInterface repositoryInterface, JacksonMapper jacksonMapper) {
+    public RoomManagementController(RepositoryInterface repositoryInterface, JacksonMapperCollection jacksonMapper) {
         this.repositoryInterface = repositoryInterface;
         this.jacksonMapper = jacksonMapper;
     }
@@ -31,7 +32,7 @@ public class RoomManagementController {
     public MappingJacksonValue getClients(){
         List<Room> rooms = repositoryInterface.getRoomRepository().retrieveRooms();
         MappingJacksonValue roomsJackson = new MappingJacksonValue(rooms);
-        roomsJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        roomsJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
         return roomsJackson;
     }
 
@@ -40,7 +41,7 @@ public class RoomManagementController {
 
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(id);
         MappingJacksonValue roomJackson = new MappingJacksonValue(room);
-        roomJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        roomJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
         return roomJackson;
     }
 
@@ -64,7 +65,7 @@ public class RoomManagementController {
 
         room =  repositoryInterface.getRoomRepository().addRoom(room);
         MappingJacksonValue roomJackson = new MappingJacksonValue(room);
-        roomJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        roomJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
         return roomJackson;
     }
 

@@ -2,6 +2,7 @@ package com.teoriaprogramowania.go_game.controllers;
 
 import java.util.List;
 
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,31 +14,39 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.resources.ClientDetails;
+import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 
 @RestController
 public class ClientController {
 
-    RepositoryInterface repositoryInterface;
+    private RepositoryInterface repositoryInterface;
+    private JacksonMapperCollection jacksonMapper;
     
-    public ClientController(RepositoryInterface repositoryInterface) {
+    public ClientController(RepositoryInterface repositoryInterface, JacksonMapperCollection jacksonMapper) {
         this.repositoryInterface = repositoryInterface;
+        this.jacksonMapper = jacksonMapper;
     }
 
     @GetMapping("/clients") 
-    public List<Client> getClients(){
-        return repositoryInterface.getClientRepository().retrieveClients();
+    public MappingJacksonValue getClients(){
+        List<Client> clients = repositoryInterface.getClientRepository().retrieveClients();
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(clients);
+        mappingJacksonValue.setFilters(jacksonMapper.getClientJacksonMapper().getMainFilterProvider());
+        return mappingJacksonValue;
     }
 
     @GetMapping("/clients/{id}")
-    public Client getClientById(@PathVariable Long id){
-        return repositoryInterface.getClientRepository().retrieveClientById(id);
+    public MappingJacksonValue getClientById(@PathVariable Long id){
+        Client client = repositoryInterface.getClientRepository().retrieveClientById(id);
+        return jacksonMapper.getClientJacksonMapper().getMainFilterMapped(client);
     }
 
     @PostMapping("/login")
-    public Client login(@RequestBody ClientDetails clientDetails){
+    public MappingJacksonValue login(@RequestBody ClientDetails clientDetails){
         Client cl = repositoryInterface.getClientRepository().retrieveClientByUsername(clientDetails.getUsername());
         
-        if(cl.getClientDetails().getPassword().equals(clientDetails.getPassword())) return cl;
+        if(cl.getClientDetails().getPassword().equals(clientDetails.getPassword())) 
+             return jacksonMapper.getClientJacksonMapper().getMainFilterMapped(cl);
         else throw new RuntimeException("Wrong password");
     }
 
@@ -47,8 +56,9 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public Client addClient(@RequestBody ClientDetails clientDetails){
-        return repositoryInterface.getClientRepository().addClient(clientDetails);
+    public MappingJacksonValue addClient(@RequestBody ClientDetails clientDetails){
+        Client client = repositoryInterface.getClientRepository().addClient(clientDetails);
+        return jacksonMapper.getClientJacksonMapper().getMainFilterMapped(client);
     }
 
     @PutMapping("/clients/{id}")

@@ -1,4 +1,4 @@
-package com.teoriaprogramowania.go_game.controllers;
+package com.teoriaprogramowania.jacksonMappers;
 
 import org.springframework.stereotype.Component;
 
@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @Component
-public class JacksonMapper {
+public class GameJacksonMapper {
     
-    public JacksonMapper(){
+    public GameJacksonMapper(){
 
     }
 
-    public FilterProvider getRoomMainFilterProvider(){
+    public FilterProvider getMainFilterProvider(){
         
         FilterProvider filterProvider = new SimpleFilterProvider()
             .addFilter("Game", SimpleBeanPropertyFilter.serializeAllExcept("previousBoardStates"))
@@ -30,7 +30,7 @@ public class JacksonMapper {
             .addFilter("Territory_points", SimpleBeanPropertyFilter.serializeAllExcept("board", "stoneGroup"))
             .addFilter("Territory_owner", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
             .addFilter("Game_players", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
-            
+            .addFilter("Client", SimpleBeanPropertyFilter.serializeAllExcept("currentRoom"))    
         ;
         return filterProvider;
     }

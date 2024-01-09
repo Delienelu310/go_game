@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 
 export function setPlayer(gameId, clientId, position){
-    return apiClient.put(`/games/${gameId}/set/${clientId}/${position}`);
+    return apiClient.put(`/games/${gameId}/set/player/${clientId}/${position}`);
 }
 
 export function setPlayersCount(gameId, count){
@@ -14,5 +14,5 @@ export function startGame(gameId){
 }
 
 export function makeMove(gameId, move){
-    return apiClient.put(`/games/${gameId}`, move);
+    return apiClient.put(`/games/${gameId}/add/move`, move);
 }

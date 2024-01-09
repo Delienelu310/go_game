@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
+import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 
 @RestController
 public class GameController {
     RepositoryInterface repositoryInterface;
-    JacksonMapper jacksonMapper;
+    JacksonMapperCollection jacksonMapper;
     
-    public GameController(RepositoryInterface repositoryInterface, JacksonMapper jacksonMapper) {
+    public GameController(RepositoryInterface repositoryInterface, JacksonMapperCollection jacksonMapper) {
         this.repositoryInterface = repositoryInterface;
         this.jacksonMapper = jacksonMapper;
     }
@@ -25,7 +26,7 @@ public class GameController {
     public MappingJacksonValue getGames(){
         List<Game> games = repositoryInterface.getGameRepository().retrieveAllGames();
         MappingJacksonValue gamesJacksonValue = new MappingJacksonValue(games);
-        gamesJacksonValue.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        gamesJacksonValue.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
         return gamesJacksonValue;
     }
 
@@ -33,7 +34,7 @@ public class GameController {
     public Game getGameById(@PathVariable Long id){
         Game game = repositoryInterface.getGameRepository().retrieveGameById(id);
         MappingJacksonValue gameJackson = new MappingJacksonValue(game);
-        gameJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
+        gameJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
 
         return repositoryInterface.getGameRepository().retrieveGameById(id);
     }

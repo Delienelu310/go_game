@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { enterRoom, leaveRoom } from "../api/roomsApi"
+import { enterRoom, leaveRoom, retrieveRoom } from "../api/roomsApi"
 import { setPlayer, makeMove, startGame, setPlayersCount } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
@@ -31,13 +31,14 @@ export default function GamePage(){
             console.log('Connected');
             client.subscribe(`/game/${roomId}`, (room) => {
                 console.log(JSON.parse(room.body));
-                if(room.game.players.length != 2){
+                if(room && room.game && room.game.players.length != 2){
                     setPlayersCount(room.game.id, 2)
                         .then(response => console.log(response))
                         .catch(e => console.log(e));
                 }
                 setRoom(JSON.parse(room.body));
             });
+
         });
 
         client.onWebSocketError = (error) => {
@@ -50,6 +51,7 @@ export default function GamePage(){
         };
 
         setStompClient(client);
+        refreshRoomForAll();
     };
 
     function connect(){
@@ -69,13 +71,18 @@ export default function GamePage(){
         stompClient.send( `/room/${roomId}/refresh`,  {},  "{}");
     }
 
+
     useEffect(() => {
         enterRoom(roomId, id)
             .then(response => {
                 initializeStompClient();
-                refreshRoomForAll();
-            })
-            .catch(e => {
+                return retrieveRoom(roomId);
+            }).then(response => {
+                setRoom(response.data);
+                return setPlayersCount(response.data.game.id, 2);
+            }).then(response => {
+                console.log(response);
+            }).catch(e => {
                 console.log(e);
             });
         
@@ -167,8 +174,9 @@ export default function GamePage(){
                         cellSize={50}
                         boardMatrix={room.game.board.board}
                         clientId={id}
-                        sendMove={(move) => {
-                            makeMove(room.game.id, move)
+                        sendMove={({x,y,clientId, moveType}) => {
+                            refreshRoomForAll();
+                            makeMove(room.game.id, {x,y,moveType, player: {client: {id:clientId}}})
                                 .then(response => refreshRoomForAll())
                                 .catch(e => console.log(e));
                         }}
