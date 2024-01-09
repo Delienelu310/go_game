@@ -2,6 +2,7 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
 import lombok.Data;
@@ -11,11 +12,13 @@ public class Game {
 	//class Game is handling rules of the game
 	
 	private Long id;
+
     private Board board;
     private State state;
     private List<Move> moves = new ArrayList<>();
     private Set<String> previousBoardStates = new HashSet<>();
     private Set<StoneGroup> deadStoneGroups = new HashSet<>();
+	@JsonIgnore
     private Set<Territory> territories = new HashSet<>();
     private Set<Player> agreed = new HashSet<>();
     private List<Player> players = new ArrayList<>();
@@ -53,21 +56,6 @@ public class Game {
     	}
     }
     
-    public void setId(Long id) {
-    	this.id = id;
-    }
-    
-    public Long getId() {
-    	return this.id;
-    }
-    
-    public Board getBoard() {
-    	return this.board;
-    }
-    
-    public State getState() {
-    	return this.state;
-    }
     
     private Set<String> getPreviousBoardStates(){
     	return this.previousBoardStates;
@@ -79,18 +67,6 @@ public class Game {
     
     public void addMove(Move move){
         moves.add(move);
-    }
-    
-    public List<Move> getMoves(){
-    	return this.moves;
-    }
-    
-    public List<Player> getPlayers(){
-    	return this.players;
-    }
-    
-    public void setPlayers(List<Player> players) {
-    	this.players = players;
     }
     
     public boolean hasChangedState() {

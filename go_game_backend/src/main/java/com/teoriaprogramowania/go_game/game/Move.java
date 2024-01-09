@@ -1,12 +1,6 @@
 package com.teoriaprogramowania.go_game.game;
 
-import java.util.Objects;
 
-import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
-
-import lombok.Data;
-
-@Data
 public class Move {
 	private int x;
 	private int y;
