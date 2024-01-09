@@ -6,12 +6,10 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
-// import com.teoriaprogramowania.go_game.resources.Client;
 
 @RestController
 public class GameController {
@@ -20,6 +18,7 @@ public class GameController {
     
     public GameController(RepositoryInterface repositoryInterface, JacksonMapper jacksonMapper) {
         this.repositoryInterface = repositoryInterface;
+        this.jacksonMapper = jacksonMapper;
     }
 
     @GetMapping("/games") 
@@ -35,7 +34,7 @@ public class GameController {
         Game game = repositoryInterface.getGameRepository().retrieveGameById(id);
         MappingJacksonValue gameJackson = new MappingJacksonValue(game);
         gameJackson.setFilters(jacksonMapper.getRoomMainFilterProvider());
-        
+
         return repositoryInterface.getGameRepository().retrieveGameById(id);
     }
 
@@ -43,22 +42,6 @@ public class GameController {
     public void deleteGameById(@PathVariable Long id){
         repositoryInterface.getGameRepository().deleteGameById(id);
     }
-
-    // @PutMapping("/games/{id}/set/white/{client_id}")
-    // public Game setWhitePlayer(@PathVariable("id") Long gameId, @PathVariable("client_id") Long clientId){
-    //     Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
-    //     Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
-    //     game.setWhite(whitePlayer);
-    //     return game;
-    // }
-
-    // @PutMapping("/games/{id}/set/black/{client_id}")
-    // public Game setBlackPlayer(@PathVariable("id") Long gameId, @PathVariable("client_id") Long clientId){
-    //     Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
-    //     Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
-    //     game.setBlack(whitePlayer);
-    //     return game;
-    // }
 
 
 }

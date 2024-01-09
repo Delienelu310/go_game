@@ -15,6 +15,10 @@ public class Player {
 	private List<Point> captives = new ArrayList<>();
 	@JsonFilter("Player_territory")
 	private Territory territory;
+
+	public Player(){
+		
+	}
 	
 	public Player(Client client) {
 		this.client = client;

@@ -9,7 +9,9 @@ public class Move {
 	@JsonFilter("Move_player")
     private Player player;
  
-    public Move() {
+    
+
+	public Move() {
 	}
 
 	public Move(int x, int y, MoveType moveType, Player player) {
@@ -42,6 +44,10 @@ public class Move {
     public Player getPlayer() {
     	return this.player;
     }
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 
     @Override 
 	public boolean equals(Object obj) {
