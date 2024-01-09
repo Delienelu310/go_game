@@ -3,9 +3,15 @@ package com.teoriaprogramowania.go_game.game;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 public class Territory {
+	
+	@JsonFilter("Territory_points")
 	private Set<Point> points = new HashSet<>();
+	@JsonFilter("Territory_neighbours")
 	private Set<StoneGroup> neighbors = new HashSet<>();
+	@JsonFilter("Territory_owner")
 	private Player owner;
 	
 	public Territory() {

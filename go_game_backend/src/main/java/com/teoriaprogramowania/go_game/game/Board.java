@@ -1,9 +1,11 @@
 package com.teoriaprogramowania.go_game.game;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
-import java.util.Arrays;
 
 public class Board {
+	@JsonFilter("Board_board")
 	private Point[][] board;
 	private int size;
 	
@@ -37,6 +39,7 @@ public class Board {
 		return this.size;
 	}
 	
+	@JsonIgnore
 	public Point getPoint(int x, int y) throws OutOfBoardException {
 		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
 			throw new OutOfBoardException();

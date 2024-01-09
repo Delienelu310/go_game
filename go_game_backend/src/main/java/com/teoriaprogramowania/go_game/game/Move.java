@@ -1,16 +1,12 @@
 package com.teoriaprogramowania.go_game.game;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
-import com.teoriaprogramowania.go_game.game.exceptions.InvalidMoveException;
-
-import lombok.Data;
-
-@Data
 public class Move {
 	private int x;
 	private int y;
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
+	@JsonFilter("Move_player")
     private Player player;
  
     public Move() {

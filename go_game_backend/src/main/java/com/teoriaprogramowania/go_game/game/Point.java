@@ -1,4 +1,5 @@
 package com.teoriaprogramowania.go_game.game;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 import java.util.*;
@@ -7,9 +8,12 @@ public class Point {
 	//class represents a singular point on the board
 	private int x;					//coordinate x
 	private int y;					//coordinate y
-	@JsonIgnore
+
+	@JsonFilter("Point_board")
 	private Board board;			//board to which the point belongs
+	@JsonFilter("Point_stoneGroup")
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
+
 	private boolean isEmpty;		//true if the point belongs to some stone group
 	
 	public Point() {

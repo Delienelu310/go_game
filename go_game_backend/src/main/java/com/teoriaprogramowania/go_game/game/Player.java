@@ -1,14 +1,19 @@
 package com.teoriaprogramowania.go_game.game;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.teoriaprogramowania.go_game.resources.Client;
 
 import java.util.*;
 
 public class Player {
-	private final Client client;
+	@JsonFilter("Player_client")
+	private Client client;
 //	private int captives;
 	private int finalScore;
+
+	@JsonFilter("Player_captives")
 	private List<Point> captives = new ArrayList<>();
+	@JsonFilter("Player_territory")
 	private Territory territory;
 	
 	public Player(Client client) {
