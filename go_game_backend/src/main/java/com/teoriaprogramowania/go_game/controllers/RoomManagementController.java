@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Player;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Room;
@@ -65,6 +66,8 @@ public class RoomManagementController {
         repositoryInterface.getRoomRepository().updateRoom(room);
     }
 
+    
+
     @PutMapping("/rooms/{id}/remove/{client_id}")
     public void removeParticipant(@PathVariable("id") Long id, @PathVariable("client_id") Long clientId){
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(id);
@@ -72,48 +75,48 @@ public class RoomManagementController {
 
         repositoryInterface.getRoomRepository().updateRoom(room);
     }
-
-    @PutMapping("/rooms/{id}/set/white/{client_id}")
-    public void setWhitePlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
-        Client whitePlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+    
+    @PutMapping("/rooms/{id}/set/players/size/{size}")
+    public void setPlayersSize(@PathVariable("id") Long roomId, @PathVariable("size") Integer size){
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
 
-        room.getGame().setWhite(new Player(whitePlayer));
+        Game game = room.getGame();
+        List<Player> players = game.getPlayers();
+        while(players.size() < size){
+            players.add(null);
+        }
+        while(players.size() > size){
+            players.remove(players.size() - 1);
+        }
 
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        game.setPlayers(players);
+
         repositoryInterface.getRoomRepository().updateRoom(room);
+        repositoryInterface.getGameRepository().updateGame(game);
+
     }
 
-    @PutMapping("/rooms/{id}/set/black/{client_id}")
-    public void setBlackPlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId){
-        Client blackPlayer = repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
-
-        room.getGame().setBlack(new Player(blackPlayer));
-
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
-        repositoryInterface.getRoomRepository().updateRoom(room);
-    }
-
-    @PutMapping("/rooms/{id}/remove/white")
-    public void removeWhitePlayer(@PathVariable("id") Long roomId){
-
-        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
-
-        room.getGame().setWhite(null);
-
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
-        repositoryInterface.getRoomRepository().updateRoom(room);
-    }
-
-    @PutMapping("/rooms/{id}/remove/black")
-    public void setBlackPlayer(@PathVariable("id") Long roomId){
-
-        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
+    @PutMapping("/rooms/{id}/set/players/{position}/{client_id}")
+    public void setPlayer(@PathVariable("id") Long roomId, @PathVariable("client_id") Long clientId, @PathVariable("position") Integer position){
         
-        room.getGame().setBlack(null);
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
 
-        repositoryInterface.getGameRepository().updateGame(room.getGame());
+        Game game = room.getGame();
+        List<Player> players = game.getPlayers();
+  
+        if(players.size() <= position) throw new RuntimeException("Invalid position");
+        if(players.get(position) != null) throw new RuntimeException("Position is held");
+
+        
+        if(clientId == -1){
+            players.set(position, null);
+        }else{
+            Client client = repositoryInterface.getClientRepository().retrieveClientById(clientId);
+            Player player = new Player(client);
+            players.set(position, player);
+        } 
+
+        repositoryInterface.getGameRepository().updateGame(game);
         repositoryInterface.getRoomRepository().updateRoom(room);
     }
 
