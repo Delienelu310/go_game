@@ -1,4 +1,4 @@
-package com.teoriaprogramowania.jacksonMappers;
+package com.teoriaprogramowania.go_game.jacksonMappers;
 
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class GameJacksonMapper {
             .addFilter("Board_board", SimpleBeanPropertyFilter.serializeAllExcept("board"))
             .addFilter("Point_stoneGroup", SimpleBeanPropertyFilter.serializeAllExcept("stones", "breaths"))
             .addFilter("StoneGroup_owner", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
-            .addFilter("Player_client", SimpleBeanPropertyFilter.serializeAll())
+            .addFilter("Player_client", SimpleBeanPropertyFilter.serializeAllExcept())
             .addFilter("Game_moves", SimpleBeanPropertyFilter.serializeAll())
             .addFilter("Move_player", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
             .addFilter("Game_deadStoneGroups", SimpleBeanPropertyFilter.serializeAllExcept("breaths"))
@@ -30,7 +30,7 @@ public class GameJacksonMapper {
             .addFilter("Territory_points", SimpleBeanPropertyFilter.serializeAllExcept("board", "stoneGroup"))
             .addFilter("Territory_owner", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
             .addFilter("Game_players", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
-            .addFilter("Client", SimpleBeanPropertyFilter.serializeAllExcept("currentRoom"))    
+            .addFilter("Client", SimpleBeanPropertyFilter.serializeAll())
         ;
         return filterProvider;
     }

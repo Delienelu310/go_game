@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.resources.ClientDetails;
-import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
+import com.teoriaprogramowania.go_game.resources.Room;
 
 @RestController
 public class ClientController {
@@ -66,10 +67,14 @@ public class ClientController {
         repositoryInterface.getClientRepository().updateClient(clientDetails, id);
     }
 
-    @PutMapping("/clients/{id}/exitroom")
-    public void exitRoom(@PathVariable Long id){
+    @PutMapping("/clients/{id}/rooms/{room_id}/exitroom")
+    public void exitRoom(@PathVariable("id") Long id, @PathVariable("room_id") Long roomId){
+        Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
         Client client = repositoryInterface.getClientRepository().retrieveClientById(id);
-        client.getCurrentRoom().getParticipants().removeIf(participant -> participant.getId() == id);
-        client.setCurrentRoom(null);
+        room.getParticipants().removeIf(participant -> participant.getId() == id);
+        client.setIsInRoom(false);
+
+        repositoryInterface.getRoomRepository().updateRoom(room);
+        repositoryInterface.getClientRepository().updateClient(client);
     }
 }

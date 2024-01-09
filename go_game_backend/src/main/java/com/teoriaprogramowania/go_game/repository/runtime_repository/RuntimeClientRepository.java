@@ -43,6 +43,13 @@ public class RuntimeClientRepository implements ClientRepositoryInterface{
     }
 
     @Override
+    public void updateClient(Client client){
+        int index = clients.indexOf(client);
+        if(index == -1) throw new RuntimeException("The client is not found");
+        clients.set(index, client);
+    }
+
+    @Override
     public Client addClient(ClientDetails clientDetails) {
         Client client = new Client();
         client.setClientDetails(clientDetails);

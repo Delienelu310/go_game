@@ -14,4 +14,5 @@ public interface ClientRepositoryInterface {
     void deleteClientById(Long id);
     Client addClient(ClientDetails clientDetails);    
     void updateClient(ClientDetails clientDetails, Long id);    
+    void updateClient(Client client);
 }

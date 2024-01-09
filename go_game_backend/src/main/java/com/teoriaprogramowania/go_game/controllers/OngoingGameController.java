@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.Player;
+import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
-import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 
 @RestController
 public class OngoingGameController {

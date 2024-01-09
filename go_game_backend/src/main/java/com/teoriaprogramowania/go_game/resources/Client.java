@@ -1,7 +1,6 @@
 package com.teoriaprogramowania.go_game.resources;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ public class Client {
 
     private ClientDetails clientDetails = new ClientDetails();
 
-    @JsonIgnore
-    private Room currentRoom;
+    private Boolean isInRoom;
 
 }

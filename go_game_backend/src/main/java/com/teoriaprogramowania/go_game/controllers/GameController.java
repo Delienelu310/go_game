@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.game.Game;
+import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
-import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 
 @RestController
 public class GameController {

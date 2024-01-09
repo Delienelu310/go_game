@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Room;
 import com.teoriaprogramowania.go_game.resources.RoomDetails;
-import com.teoriaprogramowania.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.resources.Client;
 
 @RestController
@@ -57,7 +57,7 @@ public class RoomManagementController {
         Room room = new Room();
         room.setRoomDetails(roomDetails);
         room.setAdmin(admin);
-        admin.setCurrentRoom(room);
+        admin.setIsInRoom(true);
 
         room.setGame(repositoryInterface.getGameRepository().createGame(size));
 

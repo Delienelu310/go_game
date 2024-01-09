@@ -1,4 +1,4 @@
-package com.teoriaprogramowania.jacksonMappers;
+package com.teoriaprogramowania.go_game.jacksonMappers;
 
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class ClientJacksonMapper {
 
     public FilterProvider getMainFilterProvider(){
         FilterProvider filterProvider = new SimpleFilterProvider()
-            .addFilter("client", SimpleBeanPropertyFilter.serializeAllExcept("currentRoom"));
+            .addFilter("Client", SimpleBeanPropertyFilter.serializeAll());
         
         return filterProvider;
     }
