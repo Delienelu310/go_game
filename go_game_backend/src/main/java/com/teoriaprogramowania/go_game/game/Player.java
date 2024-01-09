@@ -35,12 +35,10 @@ public class Player {
 	
 	public void addCaptives(Set<Point> newCaptvies) {
 		this.captives.addAll(newCaptvies);
-		this.captivesNumber = this.captives.size();
 	}
 	
 	public void removeCaptives(Set<Point> captvies) {
 		this.captives.removeAll(captvies);
-		this.captivesNumber = this.captives.size();
 	}
 	
 	public void addTerritory(Territory territory) {

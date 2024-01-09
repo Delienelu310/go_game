@@ -63,6 +63,22 @@ public class Game {
     		makeMove(move);
     	}
     }
+
+	public void setId(Long id) {
+    	this.id = id;
+    }
+    
+    public Long getId() {
+    	return this.id;
+    }
+    
+    public Board getBoard() {
+    	return this.board;
+    }
+    
+    public State getState() {
+    	return this.state;
+    }
     
     
     private Set<String> getPreviousBoardStates(){
@@ -71,6 +87,14 @@ public class Game {
 
     public void start() {
     	this.state = State.ONGOING;
+    }
+
+	public List<Move> getMoves(){
+    	return this.moves;
+    }
+    
+    public List<Player> getPlayers(){
+    	return this.players;
     }
     
     public void addMove(Move move){
