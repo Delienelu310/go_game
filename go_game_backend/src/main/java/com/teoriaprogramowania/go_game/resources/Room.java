@@ -3,7 +3,6 @@ package com.teoriaprogramowania.go_game.resources;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.Game;
 
 import lombok.Data;

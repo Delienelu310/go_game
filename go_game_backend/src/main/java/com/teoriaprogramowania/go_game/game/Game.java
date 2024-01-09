@@ -2,26 +2,34 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
 import lombok.Data;
 
 @Data
+@JsonFilter("Game")
 public class Game {
 	//class Game is handling rules of the game
 	
 	private Long id;
-
-    private Board board;
-    private State state;
+	@JsonFilter("Game_board")
+    private Board board;		
+    private State state;	
+	@JsonFilter("Game_moves")	
     private List<Move> moves = new ArrayList<>();
-    private Set<String> previousBoardStates = new HashSet<>();
-    private Set<StoneGroup> deadStoneGroups = new HashSet<>();
-	@JsonIgnore
+	@JsonFilter("Game_previousBoardStates")
+    private Set<String> previousBoardStates = new HashSet<>(); 
+	@JsonFilter("Game_deadStoneGroups")
+    private Set<StoneGroup> deadStoneGroups = new HashSet<>(); 
+	@JsonFilter("Game_territories")
     private Set<Territory> territories = new HashSet<>();
+	@JsonFilter("Game_players")
     private Set<Player> agreed = new HashSet<>();
+	@JsonFilter("Game_players")
     private List<Player> players = new ArrayList<>();
+	@JsonFilter("Game_players")
     private Player currentPlayer;
     
     public Game() {
@@ -156,6 +164,7 @@ public class Game {
         return true;
     }
     
+	@JsonIgnore
     public boolean isMoveValid(Move move){
     	if(move.getPlayer() == currentPlayer) {
     		return false;
@@ -324,6 +333,7 @@ public class Game {
     	p2.setFinalScore(p2Score);
     }
     
+	@JsonIgnore
     public int getPlayerScore(Player player) {
     	return player.getFinalScore();
     }

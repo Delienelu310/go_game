@@ -2,14 +2,15 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 public class StoneGroup {
 	//represents a group of stones 
-	@JsonIgnore
+	@JsonFilter("StoneGroup_stones")
 	private Set<Point> stones;
-	@JsonIgnore
+	@JsonFilter("StoneGroup_breaths")
 	private Set<Point> breaths;
+	@JsonFilter("StoneGroup_owner")
 	private Player owner;
 	
 	public StoneGroup() {
@@ -41,11 +42,11 @@ public class StoneGroup {
 	public Player getOwner() {
 		return this.owner;
 	}
-	@JsonIgnore
+
 	public Set<Point> getBreaths(){
 		return this.breaths;
 	}
-	@JsonIgnore
+
 	public Set<Point> getStones(){
 		return this.stones;
 	}

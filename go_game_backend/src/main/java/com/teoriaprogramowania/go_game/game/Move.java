@@ -1,13 +1,17 @@
 package com.teoriaprogramowania.go_game.game;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 public class Move {
 	private int x;
 	private int y;
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
+	@JsonFilter("Move_player")
     private Player player;
  
-    public Move() {
+    
+
+	public Move() {
 	}
 
 	public Move(int x, int y, MoveType moveType, Player player) {
@@ -41,7 +45,7 @@ public class Move {
     	return this.player;
     }
 
-	public void setPlayer(Player player){
+	public void setPlayer(Player player) {
 		this.player = player;
 	}
 

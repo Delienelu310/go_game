@@ -1,6 +1,6 @@
 package com.teoriaprogramowania.go_game.game;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.teoriaprogramowania.go_game.resources.Client;
 
 import lombok.Data;
@@ -9,15 +9,19 @@ import java.util.*;
 
 @Data
 public class Player {
-
+	@JsonFilter("Player_client")
 	private Client client;
-	private int captivesNumber = 0;
+//	private int captives;
 	private int finalScore;
 
-	@JsonIgnore
+	@JsonFilter("Player_captives")
 	private List<Point> captives = new ArrayList<>();
-	@JsonIgnore
+	@JsonFilter("Player_territory")
 	private Territory territory;
+
+	public Player(){
+		
+	}
 	
 	public Player(Client client) {
 		this.client = client;
