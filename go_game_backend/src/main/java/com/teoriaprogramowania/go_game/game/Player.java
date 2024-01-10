@@ -28,6 +28,10 @@ public class Player {
 		this.territory = new Territory();
 		this.territory.setOwner(this);
 	}
+
+	public Client getClient(){
+		return this.client;
+	}
 	
 	public List<Point> getCaptives() {
 		return this.captives;

@@ -2,6 +2,9 @@ package com.teoriaprogramowania.go_game.game;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
+import lombok.Data;
+
+@Data
 public class Move {
 	private int x;
 	private int y;

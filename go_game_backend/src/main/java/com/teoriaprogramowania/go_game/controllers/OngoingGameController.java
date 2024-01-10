@@ -79,7 +79,7 @@ public class OngoingGameController {
             .filter(pl -> pl != null && pl.getClient().getId() == move.getPlayer().getClient().getId())
             .findFirst().get();
         move.setPlayer(player);
-
+        if(!game.isMoveValid(move)) throw new RuntimeException("move is invalid");
         game.makeMove(move);
 
         return getMappedGameMain(game);
