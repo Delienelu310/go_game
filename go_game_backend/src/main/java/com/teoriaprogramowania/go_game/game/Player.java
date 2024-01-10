@@ -3,11 +3,9 @@ package com.teoriaprogramowania.go_game.game;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.teoriaprogramowania.go_game.resources.Client;
 
-import lombok.Data;
 
 import java.util.*;
 
-@Data
 public class Player {
 	@JsonFilter("Player_client")
 	private Client client;
