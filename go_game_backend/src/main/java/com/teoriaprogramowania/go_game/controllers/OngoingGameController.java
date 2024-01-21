@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
+import com.teoriaprogramowania.go_game.game.MoveType;
 import com.teoriaprogramowania.go_game.game.Player;
 import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
@@ -70,6 +71,16 @@ public class OngoingGameController {
 
         return getMappedGameMain(game);
     }
+    
+    @PutMapping("/games/{id}/start")
+    public MappingJacksonValue startGame(@PathVariable("id") Long gameId){
+        Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
+        game.start();
+
+        repositoryInterface.getGameRepository().updateGame(game);
+
+        return getMappedGameMain(game);
+    }
 
     @PutMapping("/games/{id}/add/move")
     public MappingJacksonValue addMove(@PathVariable("id") Long gameId, @RequestBody Move move){
@@ -82,19 +93,56 @@ public class OngoingGameController {
         if(!game.isMoveValid(move)) throw new RuntimeException("move is invalid");
         game.makeMove(move);
 
+        game.hasChangedState();
+
         return getMappedGameMain(game);
     }
 
-    @PutMapping("/games/{id}/start")
-    public MappingJacksonValue startGame(@PathVariable("id") Long gameId){
+
+    @PutMapping("/games/{id}/toggle/stonegroup")
+    public MappingJacksonValue toggleStoneGroup(@PathVariable("id") Long gameId, @RequestBody Move move){
         Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
-        game.start();
+        Player player = game.getPlayers().stream()
+            .filter(pl -> pl != null && pl.getClient().getId() == move.getPlayer().getClient().getId())
+            .findFirst().get();
+
+        game.toggleDeadStoneGroup(move.getX(), move.getY(), player);
 
         repositoryInterface.getGameRepository().updateGame(game);
 
         return getMappedGameMain(game);
     }
 
+    @PutMapping("/games/{id}/toggle/agreed_to_finalize/{clientId}")
+    public MappingJacksonValue toggleAgreedToFinalize(@PathVariable("id") Long gameId, @PathVariable("clientId") Long clientId){
+        Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
+        Player player = game.getPlayers().stream()
+            .filter(pl -> pl != null && pl.getClient().getId() == clientId)
+            .findFirst().get();
+
+        game.toggleAgreedToFinalize(player);
+        game.finalizeGame();
+
+        repositoryInterface.getGameRepository().updateGame(game);
+
+        return getMappedGameMain(game);
+    }
+
+    @PutMapping("/games/{id}/resume_game/{clientId}")
+    public MappingJacksonValue resumeGame(@PathVariable("id") Long gameId, @PathVariable("clientId") Long clientId){
+        Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
+        Player player = game.getPlayers().stream()
+            .filter(pl -> pl != null && pl.getClient().getId() == clientId)
+            .findFirst().get();
+
+        Move resumeMove = new Move(0, 0, MoveType.RESUMEGAME, player);
+        game.makeMove(resumeMove);
+        game.resumeGame();
+
+        repositoryInterface.getGameRepository().updateGame(game);
+
+        return getMappedGameMain(game);
+    }
 
 
 }

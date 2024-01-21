@@ -16,3 +16,16 @@ export function startGame(gameId){
 export function makeMove(gameId, move){
     return apiClient.put(`/games/${gameId}/add/move`, move);
 }
+
+export function toggleDeadStoneGroup(gameId, move){
+    return apiClient.put(`/games/${gameId}/toggle/stonegroup`, move);
+}
+
+export function toggleAgreedToFinalize(gameId, clientId){
+    return apiClient.put(`/games/${gameId}/toggle/agreed_to_finalize/${clientId}`);
+}
+
+export function resumeGame(gameId, clientId){
+    return apiClient.put(`/games/${gameId}/resume_game/${clientId}`);
+
+}

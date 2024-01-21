@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { enterRoom, leaveRoom, retrieveRoom } from "../api/roomsApi"
-import { setPlayer, makeMove, startGame, setPlayersCount } from "../api/gameOngoingApi";
+import { setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
 import SockJS from "sockjs-client"
@@ -168,17 +168,41 @@ export default function GamePage(){
 
                 <br/>
                 {room.game.state != "CREATED" && <div>
-                    <button className="btn btn-danger m-2">Surrender</button>
+                    {room.game.state == "ONGOING"}
+                    <button className="m-3 btn" onClick={() => {
+                        
+                    }}>Pass</button>
+                    <button className="m-3 btn btn-danger">Surrender</button>
+
+
+
                     <Board
                         size={room.game.board.size}
                         cellSize={50}
                         boardMatrix={room.game.board.board}
                         clientId={id}
                         sendMove={({x,y,clientId, moveType}) => {
-                            refreshRoomForAll();
-                            makeMove(room.game.id, {x,y,moveType, player: {client: {id:clientId}}})
-                                .then(response => refreshRoomForAll())
-                                .catch(e => console.log(e));
+                            switch(room.game.state){
+                                case "ONGOING": 
+                                    makeMove(room.game.id, {x,y,moveType, player: {client: {id:clientId}}})
+                                        .then(response => refreshRoomForAll())
+                                        .catch(e => console.log(e));
+                                    break;
+                                case "NEGOTIATION":
+                                    switch(moveType){
+                                        case "STONEGROUP":
+                                            toggleDeadStoneGroup(room.game.id, {x, y, player: {client: {id: clientId}}})
+                                                .then(response => refreshRoomForAll())
+                                                .catch(e => console.log(e));
+                                            break;
+                                        case "AGREE":
+                                            toggleAgreedToFinalize(room.game.id, clientId);
+                                            break;
+                                    }
+                                    
+                                    break;
+                            }
+                            
                         }}
                         white={room.game.players[0] ? room.game.players[0].client.id : null}
                         black={room.game.players[1] ? room.game.players[1].client.id : null}
