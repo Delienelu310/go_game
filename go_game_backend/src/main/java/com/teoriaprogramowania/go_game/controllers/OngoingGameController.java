@@ -2,12 +2,15 @@ package com.teoriaprogramowania.go_game.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teoriaprogramowania.go_game.GoGameApplication;
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.MoveType;
@@ -20,6 +23,8 @@ import com.teoriaprogramowania.go_game.resources.Client;
 public class OngoingGameController {
     private RepositoryInterface repositoryInterface;
     private JacksonMapperCollection jacksonMapper;
+
+    private Logger logger = LoggerFactory.getLogger(GoGameApplication.class);
 
     public OngoingGameController(RepositoryInterface repositoryInterface, JacksonMapperCollection jacksonMapper){
         this.repositoryInterface = repositoryInterface;
@@ -105,6 +110,9 @@ public class OngoingGameController {
         Player player = game.getPlayers().stream()
             .filter(pl -> pl != null && pl.getClient().getId() == move.getPlayer().getClient().getId())
             .findFirst().get();
+
+        logger.info(Integer.toString(move.getX()));
+        logger.info(Integer.toString(move.getY()));
 
         game.toggleDeadStoneGroup(move.getX(), move.getY(), player);
 

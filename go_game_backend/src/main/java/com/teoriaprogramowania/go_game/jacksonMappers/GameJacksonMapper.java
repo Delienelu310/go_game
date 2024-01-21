@@ -21,6 +21,7 @@ public class GameJacksonMapper {
             .addFilter("Board_board", SimpleBeanPropertyFilter.serializeAllExcept("board"))
             .addFilter("Point_stoneGroup", SimpleBeanPropertyFilter.serializeAllExcept("stones", "breaths"))
             .addFilter("StoneGroup_owner", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
+            .addFilter("StoneGroup_breaths", SimpleBeanPropertyFilter.filterOutAll())
             .addFilter("Player_client", SimpleBeanPropertyFilter.serializeAllExcept())
             .addFilter("Game_moves", SimpleBeanPropertyFilter.serializeAll())
             .addFilter("Move_player", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))

@@ -215,24 +215,20 @@ public class Game {
     }
 
 	public void toggleDeadStoneGroup(int x, int y, Player player){
-		try {
-        	Point point = this.board.getPoint(x, y);
-    		if(point.isEmpty()) {
-    			return;
-    		}
-			if(point.getStoneGroup().getOwner() != player){
-				return;
-			}
+		Point point = this.board.getPoint(x, y);
+		if(point.isEmpty()) {
+			throw new RuntimeException("Point is empty");
+		}
+		if(point.getStoneGroup().getOwner() != player){
+			throw new RuntimeException("You are not the owner");
+		}
 
-			if( this.deadStoneGroups.contains(point.getStoneGroup()) ){
-				deadStoneGroups.add(point.getStoneGroup());
-			}else{
-				deadStoneGroups.remove(point.getStoneGroup());
-			}
-        	
-    	} catch(OutOfBoardException e) {
-    		return;
-    	}
+		if( this.deadStoneGroups.contains(point.getStoneGroup()) ){
+			deadStoneGroups.remove(point.getStoneGroup());
+		}else{
+			deadStoneGroups.add(point.getStoneGroup());
+		}
+        
 	}
 
     public void pickDeadStoneGroup(int x, int y) {
@@ -315,7 +311,7 @@ public class Game {
  	}
     
     public void resumeGame() {
-    	this.deadStoneGroups = null;
+    	this.deadStoneGroups = new HashSet<>(); 
     	this.agreed.clear();
     	if(this.state == State.NEGOTIATION) {
         	this.state = State.ONGOING;
