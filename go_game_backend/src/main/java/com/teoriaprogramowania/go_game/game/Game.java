@@ -132,7 +132,7 @@ public class Game {
     }
     
     public boolean simulateMove(Board board, Move move) {
-    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
+    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER || move.getMoveType() == MoveType.RESUMEGAME) {
     		return true;
     	}
     	
@@ -213,6 +213,27 @@ public class Game {
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }
+
+	public void toggleDeadStoneGroup(int x, int y, Player player){
+		try {
+        	Point point = this.board.getPoint(x, y);
+    		if(point.isEmpty()) {
+    			return;
+    		}
+			if(point.getStoneGroup().getOwner() != player){
+				return;
+			}
+
+			if( this.deadStoneGroups.contains(point.getStoneGroup()) ){
+				deadStoneGroups.add(point.getStoneGroup());
+			}else{
+				deadStoneGroups.remove(point.getStoneGroup());
+			}
+        	
+    	} catch(OutOfBoardException e) {
+    		return;
+    	}
+	}
 
     public void pickDeadStoneGroup(int x, int y) {
     	try {
@@ -315,6 +336,20 @@ public class Game {
     public void agreeToFinalize(Player p) {
     	this.agreed.add(p);
     }
+
+	public void disagreeToFinalize(Player p){
+		if(this.agreed.contains(p)){
+			this.agreed.remove(p);
+		}
+	}
+
+	public void toggleAgreedToFinalize(Player p){
+		if(this.agreed.contains(p)){
+			this.agreed.remove(p);
+		}else{
+			this.agreed.add(p);
+		}
+	}
     
     public boolean bothPlayersAgreed() {
     	return this.agreed.size() == 2;
