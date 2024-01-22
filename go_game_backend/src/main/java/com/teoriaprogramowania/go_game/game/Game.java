@@ -229,6 +229,8 @@ public class Game {
     	}
     }
     
+    
+    
     private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
 		Set<Point> potentialTerritory = new HashSet<Point>();
 		Set<Territory> territories = new HashSet<Territory>();
