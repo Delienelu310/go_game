@@ -201,7 +201,28 @@ public class Game {
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }
+    
+    public List<Move> getValidMoves(Player player) {
+    	List<Move> validMoves = new ArrayList<>();
+    	for (int x = 0; x < board.getSize(); x++) {
+    		for (int y = 0; y < board.getSize(); y++) {
+    			try {
+    				Point point = board.getPoint(x, y);
+    				if (point.isEmpty()) {
+    					Move potentialMove = new Move(x, y, MoveType.NORMAL, player);
+    					if (isMoveValid(potentialMove)) {
+    						validMoves.add(potentialMove);
+    					}
+    				}
+    			} catch (OutOfBoardException e) {
+    				continue;
+                }
+            }
+        }
+        return validMoves;
+    }
 
+    
     public void pickDeadStoneGroup(int x, int y) {
     	try {
         	Point point = this.board.getPoint(x, y);
