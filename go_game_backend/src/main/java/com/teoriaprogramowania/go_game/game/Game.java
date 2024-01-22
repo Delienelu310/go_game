@@ -37,6 +37,7 @@ public class Game {
     	this.board = game.getBoard();
     	this.previousBoardStates = game.getPreviousBoardStates();
     	this.state = State.CREATED;
+    	this.players = game.getPlayers();
     }
     
     public void setMoves(List<Move> moves) {
@@ -75,7 +76,7 @@ public class Game {
     }
     
     public Player getOpponent(Player player) {
-    	if(this.players.get(0) == player) {
+    	if(this.players.get(0).equals(player)) {
     		return players.get(1);
     	}
     	return players.get(0);
@@ -269,14 +270,27 @@ public class Game {
 		Territory newTerritory;
 		
 		Point point;
-		for(int i = 0; i < this.board.getSize(); ++i) {
-			for(int j = 0; j < this.board.getSize(); ++j) {
-				point = this.board.getPoint(i, j);
-				if(point.isEmpty() || deadStoneGroups.contains(point.getStoneGroup())) {
-					potentialTerritory.add(point);
+		
+		if(deadStoneGroups != null) {	
+			for(int i = 0; i < this.board.getSize(); ++i) {
+				for(int j = 0; j < this.board.getSize(); ++j) {
+					point = this.board.getPoint(i, j);
+					if(point.isEmpty() || deadStoneGroups.contains(point.getStoneGroup())) {
+						potentialTerritory.add(point);
+					}
+				}
+			}
+		} else {	
+			for(int i = 0; i < this.board.getSize(); ++i) {
+				for(int j = 0; j < this.board.getSize(); ++j) {
+					point = this.board.getPoint(i, j);
+					if(point.isEmpty()) {
+						potentialTerritory.add(point);
+					}
 				}
 			}
 		}
+		
 		
 		while(potentialTerritory.size() > 0) {
 			point = potentialTerritory.iterator().next();
@@ -292,7 +306,11 @@ public class Game {
 				prev_size = expandedTerritory.size();
 				newTerritoryPoints.clear();
 				for(Point deadOrEmptyPoint : new HashSet<>(expandedTerritory)) {
-					newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
+					if(deadStoneGroups != null) {
+						newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
+					} else {
+						newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints());
+					}
 				}
 				expandedTerritory.addAll(newTerritoryPoints);
 				curr_size = expandedTerritory.size();

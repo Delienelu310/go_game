@@ -1100,4 +1100,9 @@ public class GameTests {
     	assertEquals(9, game.getPlayerScore(black));
     	assertEquals(0, game.getPlayerScore(white));
     }
+    
+    @Test
+    void testValidMoves() {
+    	
+    }
 }

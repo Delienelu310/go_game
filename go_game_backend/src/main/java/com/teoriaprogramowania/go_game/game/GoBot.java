@@ -10,15 +10,16 @@ public class GoBot {
 		this.botPlayer = botPlayer;
 	}
 	
-	public void makeMoveBot(Game game) {
+	public Move makeMoveBot(Game game) {
 		int[] result = minimax(game, maxDepth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		Move bestMove = null;
+		
 		if(result[1] == -1) {
 			bestMove = new Move(-1, -1, MoveType.PASS, botPlayer);
 		} else {
 			bestMove = new Move(result[1], result[2], MoveType.NORMAL, botPlayer);
 		}
-		game.makeMove(bestMove);
+		return bestMove;
 	}
 	
 	private int[] minimax(Game game, int depth, boolean isMaximizingPlayer, int alpha, int beta){
@@ -42,7 +43,7 @@ public class GoBot {
 				int eval = minimax(newGame, depth - 1, false, alpha, beta)[0];
 				
 				botPlayer.setCaptives(backupCaptives);
-				
+
 				if(eval > maxEval) {
 					maxEval = eval;
 					bestMove = move;
@@ -58,21 +59,22 @@ public class GoBot {
 			}
 			return new int[] {maxEval, -1, -1};
 		} else {
-			int minEval = Integer.MIN_VALUE;
+			int minEval = Integer.MAX_VALUE;
 			Move bestMove = null;
 			
-			for(Move move : game.getValidMoves(botPlayer)) {
+			for(Move move : game.getValidMoves(game.getOpponent(botPlayer))) {
 				Game newGame = new Game(game);
 				newGame.makeMove(move);
 				int eval = minimax(newGame, depth - 1, true, alpha, beta)[0];
 				
 				botPlayer.setCaptives(backupCaptives);
 				
-				if(eval > minEval) {
+				if(eval < minEval) {
 					minEval = eval;
 					bestMove = move;
 				}
-				alpha = Math.max(alpha, eval);
+				
+				beta = Math.min(beta, eval);
 				if(beta <= alpha) {
 					break;
 				}
@@ -109,8 +111,6 @@ public class GoBot {
 		
 		score -= opponentStones;
 		score -= opponentTerritory;
-		
-		//evaluation of the game
 		
 		return score;
 	}
