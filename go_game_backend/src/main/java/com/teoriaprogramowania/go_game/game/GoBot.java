@@ -1,5 +1,7 @@
 package com.teoriaprogramowania.go_game.game;
 
+import java.util.*;
+
 public class GoBot {
 	private static final int maxDepth = 3;
 	private Player botPlayer;
@@ -28,6 +30,8 @@ public class GoBot {
 			return new int[] {evaluateGame(game), -1, -1};
 		}
 		
+		List<Point> backupCaptives = botPlayer.getCaptives();
+		
 		if(isMaximizingPlayer) {
 			int maxEval = Integer.MIN_VALUE;
 			Move bestMove = null;
@@ -36,6 +40,9 @@ public class GoBot {
 				Game newGame = new Game(game);
 				newGame.makeMove(move);
 				int eval = minimax(newGame, depth - 1, false, alpha, beta)[0];
+				
+				botPlayer.setCaptives(backupCaptives);
+				
 				if(eval > maxEval) {
 					maxEval = eval;
 					bestMove = move;
@@ -58,6 +65,9 @@ public class GoBot {
 				Game newGame = new Game(game);
 				newGame.makeMove(move);
 				int eval = minimax(newGame, depth - 1, true, alpha, beta)[0];
+				
+				botPlayer.setCaptives(backupCaptives);
+				
 				if(eval > minEval) {
 					minEval = eval;
 					bestMove = move;
@@ -77,6 +87,28 @@ public class GoBot {
 	
 	private int evaluateGame(Game game) {
 		int score = 0;
+		
+		Player opponent = game.getOpponent(botPlayer);
+		
+		int myStones = botPlayer.getCaptives().size();
+		int opponentStones = opponent.getCaptives().size();
+		
+		int myTerritory = 0;
+		int opponentTerritory = 0;
+		
+		for(Territory territory : game.getCurrentTerritories()) {
+			if(territory.getOwner() == botPlayer) {
+				myTerritory += territory.getPoints().size();
+			} else if(territory.getOwner() != null) {
+				opponentTerritory += territory.getPoints().size();
+			}
+		}
+		
+		score += myStones;
+		score += myTerritory;
+		
+		score -= opponentStones;
+		score -= opponentTerritory;
 		
 		//evaluation of the game
 		

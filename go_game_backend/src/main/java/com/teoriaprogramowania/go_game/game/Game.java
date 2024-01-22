@@ -74,6 +74,14 @@ public class Game {
     	this.state = State.ONGOING;
     }
     
+    public Player getOpponent(Player player) {
+    	if(this.players.get(0) == player) {
+    		return players.get(1);
+    	}
+    	return players.get(0);
+    }
+    
+    
     public void addMove(Move move){
         moves.add(move);
     }
@@ -250,7 +258,10 @@ public class Game {
     	}
     }
     
-    
+    public Set<Territory> getCurrentTerritories(){
+    	this.establishTerritories(null);
+    	return this.territories;
+    }
     
     private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
 		Set<Point> potentialTerritory = new HashSet<Point>();
