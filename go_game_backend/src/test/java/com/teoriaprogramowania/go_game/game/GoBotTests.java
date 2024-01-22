@@ -37,27 +37,30 @@ public class GoBotTests {
 		}
 		
 		Move botMove = bot.makeMoveBot(game);
-		if(game.isMoveValid(move)) {
+		if(game.isMoveValid(botMove)) {
 			game.makeMove(botMove);
 		}
-		/*
-		System.out.println(botMove.getX());
-		System.out.println(botMove.getY());
-		System.out.println("");
-		*/
+		
+		move = new Move(7, 8, MoveType.NORMAL, black);
+		if(game.isMoveValid(move)) {
+			game.makeMove(move);
+		}
 
+		botMove = bot.makeMoveBot(game);
+		if(game.isMoveValid(botMove)) {
+			game.makeMove(botMove);
+		}
+		
 		for(int i = 0; i < game.getMoves().size(); ++i) {
 			System.out.println(game.getMoves().get(i).getX());
 			System.out.println(game.getMoves().get(i).getY());
 			System.out.println("");
 		}
 		
-		/*
+
 		System.out.println(botMove.getX());
 		System.out.println(botMove.getY());
 		System.out.println("");
-		*/
-		
 	}
 
 }

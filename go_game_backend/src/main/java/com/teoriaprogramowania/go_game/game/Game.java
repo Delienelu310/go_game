@@ -33,11 +33,12 @@ public class Game {
     }
     
     public Game(Game game) {
-    	this.moves = game.getMoves();
-    	this.board = game.getBoard();
-    	this.previousBoardStates = game.getPreviousBoardStates();
-    	this.state = State.CREATED;
-    	this.players = game.getPlayers();
+    	this.moves = new ArrayList<>(game.getMoves());
+    	this.board = new Board(game.getBoard());
+    	this.previousBoardStates = new HashSet<>(game.getPreviousBoardStates());
+    	this.state = game.getState();
+    	this.players = new ArrayList<>(game.getPlayers());
+    	this.currentPlayer = game.getCurrentPlayer();
     }
     
     public void setMoves(List<Move> moves) {
@@ -82,6 +83,9 @@ public class Game {
     	return players.get(0);
     }
     
+    public Player getCurrentPlayer() {
+    	return this.currentPlayer;
+    }
     
     public void addMove(Move move){
         moves.add(move);

@@ -26,6 +26,23 @@ public class Board {
 		this.size = size;
 	}
 
+	public Board(Board board) {
+		this.size = board.getSize();
+		this.board = new Point[this.size][this.size];
+		
+		for(int i = 0; i < this.size; ++i) {
+			for(int j = 0; j < this.size; ++j) {
+				Point oldPoint = board.getPoint(i, j);
+				Point newPoint = new Point(oldPoint.getX(), oldPoint.getY(), this);
+				
+				newPoint.setStoneGroup(oldPoint.getStoneGroup());
+				
+				this.board[i][j] = newPoint;
+			}
+		}
+		
+	}
+	
 	public Point[][] getBoard(){
 		return board;
 	}
