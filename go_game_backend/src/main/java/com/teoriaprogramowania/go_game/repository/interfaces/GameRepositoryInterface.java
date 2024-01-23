@@ -8,6 +8,7 @@ public interface GameRepositoryInterface {
     
     public Game retrieveGameById(Long id);
     public List<Game> retrieveAllGames();
+    public List<Game> retrieveGamesOfClient(Long clientId);
 
     public void deleteGameById(Long id);
     public Game createGame(int size);

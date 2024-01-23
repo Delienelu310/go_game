@@ -22,6 +22,14 @@ public class RuntimeGameRepository implements GameRepositoryInterface{
     @Override
     public List<Game> retrieveAllGames() {
         return games;
+    } 
+    
+    @Override
+    public List<Game> retrieveGamesOfClient(Long clientId) {
+        return games.stream().filter(game ->
+            game.getPlayers().stream()
+                .anyMatch(player -> player.getClient().getId() == clientId)  
+        ).toList();
     }
 
     @Override
@@ -43,6 +51,8 @@ public class RuntimeGameRepository implements GameRepositoryInterface{
         if(index == -1) throw new RuntimeException("The game is not found");
         games.set(index, game);
     }
+
+  
 
     
     

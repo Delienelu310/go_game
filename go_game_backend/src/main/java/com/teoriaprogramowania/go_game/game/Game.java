@@ -12,7 +12,7 @@ import lombok.Data;
 @JsonFilter("Game")
 public class Game {
 	//class Game is handling rules of the game
-	
+
 	private Long id;
 	@JsonFilter("Game_board")
     private Board board;		

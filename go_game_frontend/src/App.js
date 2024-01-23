@@ -10,6 +10,8 @@ import RoomListPage from './pages/RoomListPage';
 import CreateGamePage from './pages/CreateGamePage';
 import MainPage from './pages/MainPage';
 import GamePage from './pages/GamePage';
+import HistotyPage from './pages/HistoryPage';
+import GameRecordPage from './pages/GameRecordPage';
 
 function App() {
   return (
@@ -43,6 +45,16 @@ function App() {
             <Route path="/game/:roomId" element={
               <GamePage/>
             }/>
+
+            <Route path="/history" element={
+              <HistotyPage/>
+            }/>
+
+            <Route paht="/history/:gameId" element={
+              <GameRecordPage/>
+            }/>
+
+
 
 
           </Routes>

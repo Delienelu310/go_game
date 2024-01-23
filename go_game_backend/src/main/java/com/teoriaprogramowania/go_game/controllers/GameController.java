@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.game.Game;
+import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 
@@ -31,12 +32,45 @@ public class GameController {
     }
 
     @GetMapping("/games/{id}")
-    public Game getGameById(@PathVariable Long id){
+    public MappingJacksonValue getGameById(@PathVariable Long id){
+
         Game game = repositoryInterface.getGameRepository().retrieveGameById(id);
         MappingJacksonValue gameJackson = new MappingJacksonValue(game);
         gameJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
 
-        return repositoryInterface.getGameRepository().retrieveGameById(id);
+        return gameJackson;
+    }
+
+    @GetMapping("/client/{id}/games")
+    public MappingJacksonValue getGameByClientId(@PathVariable Long id){
+
+        List<Game> game = repositoryInterface.getGameRepository().retrieveGamesOfClient(id);
+
+        MappingJacksonValue gameJackson = new MappingJacksonValue(game);
+        gameJackson.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
+        return gameJackson;
+
+    }
+
+    @GetMapping("/games/{id}/move/{moveNumber}")
+    public MappingJacksonValue getGameRecreated(@PathVariable("id") Long id, @PathVariable("moveNumber") Integer moveNumber){
+        
+        Game originalGame = repositoryInterface.getGameRepository().retrieveGameById(id);
+        MappingJacksonValue jacksonValue;
+        if(moveNumber == originalGame.getMoves().size()){
+            jacksonValue = new MappingJacksonValue(originalGame);
+        }else{
+            List<Move> movesTaken = originalGame.getMoves().subList(0, moveNumber);
+
+            Game recreatedGame = new Game();
+            recreatedGame.setMoves(movesTaken);
+
+            jacksonValue = new MappingJacksonValue(recreatedGame);
+        }
+        
+        jacksonValue.setFilters(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
+        
+        return jacksonValue;
     }
 
     @DeleteMapping("/games/{id}")
