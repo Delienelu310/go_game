@@ -50,7 +50,7 @@ function App() {
               <HistotyPage/>
             }/>
 
-            <Route paht="/history/:gameId" element={
+            <Route path="/history/:gameId" element={
               <GameRecordPage/>
             }/>
 

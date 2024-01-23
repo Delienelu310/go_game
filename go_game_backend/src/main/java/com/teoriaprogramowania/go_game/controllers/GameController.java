@@ -62,7 +62,7 @@ public class GameController {
         }else{
             List<Move> movesTaken = originalGame.getMoves().subList(0, moveNumber);
 
-            Game recreatedGame = new Game();
+            Game recreatedGame = new Game(originalGame.getBoard().getSize());
             recreatedGame.setMoves(movesTaken);
 
             jacksonValue = new MappingJacksonValue(recreatedGame);

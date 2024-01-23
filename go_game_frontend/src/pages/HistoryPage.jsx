@@ -23,7 +23,7 @@ export default function HistotyPage(){
         <div>
             {games && games.map( (game, index) => (
                 <div key={index}>
-                    <Link to={`/history/${index}`} className="btn m-3">Watch</Link>
+                    <Link to={`/history/${game.id}`} className="btn m-3">Watch</Link>
                 </div>
             ))}
         </div>
