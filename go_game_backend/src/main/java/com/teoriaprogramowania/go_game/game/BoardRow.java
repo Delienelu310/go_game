@@ -1,7 +1,11 @@
 package com.teoriaprogramowania.go_game.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -21,19 +25,19 @@ public class BoardRow {
         this.id = id;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Point[] points;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Point> points;
 
     private int size;
 
     public void addPoint(Point point){
-        this.points[point.getY()] =  point;
+        this.points.set(point.getY(), point);
     }
 
     public BoardRow(int size) {
         this.size = size;
 
-        this.points = new Point[size];
+        this.points = new ArrayList<Point>(size);
     }
 
 
@@ -49,11 +53,11 @@ public class BoardRow {
 
     }
 
-    public Point[] getPoints() {
+    public List<Point> getPoints() {
         return points;
     }
 
-    public void setPoints(Point[] points) {
+    public void setPoints(List<Point> points) {
         this.points = points;
     }
 }

@@ -5,13 +5,12 @@ import com.teoriaprogramowania.go_game.resources.Client;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Transient;
 
 import java.util.*;
 
@@ -33,15 +32,15 @@ public class Player {
 	@JsonFilter("Player_client")
 	@ManyToOne
 	private Client client;
-//	private int captives;
+
 	private int finalScore;
 
 	@JsonFilter("Player_captives")
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Point> captives = new ArrayList<>();
 	
 	@JsonFilter("Player_territory")
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Territory territory;
 
 	public Player(){

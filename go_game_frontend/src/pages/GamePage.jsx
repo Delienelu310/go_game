@@ -91,11 +91,11 @@ export default function GamePage(){
     return (
         <div>
             <button onClick={() => refreshRoomForAll()} className="btn btn-primary m-3">refresh</button>
-            {room && <div>
+            {room && room.game && <div>
                 <div>You are in the Room {room.title}</div>
                 <div>
                     <div className="m-3">Game state: {room.game.state}</div>
-                    <div className="m-3">White Player: {room.game.players[0] ? 
+                    <div className="m-3">White Player: {room.game.players[0] && room.game.players[0].clientDetails ? 
                         <div>
                             {room.game.players[0].client.clientDetails.username}
                             {(room.game.players[0].client.id == id || room.admin.id == id) &&
@@ -118,7 +118,7 @@ export default function GamePage(){
                                 .catch(e =>  console.log(e));
                         }}>Play white</button>
                     }</div>
-                    <div className="m-3">Black player: {room.game.players[1] ? 
+                    <div className="m-3">Black player: {room.game.players[1] && room.game.players[1].clientDetails ? 
                         <div>
                             {room.game.players[1].client.clientDetails.username}
                             {(room.game.players[1].client.id == id || room.admin.id == id) &&
@@ -197,7 +197,7 @@ export default function GamePage(){
 
                         {/* players agreed disagreed */}
                         <div>
-                            {room.game.players.map(player => (
+                            {room.game.players.map(player => (player.client && player.client.clientDetails && 
                                 <div>{player.client.clientDetails.username}: 
                                     {room.game.agreed.map(player => player.client.id).includes(player.client.id) ? "Ready" : "Not ready"}
                                 </div>

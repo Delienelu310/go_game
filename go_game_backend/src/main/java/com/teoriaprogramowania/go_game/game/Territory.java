@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -30,11 +31,11 @@ public class Territory {
 	}
 
 	@JsonFilter("Territory_points")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER )
 	private Set<Point> points = new HashSet<>();
 
 	@JsonFilter("Territory_neighbours")
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<StoneGroup> neighbors = new HashSet<>();
 
 	@JsonFilter("Territory_owner")

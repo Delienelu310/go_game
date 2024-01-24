@@ -48,6 +48,8 @@ public class RoomSocketsController {
             throw new RuntimeException(e.getMessage());
         }
 
+        // return "{}";
+
     }
 
 }

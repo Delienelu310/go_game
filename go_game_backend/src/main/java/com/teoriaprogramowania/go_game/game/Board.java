@@ -1,10 +1,14 @@
 package com.teoriaprogramowania.go_game.game;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -28,8 +32,9 @@ public class Board {
 	}
 
 	@JsonFilter("Board_board")
-	@OneToMany(cascade = CascadeType.ALL)
-	private BoardRow[] board;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	// @Transient
+	private List<BoardRow> board;
 	private int size;
 	
 	public Board() {
@@ -38,24 +43,24 @@ public class Board {
 	//new board initialization
 	public Board(int size){
 		this.size = size;
-		this.board = new BoardRow[size];
+		this.board = new ArrayList<BoardRow>(size);
 
         for(int i = 0; i < size; ++i) {
-			board[i] = new BoardRow(size);
+			board.set(i, new BoardRow(size));
         	for(int j = 0; j < size; ++j) {
         		Point newPoint = new Point(i, j, this);
-        		board[i].addPoint(newPoint);
+        		board.get(i).addPoint(newPoint);
         	}
 		}
           
 	}
 
-	public Board(BoardRow[] board, int size) {
+	public Board(List<BoardRow> board, int size) {
 		this.board = board;
 		this.size = size;
 	}
 
-	public BoardRow[] getBoard(){
+	public List<BoardRow> getBoard(){
 		return board;
 	}
 	
@@ -69,15 +74,15 @@ public class Board {
 		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
 			throw new OutOfBoardException();
 		}
-		return board[x].getPoints()[y];
+		return board.get(x).getPoints().get(y);
 	}
 	
 	public void addPoint(Point point) {
-		this.board[point.getX()].addPoint(point);
+		this.board.get(point.getX()).addPoint(point);
 	}
 	
 	public void setPointStoneGroup(Point point, StoneGroup stoneGroup){
-		this.board[point.getX()].getPoints()[point.getY()].setStoneGroup(stoneGroup);
+		this.board.get(point.getX()).getPoints().get(point.getY()).setStoneGroup(stoneGroup);
 	}
 	
 	@Override
@@ -85,7 +90,7 @@ public class Board {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                StoneGroup stoneGroup = board[i].getPoints()[j].getStoneGroup();
+                StoneGroup stoneGroup = board.get(i).getPoints().get(j).getStoneGroup();
                 if (stoneGroup == null) {
                     sb.append('.');
                 } else {

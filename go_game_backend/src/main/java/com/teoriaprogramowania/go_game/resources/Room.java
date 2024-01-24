@@ -8,6 +8,7 @@ import com.teoriaprogramowania.go_game.game.Game;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -33,10 +34,11 @@ public class Room {
     @ManyToOne
     private Client admin;
     
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER)
     private List<Client> participants = new ArrayList<>();
 
     @OneToOne
+    // @Transient
     private Game game;
     
 }

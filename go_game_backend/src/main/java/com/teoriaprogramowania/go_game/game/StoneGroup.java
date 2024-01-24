@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -29,15 +30,15 @@ public class StoneGroup {
 
 	//represents a group of stones 
 	@JsonFilter("StoneGroup_stones")
-	@OneToMany(mappedBy = "stoneGroup", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "stoneGroup", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Point> stones;
 
 	@JsonFilter("StoneGroup_breaths")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Point> breaths;
 	
 	@JsonFilter("StoneGroup_owner")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Player owner;
 	
 	public StoneGroup() {

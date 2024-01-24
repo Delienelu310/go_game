@@ -2,6 +2,7 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
+
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
@@ -9,10 +10,12 @@ import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -26,14 +29,13 @@ public class Game {
 	private Long id;
 
 	@JsonFilter("Game_board")
-	@OneToOne(cascade = CascadeType.ALL)
-    private Board board;	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Board board;	
 	
     private State state;	
 
-
 	@JsonFilter("Game_moves")	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Move> moves = new ArrayList<>();
 
 
@@ -43,17 +45,17 @@ public class Game {
 
 
 	@JsonFilter("Game_deadStoneGroups")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StoneGroup> deadStoneGroups = new HashSet<>(); 
 
 
 	@JsonFilter("Game_territories")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Territory> territories = new HashSet<>();
 
 
 	@JsonFilter("Game_players")
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
     private Set<Player> agreed = new HashSet<>();
 
 
@@ -67,11 +69,11 @@ public class Game {
 	}
 
 	@JsonFilter("Game_players")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<>(2);
 
 	@JsonFilter("Game_players")
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
     private Player currentPlayer;
     
     public Game() {
