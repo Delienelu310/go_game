@@ -1102,7 +1102,51 @@ public class GameTests {
     }
     
     @Test
-    void testValidMoves() {
-    	
+    void testUndo() {
+        Board board = new Board(9);
+        Game game = new Game(board);
+        
+        List<Player> players = new ArrayList<>();
+        players.add(black);
+        players.add(white);
+        game.setPlayers(players);
+        
+        Move move = new Move(0, 0, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        move = new Move(0, 1, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        
+        game.undo();
+        
+        assertEquals(1, game.getMoves().size());
+        assertTrue(game.getBoard().getPoint(move.getX(), move.getY()).isEmpty());
+        
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+        
+        move = new Move(7, 7, MoveType.NORMAL, black);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        move = new Move(1, 0, MoveType.NORMAL, white);
+        if(game.isMoveValid(move)) {
+            game.makeMove(move);
+        }
+
+        assertTrue(game.getBoard().getPoint(0, 0).isEmpty());
+        
+        int oldMovesSize = game.getMoves().size();
+        
+        game.undo();
+        
+        assertEquals(oldMovesSize - 1, game.getMoves().size());
+        assertFalse(game.getBoard().getPoint(0, 0).isEmpty());        
     }
 }

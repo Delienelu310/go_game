@@ -56,6 +56,15 @@ public class StoneGroup {
 		return newStoneGroup;
 	}
 	
+	public StoneGroup removeStone(Point stone) {
+		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
+		newStoneGroup.stones.remove(stone);
+		for(Point breath : stone.getEmptyNeighborPoints()) {
+			breaths.remove(breath);
+		}
+		return newStoneGroup;
+	}
+	
 	public void addBreath(Point breath) {
 		this.breaths.add(breath);
 	}

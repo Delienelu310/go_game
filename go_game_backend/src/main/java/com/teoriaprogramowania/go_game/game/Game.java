@@ -19,6 +19,7 @@ public class Game {
     private Set<Territory> territories = new HashSet<>();
     private Set<Player> agreed = new HashSet<>();
     private List<Player> players = new ArrayList<>();
+    private Set<StoneGroup> lastCaptured = new HashSet<>();
     private Player currentPlayer;
     
     public Game(int size){
@@ -34,7 +35,11 @@ public class Game {
     
     public Game(Game game) {
     	this.moves = new ArrayList<>(game.getMoves());
-    	this.board = new Board(game.getBoard());
+    	int boardSize = game.getBoard().getSize();
+    	this.board = new Board(boardSize);
+    	for(Move move : this.moves) {
+    		simulateMove(this.board, move);
+    	}
     	this.previousBoardStates = new HashSet<>(game.getPreviousBoardStates());
     	this.state = game.getState();
     	this.players = new ArrayList<>(game.getPlayers());
@@ -51,6 +56,42 @@ public class Game {
     		makeMove(move);
     	}
     }
+    
+    public void undo() {
+    	if(this.moves.isEmpty()) {
+    		return;
+    	}
+
+    	this.previousBoardStates.remove(this.board.toString());
+    	
+    	Move lastMove = this.moves.get(this.moves.size() - 1);
+    	if(lastMove.getMoveType() == MoveType.NORMAL) {
+    		Point lastPoint = this.board.getPoint(lastMove.getX(), lastMove.getY());
+    		StoneGroup lastStoneGroup = lastPoint.getStoneGroup();
+    		
+    		if(lastStoneGroup.getStones().size() == 1) {
+    			lastStoneGroup.removeStoneGroup(board);
+    		} else {
+    			lastPoint.removeStone();
+    		}
+
+        	this.currentPlayer = getOpponent(lastMove.getPlayer());
+    		
+        	if(!lastCaptured.isEmpty()) {
+        		for(StoneGroup captured : lastCaptured) {
+	        		for(Point stone : captured.getStones()) {
+	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, this.currentPlayer);
+	        			simulateMove(this.board, move);
+	        		}
+        		}
+        		lastCaptured.clear();
+        	}
+    	}
+    	this.moves.remove(this.moves.size() - 1);
+    	
+    }
+    	
+    
     
     public void setId(Long id) {
     	this.id = id;
@@ -186,6 +227,10 @@ public class Game {
       		stone.setStoneGroup(newStoneGroup);
       	}
         move.getPlayer().addCaptives(capturedStones);
+        if(lastCaptured.isEmpty()) {
+        	lastCaptured.clear();
+        }
+        lastCaptured.addAll(capturedStoneGroups);
         
         return true;
     }
