@@ -1,5 +1,6 @@
-package com.teoriaprogramowania.go_game.repository.runtime_repository;
+package com.teoriaprogramowania.go_game.repository.mysqlRepository;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import com.teoriaprogramowania.go_game.repository.interfaces.ClientRepositoryInterface;
@@ -8,24 +9,23 @@ import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface
 import com.teoriaprogramowania.go_game.repository.interfaces.RoomRepositoryInterface;
 
 @Repository
-public class RuntimeRepository implements RepositoryInterface{
-    private RuntimeGameRepository gameRepository; 
-    private RuntimeClientRepository clientRepository;
-    private RuntimeRoomRepository roomRepository;
+@Primary
+public class MySqlRepository implements RepositoryInterface{
 
-    public RuntimeRepository(
-        RuntimeGameRepository gameRepository, 
-        RuntimeClientRepository clientRepository,
-        RuntimeRoomRepository roomRepository
-    ){
+    private MySqlGameRepository gameRepository;
+    private MySqlRoomRepository roomRepository;
+    private MysqlClientRepository clientRepository;
+
+    public MySqlRepository( MySqlRoomRepository roomRepository,
+            MysqlClientRepository clientRepository, MySqlGameRepository gameRepository) {
         this.gameRepository = gameRepository;
-        this.clientRepository = clientRepository;
         this.roomRepository = roomRepository;
+        this.clientRepository = clientRepository;
     }
 
     @Override
     public GameRepositoryInterface getGameRepository() {
-        return gameRepository;    
+        return gameRepository;
     }
 
     @Override
@@ -38,4 +38,5 @@ public class RuntimeRepository implements RepositoryInterface{
         return clientRepository;
     }
     
+
 }

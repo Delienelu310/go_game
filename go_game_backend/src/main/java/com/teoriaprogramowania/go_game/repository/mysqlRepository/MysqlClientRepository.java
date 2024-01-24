@@ -2,48 +2,64 @@ package com.teoriaprogramowania.go_game.repository.mysqlRepository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.teoriaprogramowania.go_game.repository.interfaces.ClientRepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
 import com.teoriaprogramowania.go_game.resources.ClientDetails;
 
-public abstract class MysqlClientRepository implements ClientRepositoryInterface, JpaRepository<Client, Long>{
+@Repository
+public class MysqlClientRepository implements ClientRepositoryInterface{
+
+    @Autowired
+    private ClientJpa clientJpa;
+
+    public MysqlClientRepository(){
+
+    }
 
     @Override
     public List<Client> retrieveClients() {
-        return this.findAll();
+        return clientJpa.findAll();
     }
 
     @Override
     public Client retrieveClientById(Long id) {
-        return this.findById(id).get();
+        return clientJpa.findById(id).get();
     }
-
-    @Override
-    @Query("SELECT * FROM Client c WHERE c.clientDetails.username =:username")
-    abstract public Client retrieveClientByUsername(String username);
+   
 
     @Override
     public void deleteClientById(Long id) {
-        this.deleteById(id);
+        clientJpa.deleteById(id);
     }
 
     @Override
     public Client addClient(ClientDetails clientDetails) {
         Client client = new Client();
         client.setClientDetails(clientDetails);
-        this.updateClient(client);
+        clientJpa.save(client);
 
-        return this.retrieveClientByUsername(clientDetails.getUsername());
+        return clientJpa.retrieveClientByUsername(clientDetails.getUsername());
         
     }
 
     @Override
     public void updateClient(ClientDetails clientDetails, Long id) {
-        Client client = this.findById(id).get();
-        this.updateClient(client);
+        Client client = clientJpa.findById(id).get();
+        client.setClientDetails(clientDetails);
+        clientJpa.save(client);
+    }
+
+    @Override
+    public void updateClient(Client client) {
+        clientJpa.save(client);
+    }
+
+    @Override
+    public Client retrieveClientByUsername(String username) {
+        return clientJpa.retrieveClientByUsername(username);
     }
     
 }
