@@ -6,30 +6,61 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
 @JsonFilter("Game")
+@Entity
 public class Game {
 	//class Game is handling rules of the game
 
+	@Id
+	@GeneratedValue
 	private Long id;
+
 	@JsonFilter("Game_board")
-    private Board board;		
+	@OneToOne
+    private Board board;	
+	
     private State state;	
+
+
 	@JsonFilter("Game_moves")	
+	@OneToMany
     private List<Move> moves = new ArrayList<>();
+
+
 	@JsonFilter("Game_previousBoardStates")
     private Set<String> previousBoardStates = new HashSet<>(); 
+
+
 	@JsonFilter("Game_deadStoneGroups")
+	@OneToMany
     private Set<StoneGroup> deadStoneGroups = new HashSet<>(); 
+
+
 	@JsonFilter("Game_territories")
+	@OneToMany
     private Set<Territory> territories = new HashSet<>();
+
+
 	@JsonFilter("Game_players")
+	@OneToMany
     private Set<Player> agreed = new HashSet<>();
+
+
 	@JsonFilter("Game_players")
+	@OneToMany
     private List<Player> players = new ArrayList<>();
+
+
 	@JsonFilter("Game_players")
+	@OneToOne
     private Player currentPlayer;
     
     public Game() {

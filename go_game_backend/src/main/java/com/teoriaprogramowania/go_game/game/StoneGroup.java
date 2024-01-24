@@ -4,13 +4,39 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
+@Entity
 public class StoneGroup {
+
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	//represents a group of stones 
 	@JsonFilter("StoneGroup_stones")
+	@OneToMany(mappedBy = "stoneGroup")
 	private Set<Point> stones;
+
 	@JsonFilter("StoneGroup_breaths")
+	@OneToMany
 	private Set<Point> breaths;
+	
 	@JsonFilter("StoneGroup_owner")
+	@ManyToOne
 	private Player owner;
 	
 	public StoneGroup() {

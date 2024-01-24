@@ -3,18 +3,44 @@ package com.teoriaprogramowania.go_game.game;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.teoriaprogramowania.go_game.resources.Client;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 
 import java.util.*;
 
+@Entity
 public class Player {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@JsonFilter("Player_client")
+	@ManyToOne
 	private Client client;
 //	private int captives;
 	private int finalScore;
 
 	@JsonFilter("Player_captives")
+	@ManyToMany
 	private List<Point> captives = new ArrayList<>();
+	
 	@JsonFilter("Player_territory")
+	@OneToOne
 	private Territory territory;
 
 	public Player(){

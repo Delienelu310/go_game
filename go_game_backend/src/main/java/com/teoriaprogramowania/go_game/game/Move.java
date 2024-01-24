@@ -2,14 +2,34 @@ package com.teoriaprogramowania.go_game.game;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
+@Entity
 public class Move {
+
+	@Id
+	@GeneratedValue
+	private Long moveId;
+
+	public Long getMoveId(){
+		return moveId;
+	}
+
+	public void setMoveId(Long moveId){
+		this.moveId = moveId;
+	}
+
 	private int x;
 	private int y;
     private MoveType moveType;		//type of move. Either normal move, pass or surrender
+
 	@JsonFilter("Move_player")
+	@ManyToOne
     private Player player;
  
     

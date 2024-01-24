@@ -2,16 +2,39 @@ package com.teoriaprogramowania.go_game.game;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 import java.util.*;
 
+@Entity
 public class Point {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	//class represents a singular point on the board
 	private int x;					//coordinate x
 	private int y;					//coordinate y
 
 	@JsonFilter("Point_board")
+	@ManyToOne
 	private Board board;			//board to which the point belongs
+
 	@JsonFilter("Point_stoneGroup")
+	@ManyToOne
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
 
 	private boolean isEmpty;		//true if the point belongs to some stone group
