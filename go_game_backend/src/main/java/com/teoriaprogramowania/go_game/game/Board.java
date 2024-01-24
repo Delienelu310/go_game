@@ -43,13 +43,13 @@ public class Board {
 	//new board initialization
 	public Board(int size){
 		this.size = size;
-		this.board = new ArrayList<BoardRow>(size);
+		this.board = new ArrayList<BoardRow>();
 
         for(int i = 0; i < size; ++i) {
-			board.set(i, new BoardRow(size));
+			board.add(i, new BoardRow(size));
         	for(int j = 0; j < size; ++j) {
         		Point newPoint = new Point(i, j, this);
-        		board.get(i).addPoint(newPoint);
+        		board.get(i).getPoints().add(newPoint);
         	}
 		}
           
