@@ -9,6 +9,6 @@ import com.teoriaprogramowania.go_game.resources.Client;
 
 @Repository
 public interface ClientJpa extends JpaRepository<Client, Long> {
-    @Query("SELECT * FROM Client c WHERE c.clientDetails.username =:username")
+    @Query("SELECT c FROM Client c WHERE c.clientDetails.username =:username")
     abstract public Client retrieveClientByUsername(@Param("username") String username);
 }

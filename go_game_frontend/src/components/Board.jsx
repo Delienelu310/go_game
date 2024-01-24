@@ -51,7 +51,7 @@ export default function Board({ size, cellSize, boardMatrix, sendMove, clientId,
         // Draw stones
         
         boardMatrix.forEach((row, r) => {
-            row.forEach( (cell, c) => {
+            row.points.forEach( (cell, c) => {
                 if(cell.stoneGroup == null || cell.isEmpty) return;
 
                 const x = r * cellSize + cellSize / 2;

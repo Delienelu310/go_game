@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -28,11 +29,11 @@ public class StoneGroup {
 
 	//represents a group of stones 
 	@JsonFilter("StoneGroup_stones")
-	@OneToMany(mappedBy = "stoneGroup")
+	@OneToMany(mappedBy = "stoneGroup", cascade = CascadeType.ALL)
 	private Set<Point> stones;
 
 	@JsonFilter("StoneGroup_breaths")
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Point> breaths;
 	
 	@JsonFilter("StoneGroup_owner")

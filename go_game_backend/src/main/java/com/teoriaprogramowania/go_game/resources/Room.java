@@ -10,6 +10,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
@@ -24,18 +25,18 @@ public class Room {
     @Id
     @GeneratedValue
     private Long id;
-    
+
     @Embedded
     private RoomDetails roomDetails;
 
     @JsonFilter("Client")
-    @OneToOne
+    @ManyToOne
     private Client admin;
     
     @OneToMany
     private List<Client> participants = new ArrayList<>();
 
-    @Transient
+    @OneToOne
     private Game game;
     
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -24,28 +26,29 @@ public class Game {
 	private Long id;
 
 	@JsonFilter("Game_board")
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
     private Board board;	
 	
     private State state;	
 
 
 	@JsonFilter("Game_moves")	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
     private List<Move> moves = new ArrayList<>();
 
 
 	@JsonFilter("Game_previousBoardStates")
+	@ElementCollection
     private Set<String> previousBoardStates = new HashSet<>(); 
 
 
 	@JsonFilter("Game_deadStoneGroups")
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
     private Set<StoneGroup> deadStoneGroups = new HashSet<>(); 
 
 
 	@JsonFilter("Game_territories")
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
     private Set<Territory> territories = new HashSet<>();
 
 
@@ -54,10 +57,18 @@ public class Game {
     private Set<Player> agreed = new HashSet<>();
 
 
-	@JsonFilter("Game_players")
-	@OneToMany
-    private List<Player> players = new ArrayList<>();
+	private Integer playersCount = 2;
 
+	public Integer getPlayersCount(){
+		return playersCount;
+	}
+	public void setPlayersCount(int playersCount){
+		this.playersCount = playersCount;
+	}
+
+	@JsonFilter("Game_players")
+	@OneToMany(cascade = CascadeType.ALL)
+    private List<Player> players = new ArrayList<>(2);
 
 	@JsonFilter("Game_players")
 	@OneToOne

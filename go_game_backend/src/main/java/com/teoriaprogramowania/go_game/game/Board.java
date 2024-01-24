@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,7 +28,7 @@ public class Board {
 	}
 
 	@JsonFilter("Board_board")
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private BoardRow[] board;
 	private int size;
 	
@@ -68,7 +69,7 @@ public class Board {
 		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
 			throw new OutOfBoardException();
 		}
-		return board[x].getPoints().get(y);
+		return board[x].getPoints()[y];
 	}
 	
 	public void addPoint(Point point) {
@@ -76,7 +77,7 @@ public class Board {
 	}
 	
 	public void setPointStoneGroup(Point point, StoneGroup stoneGroup){
-		this.board[point.getX()].getPoints().get(point.getY()).setStoneGroup(stoneGroup);
+		this.board[point.getX()].getPoints()[point.getY()].setStoneGroup(stoneGroup);
 	}
 	
 	@Override
@@ -84,7 +85,7 @@ public class Board {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                StoneGroup stoneGroup = board[i].getPoints().get(j).getStoneGroup();
+                StoneGroup stoneGroup = board[i].getPoints()[j].getStoneGroup();
                 if (stoneGroup == null) {
                     sb.append('.');
                 } else {

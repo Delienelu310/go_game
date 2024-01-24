@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -34,7 +35,7 @@ public class Point {
 	private Board board;			//board to which the point belongs
 
 	@JsonFilter("Point_stoneGroup")
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private StoneGroup stoneGroup;	//group of stones to which the point belongs
 
 	private boolean isEmpty;		//true if the point belongs to some stone group

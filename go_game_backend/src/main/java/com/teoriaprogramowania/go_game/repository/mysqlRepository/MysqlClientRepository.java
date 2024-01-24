@@ -39,9 +39,8 @@ public class MysqlClientRepository implements ClientRepositoryInterface{
     public Client addClient(ClientDetails clientDetails) {
         Client client = new Client();
         client.setClientDetails(clientDetails);
-        clientJpa.save(client);
+        return clientJpa.save(client);
 
-        return clientJpa.retrieveClientByUsername(clientDetails.getUsername());
         
     }
 

@@ -61,15 +61,19 @@ public class OngoingGameController {
     @PutMapping("/games/{id}/set/player/{client_id}/{position}")
     public MappingJacksonValue setPlayer(@PathVariable("id") Long gameId, @PathVariable("client_id") Long clientId, @PathVariable("position") Integer position){
         Client client = clientId == -1 ? null : repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Player player = clientId == -1 ? null : new Player(client);
+        Player player = clientId == -1 ? new Player() : new Player(client);
 
         Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
         
         for(int i = 0; i < game.getPlayers().size(); i++){
-            if(game.getPlayers().get(i) != null && game.getPlayers().get(i).getClient().getId() == clientId){
-                game.getPlayers().set(i, null);
+            if(game.getPlayers().get(i).getClient() != null && game.getPlayers().get(i).getClient().getId() == clientId){
+                game.getPlayers().set(i, new Player());
             }
         }
+        while(game.getPlayers().size() < game.getPlayersCount() && game.getPlayers().size() <= position + 1){
+            game.getPlayers().add(new Player());
+        }
+
         game.getPlayers().set(position, player);
         
         repositoryInterface.getGameRepository().updateGame(game);

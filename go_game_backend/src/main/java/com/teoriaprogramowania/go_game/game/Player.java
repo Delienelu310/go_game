@@ -3,6 +3,7 @@ package com.teoriaprogramowania.go_game.game;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.teoriaprogramowania.go_game.resources.Client;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -40,7 +41,7 @@ public class Player {
 	private List<Point> captives = new ArrayList<>();
 	
 	@JsonFilter("Player_territory")
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Territory territory;
 
 	public Player(){

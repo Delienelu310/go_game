@@ -90,6 +90,7 @@ export default function GamePage(){
 
     return (
         <div>
+            <button onClick={() => refreshRoomForAll()} className="btn btn-primary m-3">refresh</button>
             {room && <div>
                 <div>You are in the Room {room.title}</div>
                 <div>

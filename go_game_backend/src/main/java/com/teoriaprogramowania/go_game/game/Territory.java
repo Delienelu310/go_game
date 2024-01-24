@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -29,11 +30,11 @@ public class Territory {
 	}
 
 	@JsonFilter("Territory_points")
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Point> points = new HashSet<>();
 
 	@JsonFilter("Territory_neighbours")
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<StoneGroup> neighbors = new HashSet<>();
 
 	@JsonFilter("Territory_owner")
