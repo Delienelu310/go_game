@@ -64,35 +64,56 @@ public class Game {
     		return;
     	}
 
-    	this.previousBoardStates.remove(this.board.toString());
-    	
     	Move lastMove = this.moves.get(this.moves.size() - 1);
+    	
     	if(lastMove.getMoveType() == MoveType.NORMAL) {
     		Point lastPoint = this.board.getPoint(lastMove.getX(), lastMove.getY());
-    		StoneGroup lastStoneGroup = lastPoint.getStoneGroup();
     		
+    		StoneGroup lastStoneGroup = lastPoint.getStoneGroup();
+
+        	this.previousBoardStates.remove(this.board.toString());
+        	
     		if(lastStoneGroup.getStones().size() == 1) {
     			lastStoneGroup.removeStoneGroup(board);
     		} else {
     			lastPoint.removeStone();
     		}
-
-        	this.currentPlayer = getOpponent(lastMove.getPlayer());
     		
-        	lastCaptured = capturedStonesStack.pop();
-        	if(!lastCaptured.isEmpty()) {
-        		for(StoneGroup captured : lastCaptured) {
+        	Set<StoneGroup> last = capturedStonesStack.pop();
+        	if(last != null) {
+        		for(StoneGroup captured : last) {
 	        		for(Point stone : captured.getStones()) {
-	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, this.currentPlayer);
+	        			/*
+	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, getOpponent(lastMove.getPlayer()));
 	        			simulateMove(this.board, move);
+	        			*/
+	        			
+	        			
+	        			Set<StoneGroup> neighbors = stone.getNeighborStoneGroups();
+	        	    	//remove breath from enemy stone group and kill it if appropriate
+	        	      	for(StoneGroup neighbor : neighbors) {
+	        	    		if(neighbor.getOwner().equals(lastMove.getPlayer())){
+	        	    			neighbor = neighbor.removeBreath(stone);
+	        	    		}
+	        	    	}
+	        	      	for(StoneGroup neighbor : neighbors) {
+	        	    		if(!neighbor.getOwner().equals(lastMove.getPlayer())) {
+	        	    	        captured.joinStoneGroup(neighbor, stone);
+	        	            }
+	        	      	}
+	        	      	for(Point reStone : captured.getStones()) {
+	        	      		reStone.setStoneGroup(captured);
+	        	      	}
 	        		}
 	        		lastMove.getPlayer().removeCaptives(captured.getStones());
         		}
         		lastCaptured.clear();
         	}
+        	
     	}
-    	this.moves.remove(this.moves.size() - 1);
     	
+    	this.moves.remove(this.moves.size() - 1);
+    	this.currentPlayer = getOpponent(currentPlayer);
     }
     
     Set<StoneGroup> getLastCapturedStoneGroup(){
@@ -171,25 +192,48 @@ public class Game {
     	return false;
     }
     
-    public void makeMove(Move move) {
-    	simulateMove(this.board, move);
-    	this.moves.add(move);
-    	
-    	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
-   		this.capturedStonesStack.push(capturedCopy);
- 	
-    	String currentBoardState = this.board.toString();
-        previousBoardStates.add(currentBoardState);
+    public boolean makeMove(Move move) {
+    	if(simulateMove(this.board, move)) {
+        	this.moves.add(move);
+        	
+        	if(lastCaptured.isEmpty()) {
+          		this.capturedStonesStack.push(null);        		
+        	} else {
+            	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
+           		this.capturedStonesStack.push(capturedCopy);        		
+        	}
+     	
+        	String currentBoardState = this.board.toString();
+            previousBoardStates.add(currentBoardState);
 
-    	currentPlayer = move.getPlayer();
+        	currentPlayer = move.getPlayer();
+        	
+        	return true;
+    	}
+    	return false;
     }
     
-    public boolean simulateMove(Board board, Move move) {
-    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
-    		return true;
+    private boolean simulateMove(Board board, Move move) {
+    	if(move.getPlayer() == currentPlayer) {
+    		return false;
     	}
     	
-    	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
+    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
+            if(!lastCaptured.isEmpty()) {
+            	lastCaptured.clear();
+            }
+    		return true;
+    	}
+
+    	Point simulatedPoint;
+    	try {
+    		simulatedPoint = board.getPoint(move.getX(), move.getY());
+    		if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
+    			return false;
+    		}
+    	} catch(OutOfBoardException e) {
+    		return false;
+    	}
     	
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, move.getPlayer());
     	
@@ -229,49 +273,21 @@ public class Game {
         			this.board.setPointStoneGroup(stone, sg);
         		}
         	}
+        	simulatedPoint.setStoneGroup(null);
         	return false;
         }
-        
         //if ok then apply changes
       	for(Point stone : newStoneGroup.getStones()) {
       		stone.setStoneGroup(newStoneGroup);
       	}
         move.getPlayer().addCaptives(capturedStones);
-        if(lastCaptured.isEmpty()) {
+        
+        if(!lastCaptured.isEmpty()) {
         	lastCaptured.clear();
         }
         lastCaptured.addAll(capturedStoneGroups);
-        
+
         return true;
-    }
-    
-    public boolean isMoveValid(Move move){
-    	if(move.getPlayer() == currentPlayer) {
-    		return false;
-    	}
-    	
-    	return checkMove(move);
-    }
-    
-    public boolean checkMove(Move move) {
-    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
-    		return true;
-    	}
-    	try {
-    		if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
-    			return false;
-    		}
-    	} catch(OutOfBoardException e) {
-    		return false;
-    	}
-
-    	if(simulateMove(this.board, move) == false) {
-    		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
-    		return false;
-    	}
-
-    	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
-    	return true;
     }
     
     public void pickDeadStoneGroup(int x, int y) {

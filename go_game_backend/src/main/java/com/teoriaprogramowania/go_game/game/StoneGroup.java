@@ -72,7 +72,7 @@ public class StoneGroup {
 	//remove stone group and update breaths of neighbor stone groups
 	//return number of stones from this group
 	public Set<Point> removeStoneGroup(Board board) {
-		Set<Point> capturedStones = this.stones;
+		Set<Point> capturedStones = new HashSet<Point>(this.stones);
 		for(Point stone : this.stones) {
 			Point actualPoint = board.getPoint(stone.getX(), stone.getY());
 			actualPoint.removeStone();

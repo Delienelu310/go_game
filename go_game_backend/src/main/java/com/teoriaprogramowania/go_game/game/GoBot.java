@@ -14,17 +14,13 @@ public class GoBot {
         Move bestMove = null;
         int bestValue = Integer.MIN_VALUE;
         
+        Game gameCopy = new Game(game);
         
         int boardSize = game.getBoard().getSize();
         for (int i = 0; i < boardSize; ++i) {
             for (int j = 0; j < boardSize; ++j) {
                 Move move = new Move(i, j, MoveType.NORMAL, botPlayer);
-                Game gameCopy = new Game(game);
-                if (gameCopy.checkMove(move)) {
-
-                	game.undo();
-                	gameCopy.makeMove(move);
-
+                if (gameCopy.makeMove(move)) {
                     int moveValue = minimax(gameCopy, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
                 	
                     if (moveValue > bestValue) {
@@ -46,15 +42,15 @@ public class GoBot {
         if (depth == 0 || game.hasChangedState()) {
             return evaluateBoard(game);
         }
-
+        
+        int boardSize = game.getBoard().getSize();
+        
         if (isMaximizing) {
             int maxEval = Integer.MIN_VALUE;
-            for (int i = 0; i < game.getBoard().getSize(); ++i) {
-                for (int j = 0; j < game.getBoard().getSize(); ++j) {
+            for (int i = 0; i < boardSize; ++i) {
+                for (int j = 0; j < boardSize; ++j) {
                     Move move = new Move(i, j, MoveType.NORMAL, botPlayer);
-                    if (game.checkMove(move)) {
-                    	game.undo();
-                        game.makeMove(move);
+                    if (game.makeMove(move)) {
                         int eval = minimax(game, depth - 1, alpha, beta, false);
                         maxEval = Math.max(maxEval, eval);
                         alpha = Math.max(alpha, eval);
@@ -68,11 +64,10 @@ public class GoBot {
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            for (int i = 0; i < game.getBoard().getSize(); ++i) {
-                for (int j = 0; j < game.getBoard().getSize(); ++j) {
+            for (int i = 0; i < boardSize; ++i) {
+                for (int j = 0; j < boardSize; ++j) {
                     Move move = new Move(i, j, MoveType.NORMAL, game.getOpponent(botPlayer));
-                    if (game.checkMove(move)) {
-                        game.makeMove(move);
+                    if (game.makeMove(move)) {
                         int eval = minimax(game, depth - 1, alpha, beta, true);
                         minEval = Math.min(minEval, eval);
                         beta = Math.min(beta, eval);
