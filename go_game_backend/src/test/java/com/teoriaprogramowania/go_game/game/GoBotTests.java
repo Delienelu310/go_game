@@ -31,25 +31,50 @@ public class GoBotTests {
 		
 		GoBot bot = new GoBot(botPlayer);
 		
-		Move move = new Move(0, 0, MoveType.NORMAL, black);
-		if(game.isMoveValid(move)) {
-			game.makeMove(move);
-		}
-		
-		Move botMove = bot.makeMoveBot(game);
-		if(game.isMoveValid(botMove)) {
-			game.makeMove(botMove);
-		}
-		
-		move = new Move(7, 8, MoveType.NORMAL, black);
+		Move move = new Move(0, 1, MoveType.NORMAL, black);
 		if(game.isMoveValid(move)) {
 			game.makeMove(move);
 		}
 
-		botMove = bot.makeMoveBot(game);
+		Move botMove = bot.findBestMove(game);
+/*
+		System.out.println(botMove.getX());
+		System.out.println(botMove.getY());
+	*/	
 		if(game.isMoveValid(botMove)) {
 			game.makeMove(botMove);
 		}
+
+		move = new Move(0, 2, MoveType.NORMAL, black);
+		if(game.isMoveValid(move)) {
+			game.makeMove(move);
+		}
+		
+		botMove = bot.findBestMove(game);
+		if(game.isMoveValid(botMove)) {
+			game.makeMove(botMove);
+		}
+
+		move = new Move(0, 4, MoveType.NORMAL, black);
+		if(game.isMoveValid(move)) {
+			game.makeMove(move);
+		}
+
+		botMove = bot.findBestMove(game);
+		if(game.isMoveValid(botMove)) {
+			game.makeMove(botMove);
+		}
+
+		move = new Move(1, 3, MoveType.NORMAL, black);
+		if(game.isMoveValid(move)) {
+			game.makeMove(move);
+		}
+
+		botMove = bot.findBestMove(game);
+		if(game.isMoveValid(botMove)) {
+			game.makeMove(botMove);
+		}
+		
 		
 		for(int i = 0; i < game.getMoves().size(); ++i) {
 			System.out.println(game.getMoves().get(i).getX());
@@ -58,9 +83,19 @@ public class GoBotTests {
 		}
 		
 
-		System.out.println(botMove.getX());
-		System.out.println(botMove.getY());
-		System.out.println("");
+
+		/*
+		for(int i = 0; i < game.getBoard().getSize(); ++i) {
+			for(int j = 0; j < game.getBoard().getSize(); ++j) {
+				if(!game.getBoard().getPoint(i, j).isEmpty()) {
+					System.out.println(game.getBoard().getPoint(i, j).getX());
+					System.out.println(game.getBoard().getPoint(i, j).getY());
+					System.out.println("");
+				}
+			}	
+		}
+		
+		*/
 	}
 
 }

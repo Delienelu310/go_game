@@ -20,6 +20,7 @@ public class Game {
     private Set<Player> agreed = new HashSet<>();
     private List<Player> players = new ArrayList<>();
     private Set<StoneGroup> lastCaptured = new HashSet<>();
+    private Stack<Set<StoneGroup>> capturedStonesStack = new Stack<>();
     private Player currentPlayer;
     
     public Game(int size){
@@ -40,6 +41,7 @@ public class Game {
     	for(Move move : this.moves) {
     		simulateMove(this.board, move);
     	}
+    	this.lastCaptured = game.getLastCapturedStoneGroup();
     	this.previousBoardStates = new HashSet<>(game.getPreviousBoardStates());
     	this.state = game.getState();
     	this.players = new ArrayList<>(game.getPlayers());
@@ -77,12 +79,14 @@ public class Game {
 
         	this.currentPlayer = getOpponent(lastMove.getPlayer());
     		
+        	lastCaptured = capturedStonesStack.pop();
         	if(!lastCaptured.isEmpty()) {
         		for(StoneGroup captured : lastCaptured) {
 	        		for(Point stone : captured.getStones()) {
 	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, this.currentPlayer);
 	        			simulateMove(this.board, move);
 	        		}
+	        		lastMove.getPlayer().removeCaptives(captured.getStones());
         		}
         		lastCaptured.clear();
         	}
@@ -90,7 +94,10 @@ public class Game {
     	this.moves.remove(this.moves.size() - 1);
     	
     }
-    	
+    
+    Set<StoneGroup> getLastCapturedStoneGroup(){
+    	return this.lastCaptured;
+    }
     
     
     public void setId(Long id) {
@@ -168,6 +175,9 @@ public class Game {
     	simulateMove(this.board, move);
     	this.moves.add(move);
     	
+    	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
+   		this.capturedStonesStack.push(capturedCopy);
+ 	
     	String currentBoardState = this.board.toString();
         previousBoardStates.add(currentBoardState);
 
@@ -240,6 +250,10 @@ public class Game {
     		return false;
     	}
     	
+    	return checkMove(move);
+    }
+    
+    public boolean checkMove(Move move) {
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
     		return true;
     	}
@@ -259,27 +273,6 @@ public class Game {
     	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
     	return true;
     }
-    
-    public List<Move> getValidMoves(Player player) {
-    	List<Move> validMoves = new ArrayList<>();
-    	for (int x = 0; x < board.getSize(); x++) {
-    		for (int y = 0; y < board.getSize(); y++) {
-    			try {
-    				Point point = board.getPoint(x, y);
-    				if (point.isEmpty()) {
-    					Move potentialMove = new Move(x, y, MoveType.NORMAL, player);
-    					if (isMoveValid(potentialMove)) {
-    						validMoves.add(potentialMove);
-    					}
-    				}
-    			} catch (OutOfBoardException e) {
-    				continue;
-                }
-            }
-        }
-        return validMoves;
-    }
-
     
     public void pickDeadStoneGroup(int x, int y) {
     	try {
@@ -309,8 +302,7 @@ public class Game {
     }
     
     public Set<Territory> getCurrentTerritories(){
-    	this.establishTerritories(null);
-    	return this.territories;
+    	return establishTerritories(null);
     }
     
     private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
@@ -397,7 +389,7 @@ public class Game {
     	if(this.state != State.NEGOTIATION) {
     		return;
     	}
-    	territories = establishTerritories(deadStoneGroups);
+    	this.territories = establishTerritories(deadStoneGroups);
     	this.state = State.FINISHED;
     }
     

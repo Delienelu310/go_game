@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 
 
 public class GameTests {
@@ -1102,7 +1103,7 @@ public class GameTests {
     }
     
     @Test
-    void testUndo() {
+    void testUndoCapture() {
         Board board = new Board(9);
         Game game = new Game(board);
         
@@ -1147,6 +1148,16 @@ public class GameTests {
         game.undo();
         
         assertEquals(oldMovesSize - 1, game.getMoves().size());
-        assertFalse(game.getBoard().getPoint(0, 0).isEmpty());        
+        assertFalse(game.getBoard().getPoint(0, 0).isEmpty());
+        assertTrue(game.getBoard().getPoint(1, 0).isEmpty());
+        assertEquals(2, game.getBoard().getPoint(0, 1).getStoneGroup().getBreaths().size());
+
+        assertFalse(game.getBoard().getPoint(7, 7).isEmpty());
+        game.undo();
+        assertTrue(game.getBoard().getPoint(7, 7).isEmpty());
+        
+        game.undo();
+        assertEquals(oldMovesSize - 3, game.getMoves().size());
     }
+    
 }
