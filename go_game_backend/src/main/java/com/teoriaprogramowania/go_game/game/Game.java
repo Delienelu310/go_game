@@ -108,12 +108,32 @@ public class Game {
 	        		lastMove.getPlayer().removeCaptives(captured.getStones());
         		}
         		lastCaptured.clear();
-        	}
-        	
-    	}
+        	}	
+    	} 
     	
     	this.moves.remove(this.moves.size() - 1);
     	this.currentPlayer = getOpponent(currentPlayer);
+    }
+    
+    List<Move> getPossibleMoves(){
+    	int boardSize = this.board.getSize();
+    	List<Move> possibleMoves = new ArrayList<>();
+    	
+    	for(int x = 0; x < boardSize; ++x) {
+    		for(int y = 0; y < boardSize; ++y) {
+    			try {
+    				Point point = this.board.getPoint(x, y);
+    				if(point.isEmpty()) {
+    					
+    				}
+    			} catch(OutOfBoardException e){
+    				continue;
+    			}
+    			
+    		}
+    	}
+    	
+    	return possibleMoves;
     }
     
     Set<StoneGroup> getLastCapturedStoneGroup(){
@@ -215,6 +235,8 @@ public class Game {
     
     private boolean simulateMove(Board board, Move move) {
     	if(move.getPlayer() == currentPlayer) {
+
+    		System.out.println("player problems");
     		return false;
     	}
     	

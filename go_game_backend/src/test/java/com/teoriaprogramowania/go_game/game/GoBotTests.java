@@ -34,16 +34,9 @@ public class GoBotTests {
 		Move move = new Move(0, 1, MoveType.NORMAL, black);
 		assertTrue(game.makeMove(move));
 		
-
 		Move botMove = bot.findBestMove(game);
-/*
-		System.out.println(botMove.getX());
-		System.out.println(botMove.getY());
-	*/	
-		
 		assertTrue(game.makeMove(botMove));
 		
-
 		move = new Move(0, 2, MoveType.NORMAL, black);
 		assertTrue(game.makeMove(move));
 		
@@ -52,15 +45,28 @@ public class GoBotTests {
 
 		move = new Move(0, 4, MoveType.NORMAL, black);
 		assertTrue(game.makeMove(move));
-
+		
 		botMove = bot.findBestMove(game);
 		assertTrue(game.makeMove(botMove));
-
+		
 		move = new Move(1, 3, MoveType.NORMAL, black);
 		assertTrue(game.makeMove(move));
-
+		
 		botMove = bot.findBestMove(game);
 		assertTrue(game.makeMove(botMove));
+
+		move = new Move(1, 8, MoveType.NORMAL, black);
+		assertTrue(game.makeMove(move));
+		
+		botMove = bot.findBestMove(game);
+		assertTrue(game.makeMove(botMove));
+
+		move = new Move(0, 7, MoveType.NORMAL, black);
+		assertTrue(game.makeMove(move));
+		
+		botMove = bot.findBestMove(game);
+		assertTrue(game.makeMove(botMove));
+		
 		
 		
 		for(int i = 0; i < game.getMoves().size(); ++i) {

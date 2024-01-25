@@ -4,7 +4,7 @@ import java.util.*;
 
 public class GoBot {
     private Player botPlayer;
-    private static final int MAX_DEPTH = 2;
+    private static final int MAX_DEPTH = 3;
 
     public GoBot(Player botPlayer) {
         this.botPlayer = botPlayer;
@@ -20,73 +20,78 @@ public class GoBot {
         for (int i = 0; i < boardSize; ++i) {
             for (int j = 0; j < boardSize; ++j) {
                 Move move = new Move(i, j, MoveType.NORMAL, botPlayer);
-                if (gameCopy.makeMove(move)) {
-                    int moveValue = minimax(gameCopy, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-                	
+                if (gameCopy .makeMove(move)) {
+                    int moveValue = minimax(gameCopy , MAX_DEPTH - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+                    
+                    gameCopy.undo();
+                    
                     if (moveValue > bestValue) {
                         bestValue = moveValue;
                         bestMove = move;
                     }
-
-                    gameCopy.undo();
                 }
             }
         }
+        
         if(bestMove == null) {
         	return new Move(-1, -1, MoveType.PASS, botPlayer);
         }
         return bestMove;
     }
-
+    
     private int minimax(Game game, int depth, int alpha, int beta, boolean isMaximizing) {
-        if (depth == 0 || game.hasChangedState()) {
-            return evaluateBoard(game);
-        }
+    	if(depth == 0 || game.hasChangedState()) {
+    		return evaluateBoard(game);
+    	}
         
-        int boardSize = game.getBoard().getSize();
-        
-        if (isMaximizing) {
-            int maxEval = Integer.MIN_VALUE;
-            for (int i = 0; i < boardSize; ++i) {
-                for (int j = 0; j < boardSize; ++j) {
-                    Move move = new Move(i, j, MoveType.NORMAL, botPlayer);
-                    if (game.makeMove(move)) {
-                        int eval = minimax(game, depth - 1, alpha, beta, false);
-                        maxEval = Math.max(maxEval, eval);
-                        alpha = Math.max(alpha, eval);
-                        game.undo();
+    	int boardSize = game.getBoard().getSize();
+    	if(isMaximizing) {
+        	int bestVal = Integer.MIN_VALUE;
+        	
+    		for(int i = 0; i < boardSize; ++i) {
+    			for(int j = 0; j < boardSize; ++j) {
+    				Move move = new Move(i, j, MoveType.NORMAL, botPlayer); 
+    				if(game.makeMove(move)) {
+    					bestVal = Math.max(bestVal, minimax(game, depth - 1, alpha, beta, false));
+    					game.undo();
+    					
+        				alpha = Math.max(alpha, bestVal);
                         if (beta <= alpha) {
                             break;
                         }
-                    }
-                }
-            }
-            return maxEval;
-        } else {
-            int minEval = Integer.MAX_VALUE;
-            for (int i = 0; i < boardSize; ++i) {
-                for (int j = 0; j < boardSize; ++j) {
-                    Move move = new Move(i, j, MoveType.NORMAL, game.getOpponent(botPlayer));
-                    if (game.makeMove(move)) {
-                        int eval = minimax(game, depth - 1, alpha, beta, true);
-                        minEval = Math.min(minEval, eval);
-                        beta = Math.min(beta, eval);
-                        game.undo();
+    				}
+    			}
+    		}
+
+    		return bestVal;
+    	} else {
+        	int bestVal = Integer.MAX_VALUE;
+        	
+    		for(int i = 0; i < boardSize; ++i) {
+        		for(int j = 0; j < boardSize; ++j) {
+       				Move move = new Move(i, j, MoveType.NORMAL, game.getOpponent(botPlayer)); 
+       				if(game.makeMove(move)) {
+    					bestVal = Math.min(bestVal, minimax(game, depth - 1, alpha, beta, true));
+    					game.undo();
+           				
+    					beta = Math.min(beta, bestVal);
                         if (beta <= alpha) {
                             break;
                         }
-                    }
-                }
-            }
-            return minEval;
-        }
+        			}
+
+        		}
+       		}
+    		
+    		return bestVal;
+    	}
     }
 
     private int evaluateBoard(Game game) {
         int score = 0;
-
+/*
         score += evaluateTerritory(game);
-  
+  */
         score += evaluateStoneGroups(game);
 
         return score;
@@ -109,18 +114,24 @@ public class GoBot {
 
     private int evaluateStoneGroups(Game game) {
         int stoneGroupScore = 0;
-
+        Set<StoneGroup> stoneGroups = new HashSet<>();
+        
         for (int i = 0; i < game.getBoard().getSize(); ++i) {
             for (int j = 0; j < game.getBoard().getSize(); ++j) {
                 Point point = game.getBoard().getPoint(i, j);
                 if (!point.isEmpty()) {
-                    StoneGroup group = point.getStoneGroup();
-                    if (group.getOwner() == botPlayer) {
-                        stoneGroupScore += group.getBreaths().size();
-                    } else if (group.getOwner() == game.getOpponent(botPlayer)) {
-                        stoneGroupScore -= group.getBreaths().size();
-                    }
+                    stoneGroups.add(point.getStoneGroup());
                 }
+            }
+        }
+        
+        for(StoneGroup group : stoneGroups) {
+        	if (group.getOwner() == botPlayer) {
+                stoneGroupScore += group.getBreaths().size();
+                stoneGroupScore += group.getStones().size() * 4;
+            } else if (group.getOwner() == game.getOpponent(botPlayer)) {
+                stoneGroupScore -= group.getBreaths().size();
+                stoneGroupScore -= group.getStones().size() * 2;
             }
         }
 

@@ -956,17 +956,4 @@ public class GameTests {
         game.undo();
         assertEquals(oldMovesSize - 3, game.getMoves().size());
     }
-    
-    @Test
-    void testSimulation(){
-    	Board board = new Board(9);
-        Game game = new Game(board);
-        
-        List<Player> players = new ArrayList<>();
-        players.add(black);
-        players.add(white);
-        game.setPlayers(players);
-        
-    }
-    
 }
