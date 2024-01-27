@@ -15,14 +15,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
 @JsonFilter("Game")
 @Entity
 public class Game {
-	//class Game is handling rules of the game
 
 	@Id
 	@GeneratedValue
@@ -61,20 +59,29 @@ public class Game {
 
 	private Integer playersCount = 2;
 
+
+	@JsonFilter("Game_players")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Player> players = new ArrayList<>(2);
+
+	@JsonFilter("Game_players")
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Player currentPlayer;
+
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<StoneGroup> lastCaptured = new HashSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Stack<StoneGroupSet> capturedStonesStack = new Stack<>();
+    
+	
 	public Integer getPlayersCount(){
 		return playersCount;
 	}
 	public void setPlayersCount(int playersCount){
 		this.playersCount = playersCount;
 	}
-
-	@JsonFilter("Game_players")
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Player> players = new ArrayList<>(2);
-
-    private Set<StoneGroup> lastCaptured = new HashSet<>();
-    private Stack<Set<StoneGroup>> capturedStonesStack = new Stack<>();
-    private Player currentPlayer;
     
     public Game() {
 	}
@@ -135,9 +142,9 @@ public class Game {
     			lastPoint.removeStone();
     		}
     		
-        	Set<StoneGroup> last = capturedStonesStack.pop();
+        	StoneGroupSet last = capturedStonesStack.pop();
         	if(last != null) {
-        		for(StoneGroup captured : last) {
+        		for(StoneGroup captured : last.getSet()) {
 	        		for(Point stone : captured.getStones()) {
 	        			/*
 	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, getOpponent(lastMove.getPlayer()));
@@ -274,7 +281,9 @@ public class Game {
           		this.capturedStonesStack.push(null);        		
         	} else {
             	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
-           		this.capturedStonesStack.push(capturedCopy);        		
+				StoneGroupSet stoneGroupSet = new StoneGroupSet();
+				stoneGroupSet.setSet(capturedCopy);
+           		this.capturedStonesStack.push(stoneGroupSet);        		
         	}
      	
         	String currentBoardState = this.board.toString();
@@ -365,6 +374,23 @@ public class Game {
 
         return true;
     }
+	
+	public void toggleDeadStoneGroup(int x, int y, Player player) {
+		try {
+        	Point point = this.board.getPoint(x, y);
+			if(player != point.getStoneGroup().getOwner()){
+				throw new RuntimeException("Invalid player");
+			}
+    		if(point.isEmpty()) {
+    			deadStoneGroups.remove(point.getStoneGroup());
+    		}else{
+				deadStoneGroups.add(point.getStoneGroup());
+			}
+        	
+    	} catch(OutOfBoardException e) {
+    		return;
+    	}
+	}
     
     public void pickDeadStoneGroup(int x, int y) {
     	try {
@@ -548,4 +574,5 @@ public class Game {
     public int getPlayerScore(Player player) {
     	return player.getFinalScore();
     }
+	
 }
