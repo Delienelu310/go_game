@@ -88,4 +88,5 @@ public class Player {
 	public int getFinalScore() {
 		return this.finalScore;
 	}
+
 }

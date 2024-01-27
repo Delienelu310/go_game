@@ -2,12 +2,16 @@ package com.teoriaprogramowania.go_game.game;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teoriaprogramowania.go_game.GoGameApplication;
 import com.teoriaprogramowania.go_game.game.exceptions.OutOfBoardException;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -22,12 +27,17 @@ import lombok.Data;
 @Entity
 public class Game {
 
+	@Transient
+	@JsonIgnore
+	Logger logger = LoggerFactory.getLogger(GoGameApplication.class);
+
 	@Id
 	@GeneratedValue
 	private Long id;
 
 	@JsonFilter("Game_board")
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	// @Transient
 	private Board board;	
 	
     private State state;	
@@ -39,7 +49,8 @@ public class Game {
 
 	@JsonFilter("Game_previousBoardStates")
 	@ElementCollection
-    private Set<String> previousBoardStates = new HashSet<>(); 
+	@Column(columnDefinition = "TEXT")
+    private List<String> previousBoardStates = new LinkedList<>(); 
 
 
 	@JsonFilter("Game_deadStoneGroups")
@@ -70,10 +81,12 @@ public class Game {
 
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	// @Transient
     private Set<StoneGroup> lastCaptured = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Stack<StoneGroupSet> capturedStonesStack = new Stack<>();
+	// @Transient
+    private List<StoneGroupSet> capturedStonesStack = new LinkedList<>();
     
 	
 	public Integer getPlayersCount(){
@@ -105,7 +118,7 @@ public class Game {
     		simulateMove(this.board, move);
     	}
     	this.lastCaptured = game.getLastCapturedStoneGroup();
-    	this.previousBoardStates = new HashSet<>(game.getPreviousBoardStates());
+    	this.previousBoardStates = new LinkedList<>(game.getPreviousBoardStates());
     	this.state = game.getState();
     	this.players = new ArrayList<>(game.getPlayers());
     	this.currentPlayer = game.getCurrentPlayer();
@@ -115,7 +128,7 @@ public class Game {
     	int boardSize = this.board.getSize();
     	this.board = new Board(boardSize);
     	this.moves = new ArrayList<>();
-    	this.previousBoardStates = new HashSet<>();
+    	this.previousBoardStates = new LinkedList<>();
 
     	for(Move move : moves) {
     		makeMove(move);
@@ -142,7 +155,7 @@ public class Game {
     			lastPoint.removeStone();
     		}
     		
-        	StoneGroupSet last = capturedStonesStack.pop();
+        	StoneGroupSet last = capturedStonesStack.remove(0);
         	if(last != null) {
         		for(StoneGroup captured : last.getSet()) {
 	        		for(Point stone : captured.getStones()) {
@@ -221,7 +234,7 @@ public class Game {
     }
     
     
-    private Set<String> getPreviousBoardStates(){
+    private List<String> getPreviousBoardStates(){
     	return this.previousBoardStates;
     }
 
@@ -278,12 +291,12 @@ public class Game {
         	this.moves.add(move);
         	
         	if(lastCaptured.isEmpty()) {
-          		this.capturedStonesStack.push(null);        		
+          		this.capturedStonesStack.add(0, null);        		
         	} else {
             	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
 				StoneGroupSet stoneGroupSet = new StoneGroupSet();
 				stoneGroupSet.setSet(capturedCopy);
-           		this.capturedStonesStack.push(stoneGroupSet);        		
+           		this.capturedStonesStack.add(0, stoneGroupSet);        		
         	}
      	
         	String currentBoardState = this.board.toString();
@@ -297,11 +310,15 @@ public class Game {
     }
     
     private boolean simulateMove(Board board, Move move) {
+
+		logger.info("State 0");
     	if(move.getPlayer() == currentPlayer) {
 
     		System.out.println("player problems");
     		return false;
     	}
+
+		logger.info("State 1");
     	
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER || move.getMoveType() == MoveType.RESUMEGAME) {
             if(!lastCaptured.isEmpty()) {
@@ -309,6 +326,8 @@ public class Game {
             }
     		return true;
     	}
+
+		logger.info("State 2");
 
     	Point simulatedPoint;
     	try {
@@ -319,7 +338,9 @@ public class Game {
     	} catch(OutOfBoardException e) {
     		return false;
     	}
-    	
+
+		logger.info("State 3");
+
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, move.getPlayer());
     	
     	Set<Point> capturedStones = new HashSet<>();
@@ -336,6 +357,8 @@ public class Game {
     			}
     		}
     	}
+
+		logger.info("State 4");
       	
     	//merge friendly neighbor stone groups        
       	for(StoneGroup neighbor : neighbors) {
@@ -344,15 +367,25 @@ public class Game {
             }
       	}
     	
+		  logger.info("State 5");
+
     	//suicide move check
     	if(newStoneGroup.getBreaths().size() == 0) {
     		this.board.setPointStoneGroup(simulatedPoint, null);
     		return false;
     	}
 
+		logger.info("State 6");
+
     	//ko rule check;
     	String currentBoardState = this.board.toString();
-        if(previousBoardStates.contains(currentBoardState)) {
+		logger.info("\n" + currentBoardState);
+		logger.info("\n" + ( previousBoardStates.size() >= 2 ? previousBoardStates.get(previousBoardStates.size() -  2) : ""));
+
+        if(previousBoardStates.contains(currentBoardState) && 
+			previousBoardStates.size() >= 2 &&
+			previousBoardStates.get(previousBoardStates.size() -  2).equals(currentBoardState)
+		) {
         	for(StoneGroup sg : capturedStoneGroups) {
         		for(Point stone : sg.getStones()) {
         			this.board.setPointStoneGroup(stone, sg);
@@ -361,6 +394,8 @@ public class Game {
         	simulatedPoint.setStoneGroup(null);
         	return false;
         }
+		logger.info("State 7");
+
         //if ok then apply changes
       	for(Point stone : newStoneGroup.getStones()) {
       		stone.setStoneGroup(newStoneGroup);
@@ -371,6 +406,8 @@ public class Game {
         	lastCaptured.clear();
         }
         lastCaptured.addAll(capturedStoneGroups);
+
+		logger.info("State 8");
 
         return true;
     }

@@ -94,9 +94,9 @@ export default function GamePage(){
             {room && room.game && <div>
                 <div>You are in the Room {room.title}</div>
                 <div>
-                    <div className="m-3">Game state: {room.game.state}</div>
-                    <div className="m-3">White Player: {room.game.players[0] && room.game.players[0].clientDetails ? 
-                        <div>
+                    <div className="m-3"><b>Game state: </b>{room.game.state}</div>
+                    <div className="m-3"><b>White Player:</b> { (room.game.players[0] && room.game.players[0].client && room.game.players[0].client.clientDetails) ? 
+                        <span>
                             {room.game.players[0].client.clientDetails.username}
                             {(room.game.players[0].client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
@@ -108,7 +108,7 @@ export default function GamePage(){
                                 }}>X</button>
                             }
                             
-                        </div>
+                        </span>
                         :
                         <button className="btn btn-success m-2" onClick={e => {
                             setPlayer(room.game.id, id, 0)
@@ -118,8 +118,8 @@ export default function GamePage(){
                                 .catch(e =>  console.log(e));
                         }}>Play white</button>
                     }</div>
-                    <div className="m-3">Black player: {room.game.players[1] && room.game.players[1].clientDetails ? 
-                        <div>
+                    <div className="m-3"><b>Black player: </b>{room.game.players[1] && room.game.players[1].client && room.game.players[1].client.clientDetails ? 
+                        <span>
                             {room.game.players[1].client.clientDetails.username}
                             {(room.game.players[1].client.id == id || room.admin.id == id) &&
                                 <button className="btn btn-danger m-2" onClick={e => {
@@ -130,7 +130,7 @@ export default function GamePage(){
                                         .catch(e =>  console.log(e));
                                 }}>X</button>
                             }
-                        </div>
+                        </span>
                         :
                         <button className="btn btn-success m-2" onClick={e => {
                             setPlayer(room.game.id, id, 1)
@@ -156,7 +156,7 @@ export default function GamePage(){
                             </div>
                         )}
                     </div>
-                    {room.admin.id == id && <button onClick={e => {
+                    {room.admin.id == id && <button className="m-3 btn btn-primary" onClick={e => {
                         startGame(room.game.id)
                             .then(response => {
                                 refreshRoomForAll();

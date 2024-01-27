@@ -91,6 +91,7 @@ public class OngoingGameController {
         return getMappedGameMain(game);
     }
 
+
     @PutMapping("/games/{id}/add/move")
     public MappingJacksonValue addMove(@PathVariable("id") Long gameId, @RequestBody Move move){
         
@@ -100,10 +101,16 @@ public class OngoingGameController {
             .findFirst().get();
         move.setPlayer(player);
         
+
+        logger.info("Doing smth");
+        logger.info(Integer.toString(move.getX()));
+        logger.info(Integer.toString(move.getY()));
         Boolean moveResult = game.makeMove(move);
         if(!moveResult) throw new RuntimeException("Move is invalid");
         game.hasChangedState();
+        logger.info("Doing smth 2");
 
+        repositoryInterface.getGameRepository().updateGame(game);
         return getMappedGameMain(game);
     }
 
