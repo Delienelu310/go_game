@@ -72,8 +72,8 @@ public class Game {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<>(2);
 
-	@JsonFilter("Game_players")
-	@OneToOne(fetch = FetchType.EAGER)
+    private Set<StoneGroup> lastCaptured = new HashSet<>();
+    private Stack<Set<StoneGroup>> capturedStonesStack = new Stack<>();
     private Player currentPlayer;
     
     public Game() {
@@ -91,10 +91,17 @@ public class Game {
     }
     
     public Game(Game game) {
-    	this.moves = game.getMoves();
-    	this.board = game.getBoard();
-    	this.previousBoardStates = game.getPreviousBoardStates();
-    	this.state = State.CREATED;
+    	this.moves = new ArrayList<>(game.getMoves());
+    	int boardSize = game.getBoard().getSize();
+    	this.board = new Board(boardSize);
+    	for(Move move : this.moves) {
+    		simulateMove(this.board, move);
+    	}
+    	this.lastCaptured = game.getLastCapturedStoneGroup();
+    	this.previousBoardStates = new HashSet<>(game.getPreviousBoardStates());
+    	this.state = game.getState();
+    	this.players = new ArrayList<>(game.getPlayers());
+    	this.currentPlayer = game.getCurrentPlayer();
     }
     
     public void setMoves(List<Move> moves) {
@@ -107,8 +114,90 @@ public class Game {
     		makeMove(move);
     	}
     }
+    
+    public void undo() {
+    	if(this.moves.isEmpty()) {
+    		return;
+    	}
 
-	public void setId(Long id) {
+    	Move lastMove = this.moves.get(this.moves.size() - 1);
+    	
+    	if(lastMove.getMoveType() == MoveType.NORMAL) {
+    		Point lastPoint = this.board.getPoint(lastMove.getX(), lastMove.getY());
+    		
+    		StoneGroup lastStoneGroup = lastPoint.getStoneGroup();
+
+        	this.previousBoardStates.remove(this.board.toString());
+        	
+    		if(lastStoneGroup.getStones().size() == 1) {
+    			lastStoneGroup.removeStoneGroup(board);
+    		} else {
+    			lastPoint.removeStone();
+    		}
+    		
+        	Set<StoneGroup> last = capturedStonesStack.pop();
+        	if(last != null) {
+        		for(StoneGroup captured : last) {
+	        		for(Point stone : captured.getStones()) {
+	        			/*
+	        			Move move = new Move(stone.getX(), stone.getY(), MoveType.NORMAL, getOpponent(lastMove.getPlayer()));
+	        			simulateMove(this.board, move);
+	        			*/
+	        			
+	        			
+	        			Set<StoneGroup> neighbors = stone.getNeighborStoneGroups();
+	        	    	//remove breath from enemy stone group and kill it if appropriate
+	        	      	for(StoneGroup neighbor : neighbors) {
+	        	    		if(neighbor.getOwner().equals(lastMove.getPlayer())){
+	        	    			neighbor = neighbor.removeBreath(stone);
+	        	    		}
+	        	    	}
+	        	      	for(StoneGroup neighbor : neighbors) {
+	        	    		if(!neighbor.getOwner().equals(lastMove.getPlayer())) {
+	        	    	        captured.joinStoneGroup(neighbor, stone);
+	        	            }
+	        	      	}
+	        	      	for(Point reStone : captured.getStones()) {
+	        	      		reStone.setStoneGroup(captured);
+	        	      	}
+	        		}
+	        		lastMove.getPlayer().removeCaptives(captured.getStones());
+        		}
+        		lastCaptured.clear();
+        	}	
+    	} 
+    	
+    	this.moves.remove(this.moves.size() - 1);
+    	this.currentPlayer = getOpponent(currentPlayer);
+    }
+    
+    List<Move> getPossibleMoves(){
+    	int boardSize = this.board.getSize();
+    	List<Move> possibleMoves = new ArrayList<>();
+    	
+    	for(int x = 0; x < boardSize; ++x) {
+    		for(int y = 0; y < boardSize; ++y) {
+    			try {
+    				Point point = this.board.getPoint(x, y);
+    				if(point.isEmpty()) {
+    					
+    				}
+    			} catch(OutOfBoardException e){
+    				continue;
+    			}
+    			
+    		}
+    	}
+    	
+    	return possibleMoves;
+    }
+    
+    Set<StoneGroup> getLastCapturedStoneGroup(){
+    	return this.lastCaptured;
+    }
+    
+    
+    public void setId(Long id) {
     	this.id = id;
     }
     
@@ -132,8 +221,23 @@ public class Game {
     public void start() {
     	this.state = State.ONGOING;
     }
-
-	public List<Move> getMoves(){
+    
+    public Player getOpponent(Player player) {
+    	if(this.players.get(0).equals(player)) {
+    		return players.get(1);
+    	}
+    	return players.get(0);
+    }
+    
+    public Player getCurrentPlayer() {
+    	return this.currentPlayer;
+    }
+    
+    public void addMove(Move move){
+        moves.add(move);
+    }
+    
+    public List<Move> getMoves(){
     	return this.moves;
     }
     
@@ -141,9 +245,6 @@ public class Game {
     	return this.players;
     }
     
-    public void addMove(Move move){
-        moves.add(move);
-    }
     
     public boolean hasChangedState() {
     	if(moves.size() < 1) {
@@ -165,22 +266,50 @@ public class Game {
     	return false;
     }
     
-    public void makeMove(Move move) {
-    	simulateMove(this.board, move);
-    	this.moves.add(move);
-    	
-    	String currentBoardState = this.board.toString();
-        previousBoardStates.add(currentBoardState);
+    public boolean makeMove(Move move) {
+    	if(simulateMove(this.board, move)) {
+        	this.moves.add(move);
+        	
+        	if(lastCaptured.isEmpty()) {
+          		this.capturedStonesStack.push(null);        		
+        	} else {
+            	Set<StoneGroup> capturedCopy = new HashSet<>(lastCaptured);
+           		this.capturedStonesStack.push(capturedCopy);        		
+        	}
+     	
+        	String currentBoardState = this.board.toString();
+            previousBoardStates.add(currentBoardState);
 
-    	currentPlayer = move.getPlayer();
+        	currentPlayer = move.getPlayer();
+        	
+        	return true;
+    	}
+    	return false;
     }
     
-    public boolean simulateMove(Board board, Move move) {
-    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER || move.getMoveType() == MoveType.RESUMEGAME) {
-    		return true;
+    private boolean simulateMove(Board board, Move move) {
+    	if(move.getPlayer() == currentPlayer) {
+
+    		System.out.println("player problems");
+    		return false;
     	}
     	
-    	Point simulatedPoint = board.getPoint(move.getX(), move.getY());
+    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER || move.getMoveType() == MoveType.RESUMEGAME) {
+            if(!lastCaptured.isEmpty()) {
+            	lastCaptured.clear();
+            }
+    		return true;
+    	}
+
+    	Point simulatedPoint;
+    	try {
+    		simulatedPoint = board.getPoint(move.getX(), move.getY());
+    		if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
+    			return false;
+    		}
+    	} catch(OutOfBoardException e) {
+    		return false;
+    	}
     	
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, move.getPlayer());
     	
@@ -220,61 +349,23 @@ public class Game {
         			this.board.setPointStoneGroup(stone, sg);
         		}
         	}
+        	simulatedPoint.setStoneGroup(null);
         	return false;
         }
-        
         //if ok then apply changes
       	for(Point stone : newStoneGroup.getStones()) {
       		stone.setStoneGroup(newStoneGroup);
       	}
         move.getPlayer().addCaptives(capturedStones);
         
+        if(!lastCaptured.isEmpty()) {
+        	lastCaptured.clear();
+        }
+        lastCaptured.addAll(capturedStoneGroups);
+
         return true;
     }
     
-	@JsonIgnore
-    public boolean isMoveValid(Move move){
-    	if(move.getPlayer() == currentPlayer) {
-    		return false;
-    	}
-    	
-    	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER) {
-    		return true;
-    	}
-    	try {
-    		if(!board.getPoint(move.getX(), move.getY()).isEmpty()){
-    			return false;
-    		}
-    	} catch(OutOfBoardException e) {
-    		return false;
-    	}
-
-    	if(simulateMove(this.board, move) == false) {
-    		this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
-    		return false;
-    	}
-
-    	this.board.setPointStoneGroup(new Point(move.getX(), move.getY(), this.board), null);
-    	return true;
-    }
-
-	public void toggleDeadStoneGroup(int x, int y, Player player){
-		Point point = this.board.getPoint(x, y);
-		if(point.isEmpty()) {
-			throw new RuntimeException("Point is empty");
-		}
-		if(point.getStoneGroup().getOwner() != player){
-			throw new RuntimeException("You are not the owner");
-		}
-
-		if( this.deadStoneGroups.contains(point.getStoneGroup()) ){
-			deadStoneGroups.remove(point.getStoneGroup());
-		}else{
-			deadStoneGroups.add(point.getStoneGroup());
-		}
-        
-	}
-
     public void pickDeadStoneGroup(int x, int y) {
     	try {
         	Point point = this.board.getPoint(x, y);
@@ -302,20 +393,37 @@ public class Game {
     	}
     }
     
+    public Set<Territory> getCurrentTerritories(){
+    	return establishTerritories(null);
+    }
+    
     private Set<Territory> establishTerritories(Set<StoneGroup> deadStoneGroups){
 		Set<Point> potentialTerritory = new HashSet<Point>();
 		Set<Territory> territories = new HashSet<Territory>();
 		Territory newTerritory;
 		
 		Point point;
-		for(int i = 0; i < this.board.getSize(); ++i) {
-			for(int j = 0; j < this.board.getSize(); ++j) {
-				point = this.board.getPoint(i, j);
-				if(point.isEmpty() || deadStoneGroups.contains(point.getStoneGroup())) {
-					potentialTerritory.add(point);
+		
+		if(deadStoneGroups != null) {	
+			for(int i = 0; i < this.board.getSize(); ++i) {
+				for(int j = 0; j < this.board.getSize(); ++j) {
+					point = this.board.getPoint(i, j);
+					if(point.isEmpty() || deadStoneGroups.contains(point.getStoneGroup())) {
+						potentialTerritory.add(point);
+					}
+				}
+			}
+		} else {	
+			for(int i = 0; i < this.board.getSize(); ++i) {
+				for(int j = 0; j < this.board.getSize(); ++j) {
+					point = this.board.getPoint(i, j);
+					if(point.isEmpty()) {
+						potentialTerritory.add(point);
+					}
 				}
 			}
 		}
+		
 		
 		while(potentialTerritory.size() > 0) {
 			point = potentialTerritory.iterator().next();
@@ -331,7 +439,11 @@ public class Game {
 				prev_size = expandedTerritory.size();
 				newTerritoryPoints.clear();
 				for(Point deadOrEmptyPoint : new HashSet<>(expandedTerritory)) {
-					newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
+					if(deadStoneGroups != null) {
+						newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints(deadStoneGroups));
+					} else {
+						newTerritoryPoints.addAll(deadOrEmptyPoint.getEmptyNeighborPoints());
+					}
 				}
 				expandedTerritory.addAll(newTerritoryPoints);
 				curr_size = expandedTerritory.size();
@@ -369,7 +481,7 @@ public class Game {
     	if(this.state != State.NEGOTIATION) {
     		return;
     	}
-    	territories = establishTerritories(deadStoneGroups);
+    	this.territories = establishTerritories(deadStoneGroups);
     	this.state = State.FINISHED;
     }
     

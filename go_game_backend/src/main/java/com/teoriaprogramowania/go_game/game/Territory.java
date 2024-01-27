@@ -61,10 +61,16 @@ public class Territory {
 	}
 	
 	public void addNeighborStoneGroups(Set<StoneGroup> neighborStoneGroups) {
+		if(neighborStoneGroups == null) {
+			return;
+		}
 		this.neighbors.addAll(neighborStoneGroups);
 	}
 	
 	public void removeNeighborStoneGroups(Set<StoneGroup> neighborStoneGroups) {
+		if(neighborStoneGroups == null) {
+			return;
+		}
 		this.neighbors.removeAll(neighborStoneGroups);
 	}
 	

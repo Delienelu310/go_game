@@ -92,6 +92,15 @@ public class StoneGroup {
 		return newStoneGroup;
 	}
 	
+	public StoneGroup removeStone(Point stone) {
+		StoneGroup newStoneGroup = new StoneGroup(this.stones, this.breaths, this.owner);
+		newStoneGroup.stones.remove(stone);
+		for(Point breath : stone.getEmptyNeighborPoints()) {
+			breaths.remove(breath);
+		}
+		return newStoneGroup;
+	}
+	
 	public void addBreath(Point breath) {
 		this.breaths.add(breath);
 	}
@@ -99,7 +108,7 @@ public class StoneGroup {
 	//remove stone group and update breaths of neighbor stone groups
 	//return number of stones from this group
 	public Set<Point> removeStoneGroup(Board board) {
-		Set<Point> capturedStones = this.stones;
+		Set<Point> capturedStones = new HashSet<Point>(this.stones);
 		for(Point stone : this.stones) {
 			Point actualPoint = board.getPoint(stone.getX(), stone.getY());
 			actualPoint.removeStone();
