@@ -10,15 +10,14 @@ import com.teoriaprogramowania.go_game.game.Point;
 import com.teoriaprogramowania.go_game.game.StoneGroup;
 import com.teoriaprogramowania.go_game.game.Territory;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Transient;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorValue("GoBot")
 public class GoBot extends Bot{
 
     @Transient

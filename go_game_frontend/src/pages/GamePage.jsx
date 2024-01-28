@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { enterRoom, leaveRoom, retrieveRoom } from "../api/roomsApi"
-import { setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize, resumeGame } from "../api/gameOngoingApi";
+import { setBot, setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize, resumeGame } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
 import SockJS from "sockjs-client"
@@ -297,8 +297,8 @@ export default function GamePage(){
                                 {room.game.players[0].finalScore == room.game.players[1].finalScore ?
                                     "Draw!":
                                     (room.game.players[0].finalScore > room.game.players[1].finalScore ? 
-                                        room.game.players[0].client.clientDetails.username :
-                                        room.game.players[1].client.clientDetails.username ) + " won!"
+                                        "White" : 
+                                        "Black" ) + " won!"
                                 }
                             </div>
                         }

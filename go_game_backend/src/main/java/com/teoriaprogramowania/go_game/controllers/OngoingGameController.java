@@ -147,7 +147,7 @@ public class OngoingGameController {
     private void pickAllDeadStoneGroups(Game game, Player player){
         for(BoardRow boardRow : game.getBoard().getBoard()){
             for(Point point : boardRow.getPoints()){
-                if(point.getOwner() != player){
+                if( !point.isEmpty() && point.getOwner() != player){
                     game.pickDeadStoneGroup(point.getX(), point.getY());
                 }
             }

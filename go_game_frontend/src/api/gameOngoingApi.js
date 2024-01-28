@@ -6,7 +6,7 @@ export function setPlayer(gameId, clientId, position){
 }
 
 export function setBot(gameId, type, position){
-    return apiClient.put(`/games/${gameId}/set/player/${type}/${position}`);
+    return apiClient.put(`/games/${gameId}/add/bot/${type}/${position}`);
 }
 
 export function setPlayersCount(gameId, count){

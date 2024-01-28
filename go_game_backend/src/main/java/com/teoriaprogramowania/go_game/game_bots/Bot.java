@@ -5,14 +5,18 @@ import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.Player;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Bot {
 
 
     @Id
+    @GeneratedValue
     private Long id;
 
     public Long getId() {
@@ -21,7 +25,7 @@ public abstract class Bot {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     abstract public Player getBotPlayer();
     abstract public void setBotPlayer(Player player);
     abstract public Move findBestMove(Game game);

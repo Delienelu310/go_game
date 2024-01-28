@@ -4,6 +4,7 @@ package com.teoriaprogramowania.go_game.game_bots;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teoriaprogramowania.go_game.resources.Client;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -14,7 +15,7 @@ import jakarta.persistence.OneToOne;
 public class BotClient extends Client{
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Bot bot;
 
     public BotClient() {
