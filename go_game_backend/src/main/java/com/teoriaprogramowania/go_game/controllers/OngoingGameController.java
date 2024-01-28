@@ -15,6 +15,7 @@ import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.MoveType;
 import com.teoriaprogramowania.go_game.game.Player;
+import com.teoriaprogramowania.go_game.game.State;
 import com.teoriaprogramowania.go_game.jacksonMappers.JacksonMapperCollection;
 import com.teoriaprogramowania.go_game.repository.interfaces.RepositoryInterface;
 import com.teoriaprogramowania.go_game.resources.Client;
@@ -61,17 +62,17 @@ public class OngoingGameController {
     @PutMapping("/games/{id}/set/player/{client_id}/{position}")
     public MappingJacksonValue setPlayer(@PathVariable("id") Long gameId, @PathVariable("client_id") Long clientId, @PathVariable("position") Integer position){
         Client client = clientId == -1 ? null : repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Player player = clientId == -1 ? new Player() : new Player(client);
+        Player player = clientId == -1 ? null : new Player(client);
 
         Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
         
         for(int i = 0; i < game.getPlayers().size(); i++){
             if(game.getPlayers().get(i).getClient() != null && game.getPlayers().get(i).getClient().getId() == clientId){
-                game.getPlayers().set(i, new Player());
+                game.getPlayers().set(i, null);
             }
         }
         while(game.getPlayers().size() < game.getPlayersCount() && game.getPlayers().size() <= position + 1){
-            game.getPlayers().add(new Player());
+            game.getPlayers().add(null);
         }
 
         game.getPlayers().set(position, player);
@@ -102,13 +103,10 @@ public class OngoingGameController {
         move.setPlayer(player);
         
 
-        logger.info("Doing smth");
-        logger.info(Integer.toString(move.getX()));
-        logger.info(Integer.toString(move.getY()));
         Boolean moveResult = game.makeMove(move);
         if(!moveResult) throw new RuntimeException("Move is invalid");
         game.hasChangedState();
-        logger.info("Doing smth 2");
+        if(game.getState() == State.FINISHED) game.setScore(game.getPlayers().get(0), game.getPlayers().get(1));
 
         repositoryInterface.getGameRepository().updateGame(game);
         return getMappedGameMain(game);
@@ -122,8 +120,6 @@ public class OngoingGameController {
             .filter(pl -> pl != null && pl.getClient().getId() == move.getPlayer().getClient().getId())
             .findFirst().get();
 
-        logger.info(Integer.toString(move.getX()));
-        logger.info(Integer.toString(move.getY()));
 
         game.toggleDeadStoneGroup(move.getX(), move.getY(), player);
 
@@ -140,8 +136,11 @@ public class OngoingGameController {
             .findFirst().get();
 
         game.toggleAgreedToFinalize(player);
-        game.finalizeGame();
-
+        if(game.bothPlayersAgreed()){
+            game.finalizeGame();
+            game.setScore(game.getPlayers().get(0), game.getPlayers().get(1));
+        }
+        
         repositoryInterface.getGameRepository().updateGame(game);
 
         return getMappedGameMain(game);

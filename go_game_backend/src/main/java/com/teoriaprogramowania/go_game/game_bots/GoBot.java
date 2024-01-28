@@ -1,8 +1,21 @@
-package com.teoriaprogramowania.go_game.game;
+package com.teoriaprogramowania.go_game.game_bots;
 
 import java.util.*;
 
-public class GoBot {
+import com.teoriaprogramowania.go_game.game.Game;
+import com.teoriaprogramowania.go_game.game.Move;
+import com.teoriaprogramowania.go_game.game.MoveType;
+import com.teoriaprogramowania.go_game.game.Player;
+import com.teoriaprogramowania.go_game.game.Point;
+import com.teoriaprogramowania.go_game.game.StoneGroup;
+import com.teoriaprogramowania.go_game.game.Territory;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class GoBot implements Bot{
     private Player botPlayer;
     private static final int MAX_DEPTH = 3;
 
@@ -136,5 +149,10 @@ public class GoBot {
         }
 
         return stoneGroupScore;
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+        this.botPlayer = player;
     }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { enterRoom, leaveRoom, retrieveRoom } from "../api/roomsApi"
 import { setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize, resumeGame } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
@@ -9,6 +9,8 @@ import SockJS from "sockjs-client"
 import Board from "../components/Board";
 
 export default function GamePage(){
+
+    const navigate = useNavigate();
 
     const {id} = useAuth();
     const {roomId} = useParams();
@@ -30,13 +32,25 @@ export default function GamePage(){
 
             console.log('Connected');
             client.subscribe(`/game/${roomId}`, (room) => {
-                console.log(JSON.parse(room.body));
-                if(room && room.game && room.game.players.length != 2){
-                    setPlayersCount(room.game.id, 2)
-                        .then(response => console.log(response))
-                        .catch(e => console.log(e));
+
+                // if you are not in the participants list, then you were kicked:
+                console.log("here");
+                
+                let roomObj = JSON.parse(room.body);
+                if(roomObj && roomObj.participants){
+                    if(! (roomObj.participants.map(participant => participant.id).includes(id) ) ){
+                        console.log("here");
+                        
+                        disconnect();
+                        navigate("/");
+                        return;
+                    }
                 }
-                setRoom(JSON.parse(room.body));
+                
+
+                console.log(roomObj);
+         
+                setRoom(roomObj);
             });
 
         });
@@ -90,15 +104,30 @@ export default function GamePage(){
 
     return (
         <div>
-            <button onClick={() => refreshRoomForAll()} className="btn btn-primary m-3">refresh</button>
             {room && room.game && <div>
-                <div>You are in the Room {room.title}</div>
+                <button className="m-3 btn btn-danger" onClick={e => {
+                        leaveRoom(room.id, id)
+                            .then(response => {
+                                refreshRoomForAll();
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                    }}>Leave</button>
                 <div>
                     <div className="m-3"><b>Game state: </b>{room.game.state}</div>
-                    <div className="m-3"><b>White Player:</b> { (room.game.players[0] && room.game.players[0].client && room.game.players[0].client.clientDetails) ? 
+                    <div className="m-3">
+                        <b>White Player:</b> 
+                        { (room.game.players[0] && room.game.players[0].client && room.game.players[0].client.clientDetails) ? 
                         <span>
                             {room.game.players[0].client.clientDetails.username}
-                            {(room.game.players[0].client.id == id || room.admin.id == id) &&
+                            {room.game.state == "FINISHED" && <span>
+                                <b> | Final score:</b> {room.game.players[0].finalScore}    
+                            </span>}
+                            {(room.game.state == "ONGOING" || room.game.state == "NEGOTIATION") && <span>
+                                <b>| Captives:</b> {room.game.players[0].captives ? room.game.players[0].captives.length : 0}
+                            </span>}
+                            {(room.game.players[0].client.id == id || room.admin.id == id) && room.game.state == "CREATED" &&
                                 <button className="btn btn-danger m-2" onClick={e => {
                                     setPlayer(room.game.id, -1, 0)
                                         .then(response => {
@@ -118,10 +147,18 @@ export default function GamePage(){
                                 .catch(e =>  console.log(e));
                         }}>Play white</button>
                     }</div>
-                    <div className="m-3"><b>Black player: </b>{room.game.players[1] && room.game.players[1].client && room.game.players[1].client.clientDetails ? 
+                    <div className="m-3">
+                        <b>Black player: </b>
+                        {room.game.players[1] && room.game.players[1].client && room.game.players[1].client.clientDetails  ? 
                         <span>
-                            {room.game.players[1].client.clientDetails.username}
-                            {(room.game.players[1].client.id == id || room.admin.id == id) &&
+                            {room.game.players[1].client.clientDetails.username} 
+                            {room.game.state == "FINISHED" && <span>
+                                <b> | Final score:</b> {room.game.players[1].finalScore}    
+                            </span>}
+                            {(room.game.state == "ONGOING" || room.game.state == "NEGOTIATION") && <span>
+                                <b>| Captives:</b> {room.game.players[1].captives ? room.game.players[1].captives.length : 0}
+                            </span>}
+                            {(room.game.players[1].client.id == id || room.admin.id == id)  && room.game.state == "CREATED" &&
                                 <button className="btn btn-danger m-2" onClick={e => {
                                     setPlayer(room.game.id, -1, 1)
                                         .then(response => {
@@ -142,21 +179,25 @@ export default function GamePage(){
                         
                     }</div>
                     <div>
-                        <h4>Participants:</h4>
-                        {room.participants.map((client, index) => 
-                            <div className="m-2">
-                                {index + 1}.{client.clientDetails.username}
-                                {room.admin.id == id && <button className="btn btn-danger m-2" onClick={e => {
-                                    leaveRoom(room.id, id)
-                                        .then(response => {
-                                            refreshRoomForAll();
-                                        })
-                                        .catch(e =>  console.log(e));
-                                }}>X</button>}
-                            </div>
+                        <h4>Viewers:</h4>
+                        {room.participants
+                            .filter(participant => !room.game.players
+                                .map(player => player.client ? player.client.id : null)
+                                .includes(participant.id)
+                            ).map((client, index) => 
+                                <div className="m-2">
+                                    {index + 1}.{client.clientDetails.username}
+                                    {room.admin.id == id && <button className="btn btn-danger m-2" onClick={e => {
+                                        leaveRoom(room.id, id)
+                                            .then(response => {
+                                                refreshRoomForAll();
+                                            })
+                                            .catch(e =>  console.log(e));
+                                    }}>X</button>}
+                                </div>
                         )}
                     </div>
-                    {room.admin.id == id && <button className="m-3 btn btn-primary" onClick={e => {
+                    {room.admin.id == id && room.game.state == 'CREATED' && <button className="m-3 btn btn-primary" onClick={e => {
                         startGame(room.game.id)
                             .then(response => {
                                 refreshRoomForAll();
@@ -217,8 +258,29 @@ export default function GamePage(){
 
                     {/* Game finished panel */}
                     {room.game.state == "FINISHED" && <div>
-                        Game is finished
+                        <h6>Game is finished</h6>
+                        {room.game.moves[room.game.moves.length-1].moveType == 'SURRENDER' ? 
+                            <div>
+                                {room.game.moves[room.game.moves.length-1].player.client.clientDetails.username} gave up.
+                                <br/>
+                                {room.game.players
+                                    .filter(player => player.client && player.client.id != room.game.moves[room.game.moves.length-1].player.client.id)[0]
+                                    .client.clientDetails.username} won!
+                            </div>
+                            :
+                            <div>
+                                {room.game.players[0].finalScore == room.game.players[1].finalScore ?
+                                    "Draw!":
+                                    (room.game.players[0].finalScore > room.game.players[1].finalScore ? 
+                                        room.game.players[0].client.clientDetails.username :
+                                        room.game.players[1].client.clientDetails.username ) + " won!"
+                                }
+                            </div>
+                        }
+
                     </div>}
+
+                    
 
                     <Board
                         size={room.game.board.size}
@@ -247,6 +309,7 @@ export default function GamePage(){
                         white={room.game.players[0] ? room.game.players[0].client.id : null}
                         black={room.game.players[1] ? room.game.players[1].client.id : null}
                     /> 
+
                 </div>}
                 
             </div>}

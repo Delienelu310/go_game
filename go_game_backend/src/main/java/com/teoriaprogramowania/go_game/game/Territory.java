@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 @Entity
 public class Territory {
@@ -31,7 +30,7 @@ public class Territory {
 	}
 
 	@JsonFilter("Territory_points")
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER )
 	private Set<Point> points = new HashSet<>();
 
 	@JsonFilter("Territory_neighbours")
@@ -45,7 +44,7 @@ public class Territory {
 
 
 	public Territory() {
-		this.owner = null;
+
 	}
 	
 	public Set<Point> getPoints(){

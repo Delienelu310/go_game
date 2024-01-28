@@ -30,7 +30,8 @@ public class GameJacksonMapper {
             .addFilter("Game_territories", SimpleBeanPropertyFilter.serializeAllExcept("neighbors"))
             .addFilter("Territory_points", SimpleBeanPropertyFilter.serializeAllExcept("board", "stoneGroup"))
             .addFilter("Territory_owner", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
-            .addFilter("Game_players", SimpleBeanPropertyFilter.serializeAllExcept("captives", "territory"))
+            .addFilter("Game_players", SimpleBeanPropertyFilter.serializeAllExcept( "territory"))
+            .addFilter("Player_captives", SimpleBeanPropertyFilter.filterOutAll())
             .addFilter("Client", SimpleBeanPropertyFilter.serializeAll())
         ;
         return filterProvider;

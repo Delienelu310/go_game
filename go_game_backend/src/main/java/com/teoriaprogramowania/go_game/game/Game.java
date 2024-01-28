@@ -311,14 +311,12 @@ public class Game {
     
     private boolean simulateMove(Board board, Move move) {
 
-		logger.info("State 0");
     	if(move.getPlayer() == currentPlayer) {
 
     		System.out.println("player problems");
     		return false;
     	}
 
-		logger.info("State 1");
     	
     	if(move.getMoveType() == MoveType.PASS || move.getMoveType() == MoveType.SURRENDER || move.getMoveType() == MoveType.RESUMEGAME) {
             if(!lastCaptured.isEmpty()) {
@@ -327,7 +325,6 @@ public class Game {
     		return true;
     	}
 
-		logger.info("State 2");
 
     	Point simulatedPoint;
     	try {
@@ -339,7 +336,6 @@ public class Game {
     		return false;
     	}
 
-		logger.info("State 3");
 
     	StoneGroup newStoneGroup = new StoneGroup(simulatedPoint, move.getPlayer());
     	
@@ -358,7 +354,6 @@ public class Game {
     		}
     	}
 
-		logger.info("State 4");
       	
     	//merge friendly neighbor stone groups        
       	for(StoneGroup neighbor : neighbors) {
@@ -367,7 +362,6 @@ public class Game {
             }
       	}
     	
-		  logger.info("State 5");
 
     	//suicide move check
     	if(newStoneGroup.getBreaths().size() == 0) {
@@ -375,13 +369,8 @@ public class Game {
     		return false;
     	}
 
-		logger.info("State 6");
-
     	//ko rule check;
     	String currentBoardState = this.board.toString();
-		logger.info("\n" + currentBoardState);
-		logger.info("\n" + ( previousBoardStates.size() >= 2 ? previousBoardStates.get(previousBoardStates.size() -  2) : ""));
-
         if(previousBoardStates.contains(currentBoardState) && 
 			previousBoardStates.size() >= 2 &&
 			previousBoardStates.get(previousBoardStates.size() -  2).equals(currentBoardState)
@@ -394,7 +383,6 @@ public class Game {
         	simulatedPoint.setStoneGroup(null);
         	return false;
         }
-		logger.info("State 7");
 
         //if ok then apply changes
       	for(Point stone : newStoneGroup.getStones()) {
@@ -407,7 +395,6 @@ public class Game {
         }
         lastCaptured.addAll(capturedStoneGroups);
 
-		logger.info("State 8");
 
         return true;
     }
@@ -415,7 +402,7 @@ public class Game {
 	public void toggleDeadStoneGroup(int x, int y, Player player) {
 		try {
         	Point point = this.board.getPoint(x, y);
-			if(player != point.getStoneGroup().getOwner()){
+			if(player == point.getStoneGroup().getOwner()){
 				throw new RuntimeException("Invalid player");
 			}
     		if(point.isEmpty()) {

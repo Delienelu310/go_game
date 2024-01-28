@@ -30,17 +30,13 @@ public class RoomSocketsController {
     @MessageMapping("/{room_id}/refresh")
     @SendTo("/game/{room_id}")
     public String refresh(@DestinationVariable("room_id") Long roomId){
-        logger.info("It is refreshing");
-        logger.info(roomId.toString());
 
         Room room = repositoryInterface.getRoomRepository().retrieveRoomById(roomId);
 
-        logger.info("It is refreshing");
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setFilterProvider(jacksonMapper.getGameJacksonMapper().getMainFilterProvider());
 
-        logger.info("It is refreshing");
         
         try{
             return objectMapper.writeValueAsString(room);

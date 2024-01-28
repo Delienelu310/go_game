@@ -12,6 +12,6 @@ import com.teoriaprogramowania.go_game.game.Game;
 @Repository
 public interface GameJpa extends JpaRepository<Game, Long> {
 
-    @Query("SELECT g FROM Game g WHERE g.id =: clientId")
+    @Query("SELECT g FROM Game g WHERE g.id =:clientId")
     public List<Game> retrieveGamesOfClient(@Param("clientId") Long clientId);
 }
