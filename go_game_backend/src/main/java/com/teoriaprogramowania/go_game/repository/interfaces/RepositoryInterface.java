@@ -5,4 +5,5 @@ public interface RepositoryInterface {
     public GameRepositoryInterface getGameRepository();
     public RoomRepositoryInterface getRoomRepository();
     public ClientRepositoryInterface getClientRepository();
+    public BotRepositoryInterface getBotRepositoryInterface();
 }

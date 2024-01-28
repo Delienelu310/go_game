@@ -5,6 +5,10 @@ export function setPlayer(gameId, clientId, position){
     return apiClient.put(`/games/${gameId}/set/player/${clientId}/${position}`);
 }
 
+export function setBot(gameId, type, position){
+    return apiClient.put(`/games/${gameId}/set/player/${type}/${position}`);
+}
+
 export function setPlayersCount(gameId, count){
     return apiClient.put(`/games/${gameId}/set/players_count/${count}`);
 }

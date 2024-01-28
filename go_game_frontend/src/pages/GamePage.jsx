@@ -139,13 +139,26 @@ export default function GamePage(){
                             
                         </span>
                         :
-                        <button className="btn btn-success m-2" onClick={e => {
-                            setPlayer(room.game.id, id, 0)
-                                .then(response => {
-                                    refreshRoomForAll();
-                                })
-                                .catch(e =>  console.log(e));
-                        }}>Play white</button>
+                        <>
+                            <button className="btn btn-success m-2" onClick={e => {
+                                setPlayer(room.game.id, id, 0)
+                                    .then(response => {
+                                        refreshRoomForAll();
+                                    })
+                                    .catch(e =>  console.log(e));
+                            }}>Play white</button>
+                            {room.admin.id == id && <button onClick={e => {
+                                setBot(room.game.id, 1, 0)
+                                    .then(respone => {
+                                        refreshRoomForAll();
+                                    })
+                                    .catch(e => console.log(e));
+                            }} className="btn btn-primary m-2">
+                                Add bot
+                            </button>}
+                        </>
+                        
+                        
                     }</div>
                     <div className="m-3">
                         <b>Black player: </b>
@@ -169,13 +182,25 @@ export default function GamePage(){
                             }
                         </span>
                         :
-                        <button className="btn btn-success m-2" onClick={e => {
-                            setPlayer(room.game.id, id, 1)
-                                .then(response => {
-                                    refreshRoomForAll();
-                                })
-                                .catch(e =>  console.log(e));
-                        }}>Play black</button>
+                        <>
+                            <button className="btn btn-success m-2" onClick={e => {
+                                setPlayer(room.game.id, id, 1)
+                                    .then(response => {
+                                        refreshRoomForAll();
+                                    })
+                                    .catch(e =>  console.log(e));
+                            }}>Play black</button>
+                            {room.admin.id == id && <button onClick={e => {
+                                setBot(room.game.id, 1, 1)
+                                    .then(respone => {
+                                        refreshRoomForAll();
+                                    })
+                                    .catch(e => console.log(e));
+                            }} className="btn btn-primary m-2">
+                                Add bot
+                            </button>}
+                        </>
+                        
                         
                     }</div>
                     <div>
