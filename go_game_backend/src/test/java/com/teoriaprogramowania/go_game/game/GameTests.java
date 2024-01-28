@@ -956,4 +956,146 @@ public class GameTests {
         game.undo();
         assertEquals(oldMovesSize - 3, game.getMoves().size());
     }
+    
+    @Test
+    void testGameSimulation() {
+        Board board = new Board(9);
+        Game game = new Game(board);
+        
+        List<Player> players = new ArrayList<>();
+        players.add(black);
+        players.add(white);
+        game.setPlayers(players);
+        
+        Move move = new Move(0, 1, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(0, 7, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+    	
+    	move = new Move(0, 2, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(1, 0, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+    	
+    	move = new Move(1, 3, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(8, 4, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(2, 8, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(0, 3, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(0, 0, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(2, 3, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(0, 8, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(4, 8, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(1, 7, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(2, 7, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+    	
+    	move = new Move(2, 2, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(1, 8, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	assertTrue(game.getBoard().getPoint(0, 8).isEmpty());
+
+    	move = new Move(0, 4, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(0, 5, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(3, 7, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(0, 6, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(1, 6, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(1, 2, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(5, 8, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(2, 6, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(1, 5, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(1, 4, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(2, 5, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(6, 8, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+
+    	move = new Move(5, 7, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(4, 7, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+    	
+    	assertTrue(game.getBoard().getPoint(0, 8).isEmpty());
+
+    	move = new Move(4, 6, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	move = new Move(0, 8, MoveType.NORMAL, white);
+    	assertFalse(game.makeMove(move));
+    }
+    
+
+    @Test
+    void testUndoBreathCheck() {
+        Board board = new Board(9);
+        Game game = new Game(board);
+        
+        List<Player> players = new ArrayList<>();
+        players.add(black);
+        players.add(white);
+        game.setPlayers(players);
+        
+        Move move = new Move(3, 0, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	
+        move = new Move(0, 0, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+        
+    	move = new Move(2, 1, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	
+        move = new Move(2, 0, MoveType.NORMAL, white);
+    	assertTrue(game.makeMove(move));
+        
+    	move = new Move(1, 0, MoveType.NORMAL, black);
+    	assertTrue(game.makeMove(move));
+    	
+        assertTrue(game.getBoard().getPoint(2, 0).isEmpty());
+
+        assertEquals(4, game.getBoard().getPoint(2, 1).getStoneGroup().getBreaths().size());
+        assertEquals(3, game.getBoard().getPoint(3, 0).getStoneGroup().getBreaths().size());
+
+        game.undo();
+        
+        assertEquals(2, game.getBoard().getPoint(0, 0).getStoneGroup().getBreaths().size());
+        assertEquals(1, game.getBoard().getPoint(2, 0).getStoneGroup().getBreaths().size());
+        
+        assertEquals(3, game.getBoard().getPoint(2, 1).getStoneGroup().getBreaths().size());
+        assertEquals(2, game.getBoard().getPoint(3, 0).getStoneGroup().getBreaths().size());
+
+        assertEquals(1, game.getBoard().getPoint(0, 0).getStoneGroup().getStones().size());
+        assertEquals(1, game.getBoard().getPoint(2, 0).getStoneGroup().getStones().size());
+
+        game.undo();
+
+        assertTrue(game.getBoard().getPoint(2, 0).isEmpty());
+    }
 }
