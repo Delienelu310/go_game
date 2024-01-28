@@ -10,14 +10,30 @@ import com.teoriaprogramowania.go_game.game.Point;
 import com.teoriaprogramowania.go_game.game.StoneGroup;
 import com.teoriaprogramowania.go_game.game.Territory;
 
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Transient;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
-public class GoBot implements Bot{
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class GoBot extends Bot{
+
+    @Transient
     private Player botPlayer;
+    
+    @Transient
     private static final int MAX_DEPTH = 3;
+    
+    public Player getBotPlayer() {
+        return botPlayer;
+    }
+
+    public void setBotPlayer(Player botPlayer) {
+        this.botPlayer = botPlayer;
+    }
 
     public GoBot(Player botPlayer) {
         this.botPlayer = botPlayer;
@@ -151,8 +167,6 @@ public class GoBot implements Bot{
         return stoneGroupScore;
     }
 
-    @Override
-    public void setPlayer(Player player) {
-        this.botPlayer = player;
-    }
+    
+
 }
