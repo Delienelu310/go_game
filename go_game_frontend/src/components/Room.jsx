@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../security/AuthContext";
+import { leaveRoom } from "../api/roomsApi";
 
 export default function Room({room}){
+
+    const {currentRoom, id, disconnect} = useAuth();
 
     const navigate = useNavigate();
 
@@ -8,13 +12,26 @@ export default function Room({room}){
         <div>
             {room ? 
                 (
-                    <div>
+                    <div style={{
+                        margin: "auto",
+                        marginTop: "30px",
+                        width: "50%",
+                        border: "1px solid black",
+                        borderRadius: "10px"
+                    }}>
                         <h4>{room.roomDetails.title}</h4>
-                        {room.admin && <div>Admin: {room.admin.clientDetails.username}</div>}
-                        Patricipants: {room.participants.length}
+                        {room.admin && <div><b>Admin:</b> {room.admin.clientDetails.username}</div>}
+                        <b>Patricipants:</b> {room.participants.length}
                         <div>{room.roomDetails.description}</div>
-                        <button className="btn btn-success m-2" onClick={ e => {
-                            navigate(`/game/${room.id}`);
+                        <button className="btn btn-primary m-2" onClick={ e => {
+                            if(disconnect) disconnect();
+                            if(currentRoom){ 
+                                leaveRoom(currentRoom, id).then(response => {
+                                    navigate(`/game/${room.id}`);
+                                });
+                            }else{
+                                navigate(`/game/${room.id}`);
+                            }
                         }}>Enter</button>
                     </div>
                 )

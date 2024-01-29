@@ -36,7 +36,7 @@ public class Player {
 	private int finalScore;
 
 	@JsonFilter("Player_captives")
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Point> captives = new ArrayList<>();
 	
 	@JsonFilter("Player_territory")

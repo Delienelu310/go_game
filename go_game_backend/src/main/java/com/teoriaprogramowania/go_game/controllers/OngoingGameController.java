@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teoriaprogramowania.go_game.GoGameApplication;
-import com.teoriaprogramowania.go_game.game.BoardRow;
 import com.teoriaprogramowania.go_game.game.Game;
 import com.teoriaprogramowania.go_game.game.Move;
 import com.teoriaprogramowania.go_game.game.MoveType;
 import com.teoriaprogramowania.go_game.game.Player;
-import com.teoriaprogramowania.go_game.game.Point;
 import com.teoriaprogramowania.go_game.game.State;
 import com.teoriaprogramowania.go_game.game_bots.BotClient;
 import com.teoriaprogramowania.go_game.game_bots.GoBot;
@@ -70,18 +68,25 @@ public class OngoingGameController {
         @PathVariable("position") Integer position
     ){
         Client client = clientId == -1 ? null : repositoryInterface.getClientRepository().retrieveClientById(clientId);
-        Player player = clientId == -1 ? null : new Player(client);
+        Player player = clientId == -1 ? new Player() : new Player(client);
 
         Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
         
+
         for(int i = 0; i < game.getPlayers().size(); i++){
-            if(game.getPlayers().get(i).getClient() != null && game.getPlayers().get(i).getClient().getId() == clientId){
+            if(game.getPlayers().get(i).getClient() == null){
                 game.getPlayers().set(i, null);
             }
         }
-        while(game.getPlayers().size() < game.getPlayersCount() && game.getPlayers().size() <= position + 1){
-            game.getPlayers().add(null);
+
+        for(int i = 0; i < game.getPlayers().size(); i++){
+            if(game.getPlayers().get(i) == null) game.getPlayers().set(i, new Player());
         }
+
+        while(game.getPlayers().size() < game.getPlayersCount() && game.getPlayers().size() <= position + 1){
+            game.getPlayers().add(new Player());
+        }
+
 
         game.getPlayers().set(position, player);
         
@@ -115,8 +120,18 @@ public class OngoingGameController {
 
         Player player = new Player(botClient);
 
+        for(int i = 0; i < game.getPlayers().size(); i++){
+            if(game.getPlayers().get(i) == null){
+                game.getPlayers().set(i, null);
+            }
+        }
+
+        for(int i = 0; i < game.getPlayers().size(); i++){
+            if(game.getPlayers().get(i).getClient() == null) game.getPlayers().set(i, new Player());
+        }
+
         while(game.getPlayers().size() < game.getPlayersCount() && game.getPlayers().size() <= position + 1){
-            game.getPlayers().add(null);
+            game.getPlayers().add(new Player());
         }
 
         game.getPlayers().set(position, player);
@@ -140,21 +155,9 @@ public class OngoingGameController {
         if(!moveResult) throw new RuntimeException("Move is invalid");
         game.hasChangedState();
         if(game.getState() == State.FINISHED) game.setScore(game.getPlayers().get(0), game.getPlayers().get(1));
-        else if(game.getState() == State.NEGOTIATION) pickAllDeadStoneGroups(game, playerMoving);
 
     }
 
-    private void pickAllDeadStoneGroups(Game game, Player player){
-        for(BoardRow boardRow : game.getBoard().getBoard()){
-            for(Point point : boardRow.getPoints()){
-                if( !point.isEmpty() && point.getOwner() != player){
-                    game.pickDeadStoneGroup(point.getX(), point.getY());
-                }
-            }
-        }
-        game.agreeToFinalize(player);
-    }
-    
     @PutMapping("/games/{id}/start")
     public MappingJacksonValue startGame(@PathVariable("id") Long gameId){
         Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
@@ -165,6 +168,27 @@ public class OngoingGameController {
 
         repositoryInterface.getGameRepository().updateGame(game);
 
+        return getMappedGameMain(game);
+    }
+
+    @PutMapping("/games/{id}/surrender/{clientId}")
+    public MappingJacksonValue surrender(@PathVariable("id") Long gameId, @PathVariable("clientId") Long clientId){
+        Game game = repositoryInterface.getGameRepository().retrieveGameById(gameId);
+        Player player = game.getPlayers().stream()
+            .filter(pl -> pl != null && pl.getClient().getId() == clientId)
+            .findFirst().get();
+        
+        Move move = new Move();
+        move.setX(-1);
+        move.setY(-1);
+        move.setMoveType(MoveType.SURRENDER);
+        move.setPlayer(player);
+
+        game.addMove(move);
+        game.hasChangedState();
+        game.setScore(game.getPlayers().get(0), game.getPlayers().get(1));
+
+        repositoryInterface.getGameRepository().updateGame(game);
         return getMappedGameMain(game);
     }
 
@@ -185,6 +209,8 @@ public class OngoingGameController {
         if(game.getState() == State.FINISHED) game.setScore(game.getPlayers().get(0), game.getPlayers().get(1));
 
         notifyBot(game);
+
+        logger.info("Is is here");
 
         repositoryInterface.getGameRepository().updateGame(game);
         return getMappedGameMain(game);

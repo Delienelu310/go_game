@@ -36,15 +36,44 @@ export default function GameRecordPage(){
         <div>
             {originalGame ? 
                 <div>
+
+                    {/* Board itself */}
+                    {gameRecreated ? 
+                        <div className="m-3" style={{display: "inline-block", position:"relative", left: "5%", top:"5%", width:"50%"}}>
+                            <Board
+                                size={gameRecreated.board.size}
+                                cellSize={50}
+                                boardMatrix={gameRecreated.board.board}
+                                white={originalGame.players[0] ? originalGame.players[0].client.id : null}
+                                black={originalGame.players[1] ? originalGame.players[1].client.id : null}
+                                // unused:
+                                deadStoneGroups={[]}
+                                clientId={id}
+                                sendMove={() => {}}
+                            />
+                        </div> 
+                        :
+                        <div>Loading...</div>
+                    }
+
                     {/* Panel for managing */}
-                    <div className="m-5">
+                    <div style={{width: "40%", display: "inline-block", position:"relative"}}>
                         <h5>Current move: {moveNumber}</h5>
 
                         {originalGame.moves.map( (move, index) => (
-                            <div className="m-3"  style={{color: index == moveNumber - 1 ? "red" : "black"}}>
+                            <div className="m-3"  style={{
+                                color: index == moveNumber - 1 ? "red" : "black",
+                                border: "1px solid black",
+                                borderRadius: "10px",
+                                display: "inline-block",
+                                width: "40%"
+                            }}>
                                 <div>Moves made</div>
-                                <div  onClick={() => setMoveNumber(index + 1)} key={index}>
-                                    {move.player.client.clientDetails.username} | {move.moveType} 
+                                <div onClick={() => setMoveNumber(index + 1)} key={index}>
+                                    {move.player.client.clientDetails ? 
+                                        move.player.client.clientDetails.username : 
+                                        "bot"
+                                    } | {move.moveType} 
                                     {move.moveType == "NORMAL" && ` - ${move.x} -${move.y} `}
                                 </div>
                             </div>
@@ -59,26 +88,7 @@ export default function GameRecordPage(){
                     </div>
 
 
-                    {/* Board itself */}
-                    {gameRecreated ? 
-                        <div>
-                            <Board
-                                size={gameRecreated.board.size}
-                                cellSize={50}
-                                boardMatrix={gameRecreated.board.board}
-                                white={originalGame.players[0] ? originalGame.players[0].client.id : null}
-                                black={originalGame.players[1] ? originalGame.players[1].client.id : null}
-                                // unused:
-                                deadStoneGroups={[]}
-                                clientId={id}
-                                sendMove={() => {}}
-                                
-
-                            />
-                        </div> 
-                        :
-                        <div>Loading...</div>
-                    }
+                    
                     
                 </div>
                 :

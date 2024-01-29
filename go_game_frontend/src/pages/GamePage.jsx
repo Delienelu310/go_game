@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { enterRoom, leaveRoom, retrieveRoom } from "../api/roomsApi"
-import { setBot, setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize, resumeGame } from "../api/gameOngoingApi";
+import { setBot, setPlayer, makeMove, startGame, setPlayersCount, toggleDeadStoneGroup, toggleAgreedToFinalize, resumeGame, surrender } from "../api/gameOngoingApi";
 import { useAuth } from "../security/AuthContext";
 import Stomp from "stompjs"
 import SockJS from "sockjs-client"
@@ -12,7 +12,7 @@ export default function GamePage(){
 
     const navigate = useNavigate();
 
-    const {id} = useAuth();
+    const {id, setDisconnect, setCurrentRoom} = useAuth();
     const {roomId} = useParams();
 
     const [showException, setException] = useState(false);
@@ -72,6 +72,7 @@ export default function GamePage(){
         stompClient && stompClient.activate();
         setConnected(true);
         console.log("Connected");
+        setDisconnect(disconnect);
     };
 
     function disconnect(){
@@ -89,6 +90,7 @@ export default function GamePage(){
     useEffect(() => {
         enterRoom(roomId, id)
             .then(response => {
+                setCurrentRoom(roomId);
                 initializeStompClient();
                 return retrieveRoom(roomId);
             }).then(response => {
@@ -118,14 +120,14 @@ export default function GamePage(){
                     <div className="m-3"><b>Game state: </b>{room.game.state}</div>
                     <div className="m-3">
                         <b>White Player:</b> 
-                        { (room.game.players[0] && room.game.players[0].client && room.game.players[0].client.clientDetails) ? 
+                        { (room.game.players[0] && room.game.players[0].client ) ? 
                         <span>
-                            {room.game.players[0].client.clientDetails.username}
+                            {room.game.players[0].client.clientDetails ? room.game.players[0].client.clientDetails.username : "bot"}
                             {room.game.state == "FINISHED" && <span>
                                 <b> | Final score:</b> {room.game.players[0].finalScore}    
                             </span>}
                             {(room.game.state == "ONGOING" || room.game.state == "NEGOTIATION") && <span>
-                                <b>| Captives:</b> {room.game.players[0].captives ? room.game.players[0].captives.length : 0}
+                                <b> | Captives:</b> {room.game.players[0].client.clientDetails && room.game.players[0].captives ? room.game.players[0].captives.length : "none"}
                             </span>}
                             {(room.game.players[0].client.id == id || room.admin.id == id) && room.game.state == "CREATED" &&
                                 <button className="btn btn-danger m-2" onClick={e => {
@@ -162,14 +164,14 @@ export default function GamePage(){
                     }</div>
                     <div className="m-3">
                         <b>Black player: </b>
-                        {room.game.players[1] && room.game.players[1].client && room.game.players[1].client.clientDetails  ? 
+                        {room.game.players[1] && room.game.players[1].client  ? 
                         <span>
-                            {room.game.players[1].client.clientDetails.username} 
+                            {room.game.players[1].client.clientDetails ? room.game.players[1].client.clientDetails.username : "bot"} 
                             {room.game.state == "FINISHED" && <span>
                                 <b> | Final score:</b> {room.game.players[1].finalScore}    
                             </span>}
                             {(room.game.state == "ONGOING" || room.game.state == "NEGOTIATION") && <span>
-                                <b>| Captives:</b> {room.game.players[1].captives ? room.game.players[1].captives.length : 0}
+                                <b> | Captives:</b> {room.game.players[1].client.clientDetails && room.game.players[1].captives ? room.game.players[1].captives.length : "none"}
                             </span>}
                             {(room.game.players[1].client.id == id || room.admin.id == id)  && room.game.state == "CREATED" &&
                                 <button className="btn btn-danger m-2" onClick={e => {
@@ -222,7 +224,10 @@ export default function GamePage(){
                                 </div>
                         )}
                     </div>
-                    {room.admin.id == id && room.game.state == 'CREATED' && <button className="m-3 btn btn-primary" onClick={e => {
+                    {room.admin.id == id && room.game.state == 'CREATED' && 
+                    room.game.players[0] && room.game.players[0].client &&
+                    room.game.players[1] && room.game.players[1].client &&                    
+                    <button className="m-3 btn btn-primary" onClick={e => {
                         startGame(room.game.id)
                             .then(response => {
                                 refreshRoomForAll();
@@ -245,7 +250,7 @@ export default function GamePage(){
 
                     {/* Surrender button */}
                     {room.game.state != "FINISHED" && <button className="m-3 btn btn-danger" onClick={() => {
-                        makeMove(room.game.id, {x: 0, y: 0, moveType: "SURRENDER", player: {client: {id} } } )
+                        surrender(room.game.id, id)
                             .then(response => refreshRoomForAll())
                             .catch(e => console.log(e));
                     }}>Surrender</button>}
@@ -286,11 +291,9 @@ export default function GamePage(){
                         <h6>Game is finished</h6>
                         {room.game.moves[room.game.moves.length-1].moveType == 'SURRENDER' ? 
                             <div>
-                                {room.game.moves[room.game.moves.length-1].player.client.clientDetails.username} gave up.
-                                <br/>
-                                {room.game.players
-                                    .filter(player => player.client && player.client.id != room.game.moves[room.game.moves.length-1].player.client.id)[0]
-                                    .client.clientDetails.username} won!
+                                {room.game.moves[room.game.moves.length-1].player.client.id == room.game.players[0].client.id ? 
+                                "white gave up, black won!" : "black gave up, white won!"}
+                                
                             </div>
                             :
                             <div>

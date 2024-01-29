@@ -172,33 +172,7 @@ public class GoBot extends Bot{
     		
     	return bestValMin;
     }
-    /*
-    public int[] pickDeadStoneGroup(Game game) {
-    	if(evaluateTerritory(game) > 0) {
-        	game.agreeToFinalize(botPlayer);
-        	return new int[] {-1, -1};    		
-    	}
-    	
-    	int boardSize = game.getBoard().getSize();
-    	for(int x = 0; x < boardSize; ++x) {
-    		for(int y = 0; y < boardSize; ++y) {
-    			try {
-        			Point point = game.getBoard().getPoint(x, y);
-        			if(!point.isEmpty()) {
-        				if(!(point.getStoneGroup().getOwner() == botPlayer)) {
-        					return new int[] {x, y};
-        				}
-        			}
-    			} catch (OutOfBoardException e) {
-    				continue;
-    			}
-    		}
-    	}
-    	
-    	game.agreeToFinalize(botPlayer);
-    	return new int[] {-1, -1};
-    }
-    */
+
     private int evaluateBoard(Game game) {
         int score = 0;
 

@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class Point {
 	private int y;					//coordinate y
 
 	@JsonFilter("Point_board")
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Board board;			//board to which the point belongs
 
 	@JsonFilter("Point_stoneGroup")
@@ -83,6 +84,7 @@ public class Point {
 		this.board.addPoint(this);
 	}
 	@JsonIgnore
+	@Transient
 	public Player getOwner() {
 		return this.stoneGroup.getOwner();
 	}

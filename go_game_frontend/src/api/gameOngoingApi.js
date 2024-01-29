@@ -21,6 +21,10 @@ export function makeMove(gameId, move){
     return apiClient.put(`/games/${gameId}/add/move`, move);
 }
 
+export function surrender(gameId, clientId){
+    return apiClient.put(`/games/${gameId}/surrender/${clientId}`);
+}
+
 export function toggleDeadStoneGroup(gameId, move){
     return apiClient.put(`/games/${gameId}/toggle/stonegroup`, move);
 }

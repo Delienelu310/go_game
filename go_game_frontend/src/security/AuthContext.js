@@ -10,6 +10,9 @@ export default function AuthProvider({children}){
 
     const [id, setId] = useState();
 
+    const [currentRoom, setCurrentRoom] = useState();
+    const [disconnect, setDisconnect] = useState();
+
 
     async function tryLogin(username, password){
         return login(username, password)
@@ -32,7 +35,9 @@ export default function AuthProvider({children}){
     }
 
     return (
-        <AuthContext.Provider value={{id, logout, tryLogin, tryRegister}}>
+        <AuthContext.Provider value={{id, logout, tryLogin, tryRegister,
+            disconnect, setDisconnect, currentRoom, setCurrentRoom
+        }}>
             {children}
         </AuthContext.Provider>
     );
