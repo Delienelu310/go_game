@@ -45,15 +45,17 @@ public class GoBot extends Bot{
         Game gameCopy = new Game(game);
         
         int boardSize = game.getBoard().getSize();
+		
         for (int i = 0; i < boardSize; ++i) {
             for (int j = 0; j < boardSize; ++j) {
                 Move move = new Move(i, j, MoveType.NORMAL, botPlayer);
-                if (gameCopy .makeMove(move)) {
+                if (gameCopy.makeMove(move)) {                	
                     int moveValue = minimax(gameCopy , MAX_DEPTH - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
                     
+//					int moveValue = minimaxIterative(gameCopy);
                     gameCopy.undo();
                     
-                    if (moveValue > bestValue) {
+                    if (moveValue > bestValue && moveValue > 0) {
                         bestValue = moveValue;
                         bestMove = move;
                     }
@@ -61,8 +63,13 @@ public class GoBot extends Bot{
             }
         }
         
-        if(bestMove == null) {
-        	return new Move(-1, -1, MoveType.PASS, botPlayer);
+        if(bestValue <= 0) {
+/*        	if(bestMove == null) {
+        		return new Move(-1, -1, MoveType.SURRENDER, botPlayer);
+        	}
+      		return new Move(-1, -1, MoveType.SURRENDER, botPlayer);
+*/
+      		return new Move(-1, -1, MoveType.SURRENDER, botPlayer);
         }
         return bestMove;
     }
@@ -80,6 +87,7 @@ public class GoBot extends Bot{
     			for(int j = 0; j < boardSize; ++j) {
     				Move move = new Move(i, j, MoveType.NORMAL, botPlayer); 
     				if(game.makeMove(move)) {
+    					
     					bestVal = Math.max(bestVal, minimax(game, depth - 1, alpha, beta, false));
     					game.undo();
     					
@@ -100,28 +108,107 @@ public class GoBot extends Bot{
        				Move move = new Move(i, j, MoveType.NORMAL, game.getOpponent(botPlayer)); 
        				if(game.makeMove(move)) {
     					bestVal = Math.min(bestVal, minimax(game, depth - 1, alpha, beta, true));
-    					game.undo();
+       					
+       					game.undo();
            				
     					beta = Math.min(beta, bestVal);
                         if (beta <= alpha) {
                             break;
                         }
         			}
-
         		}
        		}
     		
     		return bestVal;
     	}
     }
+    
 
+    private int minimaxIterative(Game game) {
+        
+    	int alpha = Integer.MIN_VALUE;
+    	int beta = Integer.MAX_VALUE;
+    	
+    	int boardSize = game.getBoard().getSize();
+        int bestValMin = Integer.MAX_VALUE;
+        	
+    	for(int i = 0; i < boardSize; ++i) {
+        	for(int j = 0; j < boardSize; ++j) {
+       			Move move = new Move(i, j, MoveType.NORMAL, game.getOpponent(botPlayer)); 
+       			if(game.makeMove(move)) {
+       	        	int bestValMax = Integer.MIN_VALUE;
+       	        	
+       				for(int x = 0; x < boardSize; ++x) {
+       					for(int y = 0; y < boardSize; ++y) {
+       						Move move2 = new Move(x, y, MoveType.NORMAL, botPlayer);
+       						if(game.makeMove(move2)) {
+       							bestValMax = Math.max(bestValMax, evaluateBoard(game));
+       							game.undo();
+       							
+       							alpha = Math.max(alpha, bestValMax);
+       							if(beta <= alpha) {
+       								break;
+       							}
+       						}
+       					}
+						if(beta <= alpha) {
+   							break;
+   						}
+       				}
+       				
+       				bestValMin = Math.min(bestValMin, bestValMax);
+    				game.undo();
+           				
+    				beta = Math.min(beta, bestValMin);
+    				if (beta <= alpha) {
+    					break;
+    				}
+       			}
+        	}
+			if (beta <= alpha) {
+				break;
+			}
+       	}
+    		
+    	return bestValMin;
+    }
+    /*
+    public int[] pickDeadStoneGroup(Game game) {
+    	if(evaluateTerritory(game) > 0) {
+        	game.agreeToFinalize(botPlayer);
+        	return new int[] {-1, -1};    		
+    	}
+    	
+    	int boardSize = game.getBoard().getSize();
+    	for(int x = 0; x < boardSize; ++x) {
+    		for(int y = 0; y < boardSize; ++y) {
+    			try {
+        			Point point = game.getBoard().getPoint(x, y);
+        			if(!point.isEmpty()) {
+        				if(!(point.getStoneGroup().getOwner() == botPlayer)) {
+        					return new int[] {x, y};
+        				}
+        			}
+    			} catch (OutOfBoardException e) {
+    				continue;
+    			}
+    		}
+    	}
+    	
+    	game.agreeToFinalize(botPlayer);
+    	return new int[] {-1, -1};
+    }
+    */
     private int evaluateBoard(Game game) {
         int score = 0;
-/*
-        score += evaluateTerritory(game);
-  */
-        score += evaluateStoneGroups(game);
 
+//        score += evaluateTerritory(game);
+  
+        score += evaluateStoneGroups(game);
+        
+        score += botPlayer.getCaptives().size();
+        score -= game.getOpponent(botPlayer).getCaptives().size();
+        
         return score;
     }
 
@@ -131,7 +218,7 @@ public class GoBot extends Bot{
         Set<Territory> territories = game.getCurrentTerritories();
         for (Territory territory : territories) {
             if (territory.getOwner() == botPlayer) {
-                territoryScore += territory.getPoints().size();
+                territoryScore += territory.getPoints().size() * 10;
             } else if (territory.getOwner() == game.getOpponent(botPlayer)) {
                 territoryScore -= territory.getPoints().size();
             }
@@ -156,10 +243,10 @@ public class GoBot extends Bot{
         for(StoneGroup group : stoneGroups) {
         	if (group.getOwner() == botPlayer) {
                 stoneGroupScore += group.getBreaths().size();
-                stoneGroupScore += group.getStones().size() * 4;
+                stoneGroupScore += group.getStones().size();
             } else if (group.getOwner() == game.getOpponent(botPlayer)) {
-                stoneGroupScore -= group.getBreaths().size();
-                stoneGroupScore -= group.getStones().size() * 2;
+                stoneGroupScore -= group.getBreaths().size() / 2;
+                stoneGroupScore -= group.getStones().size() / 2;
             }
         }
 
